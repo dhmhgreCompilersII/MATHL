@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "MATHL": {
+      "commandName": "Project",
+      "commandLineArgs": "test.txt",
+      "workingDirectory": "D:\\MyWorkII\\TeachingCourses\\Compilers II\\Exercises-Practice\\MATHL\\Testbench"
+    }
+  }
+}

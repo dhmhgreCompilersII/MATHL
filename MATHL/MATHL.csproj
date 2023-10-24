@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="MATHL.g4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Antlr4 Include="MATHL.g4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="obj\Debug\net6.0\MATHLBaseListener.cs" />
+    <Compile Include="obj\Debug\net6.0\MATHLBaseVisitor.cs" />
+    <Compile Include="obj\Debug\net6.0\MATHLLexer.cs" />
+    <Compile Include="obj\Debug\net6.0\MATHLListener.cs" />
+    <Compile Include="obj\Debug\net6.0\MATHLParser.cs" />
+    <Compile Include="obj\Debug\net6.0\MATHLVisitor.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
+    <PackageReference Include="Antlr4BuildTasks" Version="12.3.0" />
+  </ItemGroup>
+
+</Project>
