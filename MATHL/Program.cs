@@ -3,7 +3,6 @@
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 
-Console.WriteLine("Hello, World!");
 
 StreamReader aReader = new StreamReader(args[0]);
 AntlrInputStream antlrstream = new AntlrInputStream(aReader);

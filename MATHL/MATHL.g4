@@ -10,7 +10,20 @@ compile_unit: ((command|declaration) ';')+
 command : expression
 		;
 
-declaration : ;
+declaration : variable_declaration
+			| function_declaration
+			;
+
+type : INT
+	 | FLOAT
+	 ;
+
+variable_declaration: type IDENTIFIER ( '=' expression )?
+					;
+
+function_declaration : type IDENTIFIER '(' (variable_declaration (',' variable_declaration )*)? ')'
+					;
+
 
 expression :  NUMBER
 			| IDENTIFIER
@@ -27,8 +40,8 @@ params : (expression (',' expression)+);
 /*
 Lexer Rules
 */
-
-
+INT : 'int';
+FLOAT : 'float';
 LP : '(';
 RP : ')';
 PLUS : '+';

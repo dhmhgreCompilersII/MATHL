@@ -25,6 +25,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\Testbench\test.txt" Link="test.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\README.md" Link="README.md" />
   </ItemGroup>
 
