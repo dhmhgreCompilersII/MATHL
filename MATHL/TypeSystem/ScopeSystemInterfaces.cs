@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace MATHL.TypeSystem {
     public interface IScope {
-        public bool DefineSymbol(LSymbol symbol);
-        public LSymbol SearchSymbol(string name);
+        public bool DefineSymbol(LSymbol symbol, SymbolType symbolType);
+        public LSymbol SearchSymbol(string name, SymbolType symbolType);
 
-        public Scope M_EnclosingScope { get; }
+        public IScope M_EnclosingScope { get; }
         public string M_ScopeName { get; }
     }
 }

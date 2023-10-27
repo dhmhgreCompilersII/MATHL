@@ -5,12 +5,12 @@ namespace MATHL.TypeSystem {
         ST_NA, ST_VARIABLE, ST_FUNCTION
     }
 
-    public class LSymbol {
+    public abstract class LSymbol {
         string m_name;
         private LType m_type;
         private SymbolType m_symbolType;
 
-        public LSymbol(string mName, LType mType, SymbolType mSymbolType) {
+        public LSymbol(string mName, SymbolType mSymbolType,LType mType) {
             m_name = mName;
             m_type = mType;
             m_symbolType = mSymbolType;
@@ -21,15 +21,19 @@ namespace MATHL.TypeSystem {
         public LType MType => m_type;
 
         public SymbolType MSymbolType => m_symbolType;
+
+        public override string ToString() {
+            return MName + ":" + m_type;
+        }
     }
 
     public class VariableSymbol : LSymbol {
         public VariableSymbol(string mName, LType mType) :
-            base(mName, mType, SymbolType.ST_VARIABLE) { }
+            base(mName, SymbolType.ST_VARIABLE, mType) { }
     }
 
     public class FunctionSymbol : LSymbol {
         public FunctionSymbol(string mName, LType mType) :
-            base(mName, mType, SymbolType.ST_FUNCTION) { }
+            base(mName, SymbolType.ST_FUNCTION, mType) { }
     }
 }
