@@ -39,8 +39,8 @@ expression :  NUMBER
 			| expression '=' expression
 			| '(' expression ')'
 			| op=('+'|'-') expression
-			| expression op=('*'|'/'|IDIV|'%') expression
-			| expression op=('+'|'-') expression			
+			| expression op=(<assoc=left>'*'|<assoc=left>'/'|<assoc=left>IDIV|<assoc=left>'%') expression
+			| expression op=(<assoc=left>'+'|<assoc=left>'-') expression			
 			;
 
 params : (expression (',' expression)+);  

@@ -1,4 +1,4 @@
 int i=0;
 int foo(int a,float b);
 
-x+1=x+5;
+x+1=x+5+6;
