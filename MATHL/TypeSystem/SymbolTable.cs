@@ -48,17 +48,33 @@ namespace MATHL.TypeSystem {
         public override string ToString() {
             StringBuilder str = new StringBuilder();
             str.Append("Name:");
-            if (m_scopename != null) {
+            if (M_ScopeName != null) {
                 str.Append(m_scopename);
                 str.AppendLine();
             }
+            else {
+                str.AppendLine();
+            }
+
             str.Append("Parent Scope:");
             if (M_EnclosingScope != null) {
                 str.Append(m_parentScope.M_ScopeName);
                 str.AppendLine();
             }
-            str.Append(m_symbolTable.ToString());
-            return base.ToString();
+            else {
+                str.Append("NONE. Its the root scope");
+                str.AppendLine();
+            }
+
+            foreach (KeyValuePair<SymbolType, Dictionary<string, LSymbol>> keyValuePair in m_symbolTable) {
+                str.Append("Namespace :" + keyValuePair.Key);
+                str.AppendLine();
+                foreach (var lSymbol in m_symbolTable[keyValuePair.Key]) {
+                    str.Append("\t"+lSymbol.Value);
+                    str.AppendLine();
+                }
+            }
+            return str.ToString();
         }
     }
 }

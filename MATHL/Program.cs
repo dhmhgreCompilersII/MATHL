@@ -22,4 +22,5 @@ CommonTokenStream tokens = new CommonTokenStream(lexer);
 MATHLParser parser = new MATHLParser(tokens);
 
 IParseTree tree= parser.compile_unit(symtab);
+Console.WriteLine(symtab.ToString());
 Console.WriteLine(tree.ToStringTree());
