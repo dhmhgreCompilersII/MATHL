@@ -26,7 +26,10 @@ type returns [LType tsym]
 	 | FLOAT { $tsym = symtab.SearchSymbol("float", SymbolType.ST_TYPENAME).MType; }
 	 ;
 
-variable_declaration: type IDENTIFIER ( '=' expression )?
+variable_declaration: type IDENTIFIER ( '=' expression )? { 
+		VariableSymbol vs = new VariableSymbol($IDENTIFIER.text,$type.tsym);
+		symtab.DefineSymbol(vs, SymbolType.ST_VARIABLE);
+	}
 					;
 
 function_declaration : type IDENTIFIER '(' (variable_declaration (',' variable_declaration )*)? ')'
@@ -34,8 +37,8 @@ function_declaration : type IDENTIFIER '(' (variable_declaration (',' variable_d
 
 
 expression :  NUMBER
-			| IDENTIFIER
-			| IDENTIFIER '(' params ')'
+			| IDENTIFIER				{ symtab.SearchSymbol($IDENTIFIER.text,SymbolType.ST_VARIABLE); }
+			| IDENTIFIER '(' params ')' { symtab.SearchSymbol($IDENTIFIER.text,SymbolType.ST_FUNCTION); }
 			| expression '=' expression
 			| '(' expression ')'
 			| op=('+'|'-') expression

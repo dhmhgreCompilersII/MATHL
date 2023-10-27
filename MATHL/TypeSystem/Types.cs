@@ -1,16 +1,23 @@
 namespace MATHL.TypeSystem {
     public class LType {
-        private string m_typename;
+        protected string m_typename;
 
+        public LType(string mTypename) {
+            m_typename = mTypename;
+        }
     }
 
     public class IntegerType : LType {
+        public IntegerType() : base("IntegerType") { }
+
         public override string ToString() {
-            return "IntegerType";
+            return m_typename;
         }
     }
 
     public class FloatingType : LType {
+        public FloatingType() : base("FloatingType") { }
+
         public override string ToString() {
             return "FloatingType";
         }
