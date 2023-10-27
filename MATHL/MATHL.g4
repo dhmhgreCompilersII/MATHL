@@ -3,8 +3,14 @@ grammar MATHL;
 /* 
 Parser Rules
 */
+@header {
+  using MATHL.TypeSystem;
+}
+@members {Scope symtab;}
 
-compile_unit: ((command|declaration) ';')+
+compile_unit[Scope symtab]
+@init { this.symtab = symtab; }
+: ((command|declaration) ';')+
 ;
 
 command : expression
@@ -14,8 +20,9 @@ declaration : variable_declaration
 			| function_declaration
 			;
 
-type : INT
-	 | FLOAT
+type returns [LType tsym] 
+	 : INT	 { $tsym = symtab.SearchSymbol("int",SymbolType.ST_TYPENAME).MType; }
+	 | FLOAT { $tsym = symtab.SearchSymbol("float",SymbolType.ST_TYPENAME).MType; }
 	 ;
 
 variable_declaration: type IDENTIFIER ( '=' expression )?

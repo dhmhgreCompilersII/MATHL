@@ -13,16 +13,28 @@ namespace MATHL.TypeSystem {
         private string m_scopename;
         private IScope m_parentScope;
 
-        public Scope(IScope parentScope, string scopeName) {
+        public Scope(IScope parentScope,Action<Scope> init, string scopeName) {
             m_scopename = scopeName;
             m_parentScope = parentScope;
+            init(this);
+        }
+
+        public void InitializeNamespace(SymbolType type) {
+            if (!m_symbolTable.ContainsKey(type)) {
+                m_symbolTable[type] = new Dictionary<string, LSymbol>();
+            }
         }
 
         public bool DefineSymbol(LSymbol symbol, SymbolType symbolType) {
+            if (!m_symbolTable[symbolType].ContainsKey(symbol.MName)) {
+                m_symbolTable[symbolType][symbol.MName] = symbol;
+                return true;
+            }
             return false;
+
         }
         public LSymbol SearchSymbol(string name, SymbolType symbolType) {
-            return null;
+            return m_symbolTable[symbolType][name];
         }
 
         public IScope M_EnclosingScope {

@@ -2,7 +2,7 @@
 namespace MATHL.TypeSystem {
     // The base class of symbols of various categories
     public enum SymbolType {
-        ST_NA, ST_VARIABLE, ST_FUNCTION
+        ST_NA, ST_VARIABLE, ST_FUNCTION, ST_TYPENAME
     }
 
     public abstract class LSymbol {
@@ -35,5 +35,10 @@ namespace MATHL.TypeSystem {
     public class FunctionSymbol : LSymbol {
         public FunctionSymbol(string mName, LType mType) :
             base(mName, SymbolType.ST_FUNCTION, mType) { }
+    }
+
+    public class TypenameSymbol : LSymbol {
+        public TypenameSymbol(string mName, LType mType) :
+            base(mName, SymbolType.ST_TYPENAME, mType) { }
     }
 }
