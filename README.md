@@ -64,4 +64,9 @@ Console.WriteLine(tree.ToStringTree());
 
 ![Solution Explorer after adding generated files](./Images/ProjectProperties_SetWorkingDirectoryAndCommandlineArguments.jpg )
 
+9) Create a Facade class MATHLProcessor for the Compiler/Interpreter. Provide the ability
+    1. Read from the console
+    2. Read from one or multiple input files
+
+
 

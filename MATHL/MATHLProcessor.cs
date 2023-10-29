@@ -17,7 +17,19 @@ namespace MATHL {
         private CommonTokenStream m_tokens = null;
         private Scope m_symbolTable;
 
-        public MATHLProcessor() {
+        public static void Start(string[] args) {
+            // Analyze the input arguments and initialize
+            // the parser accordingly
+
+            // the absence of a switch indicates input file 
+            // switch -i create an interactive parser
+            
+            // separate the input arguments into an array
+            // determine switches from the - prefixing the letter
+
+        }
+
+        protected MATHLProcessor() {
 
             InitializeProcessor();
 
@@ -31,7 +43,7 @@ namespace MATHL {
             Console.WriteLine(tree.ToStringTree());
         }
 
-        public MATHLProcessor(string[] args) {
+        protected MATHLProcessor(string[] args) {
             int inputFiles = args.Length;
             InitializeProcessor();
 
@@ -40,7 +52,7 @@ namespace MATHL {
             StreamReader reader = new StreamReader(args[0]);
             AntlrInputStream antlrstream = new AntlrInputStream(reader);
             m_lexer = new MATHLLexer(antlrstream);
-            m_lexer.SetInputFiles(args);
+            m_lexer.SetInputFiles(args);        // Send the input files to lexer
             m_tokens = new CommonTokenStream(m_lexer);
             m_parser = new MATHLParser(m_tokens);
             
