@@ -8,10 +8,7 @@ Parser Rules
   using MATHL.TypeSystem;
 }
 @parser::members {Scope symtab;}
-
-@lexer::members { Scope symtab;
-				  public bool m_continueToNextFile=false;						  
-}
+@lexer::members { Scope symtab;}
 
 compile_unit[Scope symtab]
 @init { this.symtab = symtab; }

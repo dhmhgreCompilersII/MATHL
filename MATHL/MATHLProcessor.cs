@@ -32,7 +32,7 @@ namespace MATHL {
         }
 
         public MATHLProcessor(string[] args) {
-            int inputFiles = args.Length, fileIndex = 0;
+            int inputFiles = args.Length;
             InitializeProcessor();
 
             // Get the first file
@@ -40,14 +40,10 @@ namespace MATHL {
             StreamReader reader = new StreamReader(args[0]);
             AntlrInputStream antlrstream = new AntlrInputStream(reader);
             m_lexer = new MATHLLexer(antlrstream);
-            
             m_lexer.SetInputFiles(args);
             m_tokens = new CommonTokenStream(m_lexer);
             m_parser = new MATHLParser(m_tokens);
-            fileIndex++;
-            if (fileIndex < inputFiles) {
-                m_lexer.m_continueToNextFile = true;
-            }
+            
             IParseTree tree = m_parser.compile_unit(m_symbolTable);
 
             Console.WriteLine(m_symbolTable.ToString());
