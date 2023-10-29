@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <Content Include="..\Testbench\test.txt" Link="test.txt" />
+    <Content Include="..\Testbench\test1.txt" Link="test1.txt" />
   </ItemGroup>
 
   <ItemGroup>

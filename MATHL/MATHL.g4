@@ -7,7 +7,11 @@ Parser Rules
 @header {
   using MATHL.TypeSystem;
 }
-@members {Scope symtab;}
+@parser::members {Scope symtab;}
+
+@lexer::members { Scope symtab;
+				  public bool m_continueToNextFile=false;						  
+}
 
 compile_unit[Scope symtab]
 @init { this.symtab = symtab; }
