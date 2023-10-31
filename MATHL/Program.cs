@@ -7,6 +7,7 @@ using MATHL.TypeSystem;
 
 
 
-//MATHLProcessor mathlProcessor = new MATHLProcessor();
-MATHLProcessor mathlProcessor = new MATHLProcessor(args);
+MATHLProcessor mathlProcessor = new MATHLProcessor();
+mathlProcessor.Start(args);
+
 
