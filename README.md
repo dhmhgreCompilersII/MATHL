@@ -71,6 +71,9 @@ Console.WriteLine(tree.ToStringTree());
         or evaluates the command and modifies the parser state if a semicolon terminates
         the command.
     2. Read from one or multiple input files
+        The parser accepts one or multiple input files and after processing it can 
+        continue in interactive mode accepting more commands interactively
+        
 
 
 
