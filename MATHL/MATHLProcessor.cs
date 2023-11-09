@@ -26,7 +26,9 @@ namespace MATHL {
 
             InitializeProcessor();
 
-            CreateNonInteractiveParser();
+            if (m_inputFilesNames.Count != 0) {
+                CreateNonInteractiveParser();
+            }
 
             AntlrInputStream antlrstream = new AntlrInputStream(Console.In);
             MATHLLexer lexer = new MATHLLexer(antlrstream);
