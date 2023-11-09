@@ -30,14 +30,16 @@ namespace MATHL {
                 CreateNonInteractiveParser();
             }
 
-            AntlrInputStream antlrstream = new AntlrInputStream(Console.In);
-            MATHLLexer lexer = new MATHLLexer(antlrstream);
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-            MATHLParser parser = new MATHLParser(tokens);
-
-            IParseTree tree = parser.compile_unit(m_symbolTable);
-            Console.WriteLine(m_symbolTable.ToString());
-            Console.WriteLine(tree.ToStringTree());
+            string line;
+            while ( (line =Console.ReadLine()) != null) {
+                AntlrInputStream antlrstream = new AntlrInputStream(line);
+                MATHLLexer lexer = new MATHLLexer(antlrstream);
+                CommonTokenStream tokens = new CommonTokenStream(lexer);
+                MATHLParser parser = new MATHLParser(tokens);
+                IParseTree tree = parser.compile_unit(m_symbolTable);
+                Console.WriteLine(m_symbolTable.ToString());
+                Console.WriteLine(tree.ToStringTree());
+            }
         }
 
         protected void CreateNonInteractiveParser() {
