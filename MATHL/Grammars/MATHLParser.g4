@@ -41,9 +41,11 @@ type returns [LType tsym]
 	 | FLOAT { $tsym = symtab.SearchSymbol("float", SymbolType.ST_TYPENAME).MType; }
 	 ;
 
-variable_declaration: type IDENTIFIER ( '=' expression )? { 
-		VariableSymbol vs = new VariableSymbol($IDENTIFIER.text,$type.tsym);
-		symtab.DefineSymbol(vs, SymbolType.ST_VARIABLE);
+variable_declaration: type ( ','? ids+=IDENTIFIER ( '=' expression )?)+ { 
+		foreach ( var id in $ids ){
+			VariableSymbol vs = new VariableSymbol(id.Text,$type.tsym);
+			symtab.DefineSymbol(vs, SymbolType.ST_VARIABLE);
+		}
 	}
 					;
 
@@ -61,8 +63,10 @@ expression returns [int result]
 			| IDENTIFIER '(' params ')' { symtab.SearchSymbol($IDENTIFIER.text,SymbolType.ST_FUNCTION); }
 			| a=expression '=' b=expression {  if ( $a.ctx.GetChild(0) is ITerminalNode identifier ){
 												LSymbol sym = symtab.SearchSymbol(identifier.Symbol.Text,SymbolType.ST_VARIABLE);		
-												sym.MValue = $b.result;
-												MMessage = $"{sym.MName}={$b.result}";
+												if ( sym != null ){
+													sym.MValue = $b.result;
+													MMessage = $"{sym.MName}={$b.result}";
+												}
 											 }
 										}
 			| '(' expression ')' { $result = $expression.result; }
