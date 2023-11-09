@@ -8,6 +8,7 @@ namespace MATHL.TypeSystem {
     public abstract class LSymbol {
         string m_name;
         private LType m_type;
+        private int value;
         private SymbolType m_symbolType;
 
         public LSymbol(string mName, SymbolType mSymbolType,LType mType) {
@@ -19,6 +20,11 @@ namespace MATHL.TypeSystem {
         public string MName => m_name;
 
         public LType MType => m_type;
+
+        public int MValue {
+            get => value;
+            set => this.value = value;
+        }
 
         public SymbolType MSymbolType => m_symbolType;
 

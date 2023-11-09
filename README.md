@@ -66,7 +66,12 @@ Console.WriteLine(tree.ToStringTree());
 
 9) Create a Facade class MATHLProcessor for the Compiler/Interpreter. Provide the ability
     1. Read from the console
+        When reading from the console the parser works interactively. It evaluates 
+        each command and displays the result when the newline terminates the command
+        or evaluates the command and modifies the parser state if a semicolon terminates
+        the command.
     2. Read from one or multiple input files
+
 
 
 

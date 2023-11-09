@@ -12,11 +12,22 @@ Parser Rules
 
 compile_unit[Scope symtab]
 @init { this.symtab = symtab; }
-: ((command|declaration) ';')+
+: (command|declaration)+
 ;
 
-command : expression
-		;
+command : expression del=(';'|NEWLINE) {  
+											switch ($del.type){
+												case MATHLLexer.SEMICOLON:
+												
+												break;
+												case MATHLLexer.NEWLINE:
+													Console.WriteLine($"{$expression.result}");
+												break;
+										    }
+										
+										
+										};
+		
 
 declaration : variable_declaration
 			| function_declaration
@@ -37,11 +48,13 @@ function_declaration : type IDENTIFIER '(' (variable_declaration (',' variable_d
 					;
 
 
-expression :  NUMBER
-			| IDENTIFIER				{ symtab.SearchSymbol($IDENTIFIER.text,SymbolType.ST_VARIABLE); }
+expression returns [int result] 
+			:  NUMBER		{ $result = Int32.Parse($NUMBER.text);}
+			| IDENTIFIER				{ LSymbol symbol = symtab.SearchSymbol($IDENTIFIER.text,SymbolType.ST_VARIABLE); 
+										  $result = symbol.MValue;}
 			| IDENTIFIER '(' params ')' { symtab.SearchSymbol($IDENTIFIER.text,SymbolType.ST_FUNCTION); }
 			| expression '=' expression
-			| '(' expression ')'
+			| '(' expression ')' { $result = $expression.result; }
 			| op=('+'|'-') expression
 			| expression op=(<assoc=left>'*'|<assoc=left>'/'|<assoc=left>IDIV|<assoc=left>'%') expression
 			| expression op=(<assoc=left>'+'|<assoc=left>'-') expression			
@@ -67,5 +80,6 @@ ASSIGN : '=';
 SEMICOLON : ';' ;
 IDENTIFIER : [a-zA-Z][a-zA-Z0-9_]* ;
 NUMBER : '0'|[1-9][0-9]* ;
-NEWLINE :[ \r\n\t] ->skip;
+NEWLINE :'\r'?'\n' ; 
+SPACE :[ \t] ->skip;
 
