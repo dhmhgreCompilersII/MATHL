@@ -60,7 +60,6 @@ namespace MATHL {
         }
 
         public MATHLProcessor Start(string[] args) {
-            int argindex = 0;
             string input_ = string.Join(" ", args);
 
             

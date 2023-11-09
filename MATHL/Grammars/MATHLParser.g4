@@ -1,4 +1,7 @@
-grammar MATHL;
+parser grammar MATHLParser;
+
+options { tokenVocab = MATHLLexer; }
+
 
 /* 
 Parser Rules
@@ -15,7 +18,7 @@ compile_unit[Scope symtab]
 : (command|declaration)+
 ;
 
-command : expression del=(';'|NEWLINE) {  
+command : expression del=(SEMICOLON|NEWLINE) {  
 											switch ($del.type){
 												case MATHLLexer.SEMICOLON:
 												
@@ -44,7 +47,7 @@ variable_declaration: type IDENTIFIER ( '=' expression )? {
 	}
 					;
 
-function_declaration : type IDENTIFIER '(' (variable_declaration (',' variable_declaration )*)? ')'
+function_declaration : type IDENTIFIER '(' (variable_declaration (COMMA variable_declaration )*)? ')'
 					;
 
 
@@ -60,26 +63,4 @@ expression returns [int result]
 			| expression op=(<assoc=left>'+'|<assoc=left>'-') expression			
 			;
 
-params : (expression (',' expression)+);  
-
-/*
-Lexer Rules
-*/
-
-INT : 'int';
-FLOAT : 'float';
-LP : '(';
-RP : ')';
-PLUS : '+';
-MINUS : '-';
-MULT : '*';
-FDIV : '/';
-IDIV : '//';
-MOD : '%';
-ASSIGN : '=';
-SEMICOLON : ';' ;
-IDENTIFIER : [a-zA-Z][a-zA-Z0-9_]* ;
-NUMBER : '0'|[1-9][0-9]* ;
-NEWLINE :'\r'?'\n' ; 
-SPACE :[ \t] ->skip;
-
+params : (expression (COMMA expression)+);  

@@ -8,20 +8,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="MATHL.g4" />
+    <None Remove="Grammars\MATHLParser.g4" />
+    <None Remove="MATHLLexer.g4" />
   </ItemGroup>
 
   <ItemGroup>
-    <Antlr4 Include="MATHL.g4" />
+    <Antlr4 Include="Grammars\MATHLLexer.g4" />
+    <Antlr4 Include="Grammars\MATHLParser.g4" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="obj\Debug\net6.0\MATHLBaseListener.cs" />
-    <Compile Include="obj\Debug\net6.0\MATHLBaseVisitor.cs" />
     <Compile Include="obj\Debug\net6.0\MATHLLexer.cs" />
-    <Compile Include="obj\Debug\net6.0\MATHLListener.cs" />
     <Compile Include="obj\Debug\net6.0\MATHLParser.cs" />
-    <Compile Include="obj\Debug\net6.0\MATHLVisitor.cs" />
+    <Compile Include="obj\Debug\net6.0\MATHLParserBaseListener.cs" />
+    <Compile Include="obj\Debug\net6.0\MATHLParserBaseVisitor.cs" />
+    <Compile Include="obj\Debug\net6.0\MATHLParserListener.cs" />
+    <Compile Include="obj\Debug\net6.0\MATHLParserVisitor.cs" />
   </ItemGroup>
 
   <ItemGroup>
