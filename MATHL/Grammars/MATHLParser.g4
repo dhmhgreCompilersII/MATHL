@@ -18,18 +18,14 @@ compile_unit[Scope symtab]
 : (command|declaration)+
 ;
 
-command : expression del=(SEMICOLON|NEWLINE) {  
-											switch ($del.type){
-												case MATHLLexer.SEMICOLON:
-												
-												break;
-												case MATHLLexer.NEWLINE:													
-													Console.WriteLine($"->{MMessage}");
-												break;
-										    }
-										
-										
-										};
+command : (SEMICOLON|NEWLINE)
+		 | expression  {Console.WriteLine($"->{MMessage}");}
+		 | block		  
+		 ;
+
+command_termination : (SEMICOLON|NEWLINE) ;
+block : LB command (command_termination command)* command_termination* RB
+	;
 		
 
 declaration : variable_declaration
@@ -61,14 +57,6 @@ expression returns [int result]
 										  $result = symbol.MValue;
 										  MMessage = $"={$result}";}
 			| IDENTIFIER '(' params ')' { symtab.SearchSymbol($IDENTIFIER.text,SymbolType.ST_FUNCTION); }
-			| a=expression '=' b=expression {  if ( $a.ctx.GetChild(0) is ITerminalNode identifier ){
-												LSymbol sym = symtab.SearchSymbol(identifier.Symbol.Text,SymbolType.ST_VARIABLE);		
-												if ( sym != null ){
-													sym.MValue = $b.result;
-													MMessage = $"{sym.MName}={$b.result}";
-												}
-											 }
-										}
 			| '(' expression ')' { $result = $expression.result; }
 			| op=('+'|'-') expression { switch ($op.type) {
 											case MATHLLexer.PLUS:
@@ -110,8 +98,15 @@ expression returns [int result]
 													break;													
 												}
 												MMessage = $"{$result}";
-											}			
-
+											}
+			| a=expression '=' b=expression {  if ( $a.ctx.GetChild(0) is ITerminalNode identifier ){
+												LSymbol sym = symtab.SearchSymbol(identifier.Symbol.Text,SymbolType.ST_VARIABLE);		
+												if ( sym != null ){
+													sym.MValue = $b.result;
+													MMessage = $"{sym.MName}={$b.result}";
+												}
+											 }
+										}
 			;
 
 params : (expression (COMMA expression)+);  

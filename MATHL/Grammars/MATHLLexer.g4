@@ -9,6 +9,8 @@ INT : 'int';
 FLOAT : 'float';
 LP : '(';
 RP : ')';
+LB : '{';
+RB : '}';
 PLUS : '+';
 MINUS : '-';
 MULT : '*';

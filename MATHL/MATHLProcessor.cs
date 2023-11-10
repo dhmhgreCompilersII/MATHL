@@ -30,15 +30,38 @@ namespace MATHL {
                 CreateNonInteractiveParser();
             }
 
-            string line;
-            while ( (line =Console.ReadLine()) != null) {
+            string line="";
+            int nesting=0;
+            Console.Write("->");
+            string lineBuffer = "";
+            while ( (lineBuffer =Console.ReadLine()) != null) {
+                line = lineBuffer + "\n";
+
+                MatchCollection enterBlockPredicate = Regex.Matches(line, "[^{]*{");
+                nesting += enterBlockPredicate.Count;
+                MatchCollection leaveBlockPredicate = Regex.Matches(line, "[^}]*}");
+                nesting -= leaveBlockPredicate.Count;
+
+                while (nesting > 0) {
+                    lineBuffer = Console.ReadLine();
+                    line += lineBuffer + "\n";
+
+                    enterBlockPredicate = Regex.Matches(lineBuffer, "[^{]*{");
+                    nesting += enterBlockPredicate.Count;
+                    leaveBlockPredicate = Regex.Matches(lineBuffer, "[^}]*}");
+                    nesting -= leaveBlockPredicate.Count;
+                }
+                
+                // Check if line starts with '{'
+                    // If starting with '{' don't call parser but accumulate until a closing '}'
+
                 StringBuilder line_ = new StringBuilder(line);
-                line_.AppendLine();
                 AntlrInputStream antlrstream = new AntlrInputStream(line_.ToString());
                 MATHLLexer lexer = new MATHLLexer(antlrstream);
                 CommonTokenStream tokens = new CommonTokenStream(lexer);
                 MATHLParser parser = new MATHLParser(tokens);
                 IParseTree tree = parser.compile_unit(m_symbolTable);
+                Console.Write("->");
                 //Console.WriteLine(tree.ToStringTree());
             }
             Console.WriteLine(m_symbolTable.ToString());
@@ -66,8 +89,6 @@ namespace MATHL {
         public MATHLProcessor Start(string[] args) {
             string input_ = string.Join(" ", args);
 
-            
-            
             // Regular Expression to analyze Command line 
             var matches = Regex.Matches(input_, @"(\w[a-zA-Z0-9_]*\.\w[a-zA-Z0-9_]{1,3})|(-\p{L})");
 
