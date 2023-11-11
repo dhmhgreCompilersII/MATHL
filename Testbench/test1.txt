@@ -1,1 +1,2 @@
-int c;
+int e;
+e=1
