@@ -74,6 +74,10 @@ Console.WriteLine(tree.ToStringTree());
         The parser accepts one or multiple input files and after processing it can 
         continue in interactive mode accepting more commands interactively
         
+# TODO
+1. Create a history of commands with save capability
+2. Create a history of results with seeking capability
+
 
 
 

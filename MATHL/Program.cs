@@ -7,7 +7,7 @@ using MATHL.TypeSystem;
 
 
 
-MATHLProcessor mathlProcessor = new MATHLProcessor();
-mathlProcessor.Start(args);
+MATHLCommandLineProcessor mathlProcessor = new MATHLCommandLineProcessor();
+mathlProcessor.ParseCommandLineArguments(args);
 
 

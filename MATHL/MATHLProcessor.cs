@@ -8,88 +8,20 @@ using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using MATHL.TypeSystem;
+using static MATHL.MATHLInteractiveInterpreter;
 
 namespace MATHL {
-    public class MATHLProcessor {
 
-
+    public class MATHLCommandLineProcessor {
         List<string> m_inputFilesNames = new List<string>(); // Input Files
-        MATHLParser m_parser = null; //Parser
-        private MATHLLexer m_lexer = null;  // Lexer
-        private CommonTokenStream m_tokens = null; // TokenStream
-        private Scope m_symbolTable;    // SymbolTable
-
         // indicates the creation of an interactive parser
         private bool m_InteractiveParser = true;
 
-        protected void CreateInteractiveParser() {
-
-            InitializeProcessor();
-
-            if (m_inputFilesNames.Count != 0) {
-                CreateNonInteractiveParser();
-            }
-
-            string line="";
-            int nesting=0;
-            Console.Write("->");
-            string lineBuffer = "";
-            while ( (lineBuffer =Console.ReadLine()) != null) {
-                line = lineBuffer + "\n";
-
-                MatchCollection enterBlockPredicate = Regex.Matches(line, "[^{]*{");
-                nesting += enterBlockPredicate.Count;
-                MatchCollection leaveBlockPredicate = Regex.Matches(line, "[^}]*}");
-                nesting -= leaveBlockPredicate.Count;
-
-                while (nesting > 0) {
-                    lineBuffer = Console.ReadLine();
-                    line += lineBuffer + "\n";
-
-                    enterBlockPredicate = Regex.Matches(lineBuffer, "[^{]*{");
-                    nesting += enterBlockPredicate.Count;
-                    leaveBlockPredicate = Regex.Matches(lineBuffer, "[^}]*}");
-                    nesting -= leaveBlockPredicate.Count;
-                }
-                
-                // Check if line starts with '{'
-                    // If starting with '{' don't call parser but accumulate until a closing '}'
-
-                StringBuilder line_ = new StringBuilder(line);
-                AntlrInputStream antlrstream = new AntlrInputStream(line_.ToString());
-                MATHLLexer lexer = new MATHLLexer(antlrstream);
-                CommonTokenStream tokens = new CommonTokenStream(lexer);
-                MATHLParser parser = new MATHLParser(tokens);
-                IParseTree tree = parser.compile_unit(m_symbolTable);
-                Console.Write("->");
-                //Console.WriteLine(tree.ToStringTree());
-            }
-            Console.WriteLine(m_symbolTable.ToString());
-        }
-
-        protected void CreateNonInteractiveParser() {
-            InitializeProcessor();
-
-            // Get the first file
-            Console.WriteLine($"Opening file {m_inputFilesNames[0]}...");
-            StreamReader reader = new StreamReader(m_inputFilesNames[0]);
-            AntlrInputStream antlrstream = new AntlrInputStream(reader);
-            m_lexer = new MATHLLexer(antlrstream);
-            m_lexer.SetInputFiles(m_inputFilesNames.ToArray());        // Send the input files to lexer
-            m_tokens = new CommonTokenStream(m_lexer);
-            m_parser = new MATHLParser(m_tokens);
-
-            IParseTree tree = m_parser.compile_unit(m_symbolTable);
-
-            Console.WriteLine(m_symbolTable.ToString());
-            Console.WriteLine(tree.ToStringTree());
-
-        }
-
-        public MATHLProcessor Start(string[] args) {
+        public void ParseCommandLineArguments(string[] args) {
+            // Join arguments to single string to parse the contents using REs
             string input_ = string.Join(" ", args);
 
-            // Regular Expression to analyze Command line 
+            // Regular Expression to analyze Command line identifying files and switches 
             var matches = Regex.Matches(input_, @"(\w[a-zA-Z0-9_]*\.\w[a-zA-Z0-9_]{1,3})|(-\p{L})");
 
             // Analyze input
@@ -97,37 +29,142 @@ namespace MATHL {
                 if (match.Groups[1].Length != 0) {
                     m_inputFilesNames.Add(match.Value);
                 }
-                if (match.Groups[2].Length != 0 && match.Value[1]=='c') {
+                if (match.Groups[2].Length != 0 && match.Value[1] == 'c') {
                     m_InteractiveParser = false;
                 }
             }
 
             // If there are no files create an interactive parser
             if (m_inputFilesNames.Count == 0) {
-                CreateInteractiveParser();
-            }
-            else { // If there are files create an interactive parser if the -c switch is not used
+                MATHLInteractiveInterpreter ii =
+                    new MATHLInteractiveInterpreter(MATHLExecutionEnvironment.GetInstance());
+                ii.Start();
+            } else { // If there are files, create an interactive parser, if the -c switch is not used
                 if (m_InteractiveParser) {
-                    CreateInteractiveParser();
-                }
-                else {
-                    CreateNonInteractiveParser();
+                    // Read and execute any give files from the command line
+                    // before passing to interactive mode 
+                    MATHLInterpreter fi =
+                        new MATHLFileInterpreter(MATHLExecutionEnvironment.GetInstance(), m_inputFilesNames);
+                    fi.Start();
+                    MATHLInteractiveInterpreter ii =
+                        new MATHLInteractiveInterpreter(MATHLExecutionEnvironment.GetInstance());
+                    ii.Start();
+                } else {
+                    // If there are files, create an Non-interactive parser, if the -c switch is used
+                    MATHLInterpreter fi =
+                        new MATHLFileInterpreter(MATHLExecutionEnvironment.GetInstance(), m_inputFilesNames);
+                    fi.Start();
                 }
             }
-
-            //Regex.
-            // Analyze the input arguments and initialize
-            // the parser accordingly
-
-            // the absence of a switch indicates input file 
-            // switch -i create an interactive parser
-
-            // separate the input arguments into an array
-            // determine switches from the - prefixing the letter
-
-            return null;
         }
-        
+    }
+
+    public abstract class MATHLInterpreter {
+        protected MATHLExecutionEnvironment m_environment;
+        public abstract void Start();
+
+        protected MATHLInterpreter(MATHLExecutionEnvironment mEnvironment) {
+            m_environment = mEnvironment;
+        }
+
+        protected void StartMATHLParser(string input) {
+            AntlrInputStream antlrstream = new AntlrInputStream(input);
+            MATHLLexer lexer = new MATHLLexer(antlrstream);
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            MATHLParser parser = new MATHLParser(tokens);
+            IParseTree tree = parser.compile_unit(m_environment.MSymbolTable);
+        }
+    }
+
+    public class MATHLInteractiveInterpreter : MATHLInterpreter {
+        public MATHLInteractiveInterpreter(MATHLExecutionEnvironment environment) :
+            base(environment) { }
+
+        public override void Start() {
+            MatchCollection enterBlockPredicate;
+            MatchCollection leaveBlockPredicate;
+
+            // Update nesting variable for each input line
+            int UpdateNestingFromCurrentLine(string line, int i) {
+                //INPUT
+                // Match open curly braces per line
+                enterBlockPredicate = Regex.Matches(line, "[^{]*{");
+                i += enterBlockPredicate.Count;
+                // Match closing curly braces per line
+                leaveBlockPredicate = Regex.Matches(line, "[^}]*}");
+                i -= leaveBlockPredicate.Count;
+                return i;
+            }
+
+            string line = "";
+            int nesting = 0;
+            Console.Write("->");
+            string lineBuffer = "";
+            // Read lines until the end of file is given
+            while ((lineBuffer = Console.ReadLine()) != null) {
+                // INPUT
+                // Append newline to recover it from Readline method
+                line = lineBuffer + "\n"; // INPUT
+
+                // update nesting level from the given line
+                nesting = UpdateNestingFromCurrentLine(line, nesting);
+
+                while (nesting > 0) {
+                    lineBuffer = Console.ReadLine(); // INPUT
+                    // Append newline to recover it from Readline method
+                    line += lineBuffer + "\n"; // INPUT
+
+                    // update nesting level from the given line
+                    nesting = UpdateNestingFromCurrentLine(lineBuffer, nesting);
+                }
+
+                StringBuilder line_ = new StringBuilder(line); // INPUT
+
+                StartMATHLParser(line_.ToString());
+                Console.Write("->");
+            }
+        }
+    }
+
+    public class MATHLFileInterpreter : MATHLInterpreter {
+        List<string> m_inputFilesNames; // Input Files
+
+        public MATHLFileInterpreter(MATHLExecutionEnvironment environment,
+            List<string> inputFiles) :base(environment) {
+            m_inputFilesNames = inputFiles;
+        }
+
+        public override void Start() {
+            // Get the first file
+            foreach (string fileName in m_inputFilesNames) {
+                Console.WriteLine($"Opening file {fileName}...");
+                StreamReader reader = new StreamReader(fileName); // INPUT
+                StartMATHLParser(reader.ReadToEnd());
+            }
+        }
+    }
+
+    // Singleton
+    public class MATHLExecutionEnvironment {
+        private Scope m_symbolTable; // SymbolTable
+        private static MATHLExecutionEnvironment m_instance=null;
+
+        public Scope MSymbolTable {
+            get => m_symbolTable;
+        }
+
+        public static MATHLExecutionEnvironment GetInstance() {
+            if (m_instance == null) {
+                m_instance = new MATHLExecutionEnvironment();
+            }
+            return m_instance;
+        }
+
+        private MATHLExecutionEnvironment() {
+            // Initialize build in types 
+            InitializeProcessor();
+        }
+
         void InitializeProcessor() {
             m_symbolTable = new Scope(null, scope => {
                 scope.InitializeNamespace(SymbolType.ST_TYPENAME);
@@ -136,7 +173,7 @@ namespace MATHL {
                 scope.DefineSymbol(new TypenameSymbol("int", new IntegerType()), SymbolType.ST_TYPENAME);
                 scope.DefineSymbol(new TypenameSymbol("float", new FloatingType()), SymbolType.ST_TYPENAME);
             },
-               "global");
+                "global");
         }
     }
 }
