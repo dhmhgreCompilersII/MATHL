@@ -73,6 +73,10 @@ Console.WriteLine(tree.ToStringTree());
     2. Read from one or multiple input files
         The parser accepts one or multiple input files and after processing it can 
         continue in interactive mode accepting more commands interactively
+    3. Interactive code blocks
+        The user can provide multiple commands in a row through nested blocks of code delimeted with
+        curly braces {}. The MATHL processor postpones the processing of commands until the last
+        closing curly brace is pressed followed by ENTER
         
 
 
