@@ -13,9 +13,14 @@ using static MATHL.MATHLInteractiveInterpreter;
 namespace MATHL {
 
     public class MATHLCommandLineProcessor {
+        private MATHLExecutionEnvironment m_environment;
         List<string> m_inputFilesNames = new List<string>(); // Input Files
         // indicates the creation of an interactive parser
         private bool m_InteractiveParser = true;
+
+        public MATHLCommandLineProcessor() {
+            m_environment = MATHLExecutionEnvironment.GetInstance();
+        }
 
         public void ParseCommandLineArguments(string[] args) {
             // Join arguments to single string to parse the contents using REs
@@ -37,22 +42,22 @@ namespace MATHL {
             // If there are no files create an interactive parser
             if (m_inputFilesNames.Count == 0) {
                 MATHLInteractiveInterpreter ii =
-                    new MATHLInteractiveInterpreter(MATHLExecutionEnvironment.GetInstance());
+                    new MATHLInteractiveInterpreter();
                 ii.Start();
             } else { // If there are files, create an interactive parser, if the -c switch is not used
                 if (m_InteractiveParser) {
                     // Read and execute any give files from the command line
                     // before passing to interactive mode 
                     MATHLInterpreter fi =
-                        new MATHLFileInterpreter(MATHLExecutionEnvironment.GetInstance(), m_inputFilesNames);
+                        new MATHLFileInterpreter(m_inputFilesNames);
                     fi.Start();
                     MATHLInteractiveInterpreter ii =
-                        new MATHLInteractiveInterpreter(MATHLExecutionEnvironment.GetInstance());
+                        new MATHLInteractiveInterpreter();
                     ii.Start();
                 } else {
                     // If there are files, create an Non-interactive parser, if the -c switch is used
                     MATHLInterpreter fi =
-                        new MATHLFileInterpreter(MATHLExecutionEnvironment.GetInstance(), m_inputFilesNames);
+                        new MATHLFileInterpreter( m_inputFilesNames);
                     fi.Start();
                 }
             }
@@ -63,8 +68,8 @@ namespace MATHL {
         protected MATHLExecutionEnvironment m_environment;
         public abstract void Start();
 
-        protected MATHLInterpreter(MATHLExecutionEnvironment mEnvironment) {
-            m_environment = mEnvironment;
+        protected MATHLInterpreter() {
+            m_environment = MATHLExecutionEnvironment.GetInstance();
         }
 
         protected void StartMATHLParser(string input) {
@@ -77,8 +82,8 @@ namespace MATHL {
     }
 
     public class MATHLInteractiveInterpreter : MATHLInterpreter {
-        public MATHLInteractiveInterpreter(MATHLExecutionEnvironment environment) :
-            base(environment) { }
+        public const string m_terminalCommand = "COMMAND";
+        public MATHLInteractiveInterpreter() { }
 
         public override void Start() {
             MatchCollection enterBlockPredicate;
@@ -119,7 +124,10 @@ namespace MATHL {
                 }
 
                 StringBuilder line_ = new StringBuilder(line); // INPUT
+                // Record command to history
+                m_environment.RecordInput(line_.ToString(),m_terminalCommand);
 
+                // Call MATHL parser
                 StartMATHLParser(line_.ToString());
                 Console.Write("->");
             }
@@ -129,25 +137,39 @@ namespace MATHL {
     public class MATHLFileInterpreter : MATHLInterpreter {
         List<string> m_inputFilesNames; // Input Files
 
-        public MATHLFileInterpreter(MATHLExecutionEnvironment environment,
-            List<string> inputFiles) :base(environment) {
+        public MATHLFileInterpreter(List<string> inputFiles) {
             m_inputFilesNames = inputFiles;
         }
 
         public override void Start() {
+            StringBuilder temp = new StringBuilder();
             // Get the first file
             foreach (string fileName in m_inputFilesNames) {
                 Console.WriteLine($"Opening file {fileName}...");
                 StreamReader reader = new StreamReader(fileName); // INPUT
-                StartMATHLParser(reader.ReadToEnd());
+                temp.Append(reader.ReadToEnd());
+
+                // Record command to history
+                m_environment.RecordInput(temp.ToString(), fileName);
+
+                /*reader.DiscardBufferedData();
+                reader.BaseStream.Position = 0;*/
+
+                StartMATHLParser(temp.ToString());
             }
         }
     }
 
     // Singleton
     public class MATHLExecutionEnvironment {
-        private Scope m_symbolTable; // SymbolTable
-        private static MATHLExecutionEnvironment m_instance=null;
+        // SymbolTable
+        private Scope m_symbolTable;
+
+        // History of given commands
+        private Dictionary<string, StringBuilder> m_history = new Dictionary<string, StringBuilder>();
+
+        // Singleton instance
+        private static MATHLExecutionEnvironment m_instance = null;
 
         public Scope MSymbolTable {
             get => m_symbolTable;
@@ -163,6 +185,22 @@ namespace MATHL {
         private MATHLExecutionEnvironment() {
             // Initialize build in types 
             InitializeProcessor();
+        }
+
+        public void RecordInput(string input, string streamname) {
+            if (!m_history.ContainsKey(streamname)) {
+                m_history[streamname] = new StringBuilder();
+            }
+            m_history[streamname].Append(input);
+        }
+
+        public string GetStreamCommandRecord(string streamname) {
+            
+            if (m_history.ContainsKey(streamname)) {
+                return m_history[streamname].ToString();
+            }
+
+            throw new FileNotFoundException($"The given stream ({streamname}) does not exist");
         }
 
         void InitializeProcessor() {
