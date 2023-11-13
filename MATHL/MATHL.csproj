@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\.gitignore" Link=".gitignore" />
     <None Include="..\README.md" Link="README.md" />
   </ItemGroup>
 
