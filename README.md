@@ -78,6 +78,10 @@ Console.WriteLine(tree.ToStringTree());
         curly braces {}. The MATHL processor postpones the processing of commands until the last
         closing curly brace is pressed followed by ENTER
         
+# TODO
+1. Create a history of commands with save capability
+2. Create a history of results with seeking capability
+
 
 
 

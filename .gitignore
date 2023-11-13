@@ -361,4 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-*.vsdx
+
+# dhmhgre specific files
+*.vsdx 
+*.docx
+*.doc
+*.pdf
