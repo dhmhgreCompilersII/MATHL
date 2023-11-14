@@ -29,17 +29,47 @@ block : LB command (command_termination command)* command_termination* RB
 		
 
 declaration : variable_declaration
-			| function_declaration
+			| function_declaration			
 			;
 
-type returns [LType tsym] 
-	 : INT	 { $tsym = symtab.SearchSymbol("int", SymbolType.ST_TYPENAME).MType; }
-	 | FLOAT { $tsym = symtab.SearchSymbol("float", SymbolType.ST_TYPENAME).MType; }
+type returns [LType tid] 
+	 : INT	 { $tid = new IntegerType(); }
+	 | FLOAT { $tid = new FloatingType(); }
+	 | RANGE { $tid = new RangeType(); }
 	 ;
+	  
 
-variable_declaration: type ( ','? ids+=IDENTIFIER ( '=' expression )?)+ { 
+variable_declarator [LType t] returns [string id]
+					: IDENTIFIER pds+=postfix_declarators* { $id = $IDENTIFIER.text;
+															 VariableSymbol vs=null;
+														     switch ( $t.MTypeId ){
+																case TypeID.TID_INTEGER:															
+																case TypeID.TID_FLOAT:
+																    // Scalar variable symbol creation
+																	vs = new VariableSymbol($IDENTIFIER.text,$t);
+																break;
+																case TypeID.TID_RANGE:
+																	vs = new VariableSymbol($IDENTIFIER.text,$t);
+																	if ($pds is List<Postfix_declaratorsContext> x){
+																		if ( $t is RangeType r){
+																			r.MDimensions = x.Count;
+																		}
+																	};
+																break;
+																default:
+																break;
+															 }
+																symtab.DefineSymbol(vs, SymbolType.ST_VARIABLE);
+															
+														   }	
+					;
+
+postfix_declarators : LBR RBR
+					;
+
+variable_declaration: type ( ','? ids+=variable_declarator[$type.tid] ( '=' expression )?)+ { 
 		foreach ( var id in $ids ){
-			VariableSymbol vs = new VariableSymbol(id.Text,$type.tsym);
+			VariableSymbol vs = new VariableSymbol($variable_declarator.id,$type.tid);
 			symtab.DefineSymbol(vs, SymbolType.ST_VARIABLE);
 		}
 	}

@@ -208,8 +208,6 @@ namespace MATHL {
                 scope.InitializeNamespace(SymbolType.ST_TYPENAME);
                 scope.InitializeNamespace(SymbolType.ST_VARIABLE);
                 scope.InitializeNamespace(SymbolType.ST_FUNCTION);
-                scope.DefineSymbol(new TypenameSymbol("int", new IntegerType()), SymbolType.ST_TYPENAME);
-                scope.DefineSymbol(new TypenameSymbol("float", new FloatingType()), SymbolType.ST_TYPENAME);
             },
                 "global");
         }
