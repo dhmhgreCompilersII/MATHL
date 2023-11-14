@@ -34,7 +34,7 @@ namespace MATHL.TypeSystem {
         }
     }
 
-    public record Range {
+    public record CRange {
         private int? m_StartIndex;
         private int? m_EndIndex;
         private int? m_Step;
@@ -52,6 +52,10 @@ namespace MATHL.TypeSystem {
         public int? MStep {
             get => m_Step;
             set => m_Step = value;
+        }
+
+        public override string ToString() {
+            return $"[{MStartIndex}:{MEndIndex}:{MStep}]";
         }
     }
 

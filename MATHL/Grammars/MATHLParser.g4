@@ -41,6 +41,7 @@ type returns [LType tid]
 
 variable_declarator [LType t] returns [string id]
 					: IDENTIFIER pds+=postfix_declarators* { $id = $IDENTIFIER.text;
+															 // Declare symbol for new variable
 															 VariableSymbol vs=null;
 														     switch ( $t.MTypeId ){
 																case TypeID.TID_INTEGER:															
@@ -86,6 +87,9 @@ expression returns [int result]
 			| IDENTIFIER	{ LSymbol symbol = symtab.SearchSymbol($IDENTIFIER.text,SymbolType.ST_VARIABLE); 
 										  $result = symbol.MValue;
 										  MMessage = $"={$result}";}
+			| range			{ 
+							   	MMessage = $"={$range.r}";
+							}
 			| IDENTIFIER '(' params ')' { symtab.SearchSymbol($IDENTIFIER.text,SymbolType.ST_FUNCTION); }
 			| '(' expression ')' { $result = $expression.result; }
 			| op=('+'|'-') expression { switch ($op.type) {
@@ -140,3 +144,17 @@ expression returns [int result]
 			;
 
 params : (expression (COMMA expression)+);  
+
+range returns [CRange r] : 
+	LBR a=expression? COLON b=expression? COLON c=expression? RBR {
+																				int? start_tmp = $a.ctx==null ? null : Int32.Parse($a.text);
+																				int? end_tmp = $b.ctx==null ? null : Int32.Parse($b.text);
+																				int? step_tmp = $c.ctx==null ? null : Int32.Parse($c.text);
+																				$r = new CRange(){
+																									MStartIndex=start_tmp,
+																									MEndIndex=end_tmp,
+																									MStep=step_tmp 
+																								};
+
+																			}
+	;
