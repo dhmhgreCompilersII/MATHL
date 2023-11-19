@@ -15,16 +15,16 @@ Parser Rules
 
 compile_unit[Scope symtab]
 @init { this.symtab = symtab; }
-: (command|declaration)+
+: (command|command_block) command_termination?
 ;
 
-command : (SEMICOLON|NEWLINE)
-		 | expression  {Console.WriteLine($"->{MMessage}");}
-		 | block		  
+command : expression  {Console.WriteLine($"->{MMessage}");}		 		  
+		| declaration
 		 ;
 
 command_termination : (SEMICOLON|NEWLINE) ;
-block : LB command (command_termination command)* command_termination* RB
+command_block : LB command (command_termination command)* command_termination* RB
+			  | command (command_termination command)* command_termination*
 	;
 		
 
@@ -83,16 +83,16 @@ function_declaration : type IDENTIFIER '(' (variable_declaration (COMMA variable
 expression returns [int result] 
 			:  NUMBER		{ $result = Int32.Parse($NUMBER.text);
 								MMessage = $"={$result}";	
-							}
-			| IDENTIFIER	{ LSymbol symbol = symtab.SearchSymbol($IDENTIFIER.text,SymbolType.ST_VARIABLE); 
+							} #expression_NUMBER
+			| IDENTIFIER 	{ LSymbol symbol = symtab.SearchSymbol($IDENTIFIER.text,SymbolType.ST_VARIABLE); 
 										  $result = symbol.MValue;
-										  MMessage = $"={$result}";}
-			| range			{ 
-							   	MMessage = $"={$range.r}";
-							}
-			| IDENTIFIER '(' params ')' { symtab.SearchSymbol($IDENTIFIER.text,SymbolType.ST_FUNCTION); }
-			| '(' expression ')' { $result = $expression.result; }
-			| op=('+'|'-') expression { switch ($op.type) {
+										  MMessage = $"={$result}";} #expression_IDENTIFIER
+			| range	 		{ 
+							   					MMessage = $"={$range.r}";
+											} #expression_range
+			| IDENTIFIER '(' params ')' { symtab.SearchSymbol($IDENTIFIER.text,SymbolType.ST_FUNCTION); }  #expression_functioncall
+			| '(' expression ')'  { $result = $expression.result; } #expression_parenthesizedexpression
+			| op=('+'|'-') expression   { switch ($op.type) {
 											case MATHLLexer.PLUS:
 												$result = $expression.result;
 											break;
@@ -101,11 +101,11 @@ expression returns [int result]
 											break;
 										}
 										MMessage = $"{$result}";
-									   }
+									   } #expression_unaryprefixexpression
 			| a=expression op=(<assoc=left>'*'|
 							 <assoc=left>'/'|
 							 <assoc=left>IDIV|
-							 <assoc=left>'%') b=expression {
+							 <assoc=left>'%') b=expression  {
 												switch ($op.type) {
 													case MATHLLexer.MULT:
 														$result = $a.result * $b.result;
@@ -121,8 +121,8 @@ expression returns [int result]
 													break;
 												}
 												MMessage = $"{$result}";
-											}
-			| a=expression op=(<assoc=left>'+'|<assoc=left>'-') b=expression {
+											} #expression_multiplicationdivision
+			| a=expression op=(<assoc=left>'+'|<assoc=left>'-') b=expression  {
 												switch ($op.type) {
 													case MATHLLexer.PLUS:
 														$result = $a.result + $b.result;
@@ -132,15 +132,15 @@ expression returns [int result]
 													break;													
 												}
 												MMessage = $"{$result}";
-											}
-			| a=expression '=' b=expression {  if ( $a.ctx.GetChild(0) is ITerminalNode identifier ){
+											} #expression_additionsubtraction
+			| a=expression '=' b=expression  {  if ( $a.ctx.GetChild(0) is ITerminalNode identifier ){
 												LSymbol sym = symtab.SearchSymbol(identifier.Symbol.Text,SymbolType.ST_VARIABLE);		
 												if ( sym != null ){
 													sym.MValue = $b.result;
 													MMessage = $"{sym.MName}={$b.result}";
 												}
 											 }
-										}
+										} #expression_equationassignment
 			;
 
 params : (expression (COMMA expression)+);  

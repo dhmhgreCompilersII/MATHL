@@ -78,6 +78,8 @@ namespace MATHL {
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             MATHLParser parser = new MATHLParser(tokens);
             IParseTree tree = parser.compile_unit(m_environment.MSymbolTable);
+            SyntaxTreePrinter stPrinter = new SyntaxTreePrinter("St");
+            stPrinter.Visit(tree);
         }
     }
 
