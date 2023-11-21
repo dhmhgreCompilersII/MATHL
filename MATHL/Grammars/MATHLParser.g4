@@ -15,16 +15,16 @@ Parser Rules
 
 compile_unit[Scope symtab]
 @init { this.symtab = symtab; }
-: (command|command_block) command_termination?
+: command (command_termination command)*  command_termination?
 ;
 
 command : expression  {Console.WriteLine($"->{MMessage}");}		 		  
 		| declaration
+		| command_block
 		 ;
 
 command_termination : (SEMICOLON|NEWLINE) ;
 command_block : LB command (command_termination command)* command_termination* RB
-			  | command (command_termination command)* command_termination*
 	;
 		
 

@@ -13,11 +13,11 @@ namespace MATHL.Composite {
         NT_ASSIGNMENT
     }
 
-    public class CompileUnit : ASTComposite {
-        public const int EXPRESSIONS = 0;
-        public readonly string[] mc_contextNames = { "Expressions" };
+    public class CCompileUnit : ASTComposite {
+        public const int COMMANDS = 0;
+        public readonly string[] mc_contextNames = { "Commands" };
 
-        public CompileUnit() :
+        public CCompileUnit() :
             base(1, (int)NodeType.NT_COMPILEUNIT) {
         }
 

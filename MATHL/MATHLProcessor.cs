@@ -8,6 +8,7 @@ using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using MATHL.TypeSystem;
+using MATHL.Visitors;
 using static MATHL.MATHLInteractiveInterpreter;
 
 namespace MATHL {
@@ -80,6 +81,10 @@ namespace MATHL {
             IParseTree tree = parser.compile_unit(m_environment.MSymbolTable);
             SyntaxTreePrinter stPrinter = new SyntaxTreePrinter("St");
             stPrinter.Visit(tree);
+            ASTGeneration astgen = new ASTGeneration();
+            var asttree =astgen.Visit(tree);
+            ASTPrinter astprinter = new ASTPrinter("AST.dot");
+            astprinter.Visit(asttree);
         }
     }
 

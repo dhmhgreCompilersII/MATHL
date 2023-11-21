@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\Testbench\St.gif" Link="St.gif" />
     <Content Include="..\Testbench\test.txt" Link="test.txt" />
     <Content Include="..\Testbench\test1.txt" Link="test1.txt" />
   </ItemGroup>
@@ -34,15 +35,13 @@
   <ItemGroup>
     <None Include="..\.gitignore" Link=".gitignore" />
     <None Include="..\README.md" Link="README.md" />
+    <None Include="..\Testbench\AST.dot" Link="AST.dot" />
+    <None Include="..\Testbench\St.dot" Link="St.dot" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
     <PackageReference Include="Antlr4BuildTasks" Version="12.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Extensions\" />
   </ItemGroup>
 
 </Project>

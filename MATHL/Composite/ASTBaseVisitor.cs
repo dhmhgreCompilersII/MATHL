@@ -61,7 +61,7 @@ namespace MATHL.Composite {
             return result;
         }
 
-        public virtual Result VisitCompileUnit(CompileUnit node, params Params[] args) {
+        public virtual Result VisitCompileUnit(CCompileUnit node, params Params[] args) {
             return VisitChildren(node, args);
         }
 
