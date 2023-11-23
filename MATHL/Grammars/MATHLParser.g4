@@ -105,20 +105,25 @@ expression returns [int result]
 			| a=expression op=(<assoc=left>'*'|
 							 <assoc=left>'/'|
 							 <assoc=left>IDIV|
-							 <assoc=left>'%') b=expression  {
-												switch ($op.type) {
-													case MATHLLexer.MULT:
-														$result = $a.result * $b.result;
-													break;
-													case MATHLLexer.FDIV:
-														$result = $a.result / $b.result;
-													break;
-													case MATHLLexer.IDIV:
-														$result = $a.result / $b.result;
-													break;
-													case MATHLLexer.MOD:
-														$result = $a.result % $b.result;
-													break;
+							 <assoc=left>'%')? b=expression  {
+												if ( $op !=null ){
+													switch ($op.type) {
+														case MATHLLexer.MULT:
+															$result = $a.result * $b.result;
+														break;
+														case MATHLLexer.FDIV:
+															$result = $a.result / $b.result;
+														break;
+														case MATHLLexer.IDIV:
+															$result = $a.result / $b.result;
+														break;
+														case MATHLLexer.MOD:
+															$result = $a.result % $b.result;
+														break;
+													}
+												}
+												else{
+													$result = $a.result * $b.result;
 												}
 												MMessage = $"{$result}";
 											} #expression_multiplicationdivision
