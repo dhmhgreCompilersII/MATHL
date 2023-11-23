@@ -184,17 +184,22 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
 
     public override int VisitExpression_multiplicationdivision(MATHLParser.Expression_multiplicationdivisionContext context) {
         Visit_Prologue(() => {
-            switch (context.op.Type) {
-                case MATHLLexer.MULT:
-                    return "multiplication";
-                case MATHLLexer.IDIV:
-                    return "idivision";
-                case MATHLLexer.FDIV:
-                    return "fdivision";
-                case MATHLLexer.MOD:
-                    return "modulo";
-                default:
-                    throw new Exception("invalid operator");
+            if (context.op != null) {
+                switch (context.op.Type) {
+                    case MATHLLexer.MULT:
+                        return "multiplication";
+                    case MATHLLexer.IDIV:
+                        return "idivision";
+                    case MATHLLexer.FDIV:
+                        return "fdivision";
+                    case MATHLLexer.MOD:
+                        return "modulo";
+                    default:
+                        throw new Exception("invalid operator");
+                }
+            }
+            else {
+                return "multiplication";
             }
         });
 
