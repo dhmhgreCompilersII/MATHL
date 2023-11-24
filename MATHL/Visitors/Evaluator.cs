@@ -13,10 +13,18 @@ namespace MATHL.Visitors {
             return base.VisitCompile_unit(context);
         }
 
-        public override int VisitCommand(MATHLParser.CommandContext context) {
-            return base.VisitCommand(context);
+        public override int VisitCommand_expression(MATHLParser.Command_expressionContext context) {
+            return base.VisitCommand_expression(context);
         }
 
+        public override int VisitCommand_declaration(MATHLParser.Command_declarationContext context) {
+            return base.VisitCommand_declaration(context);
+        }
+
+        public override int VisitCommand_commandblock(MATHLParser.Command_commandblockContext context) {
+            return base.VisitCommand_commandblock(context);
+        }
+        
         public override int VisitCommand_termination(MATHLParser.Command_terminationContext context) {
             return base.VisitCommand_termination(context);
         }

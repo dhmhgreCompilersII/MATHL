@@ -8,20 +8,20 @@ using Antlr4.Runtime.Tree;
 
 
 public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
-    private Stack<string> m_parentsLabel= new Stack<string>();
+    private Stack<string> m_parentsLabel = new Stack<string>();
     int m_NodeCounter = 0;
     StreamWriter m_writer;
     private string m_outputFile;
 
     public SyntaxTreePrinter(string filename) {
-        m_writer = new StreamWriter(filename+".dot");
+        m_writer = new StreamWriter(filename + ".dot");
         m_outputFile = filename;
     }
 
     private void Visit_Prologue(Func<string> nodelabel_, bool root = false) {
         // Create node label
         string nodelabel = nodelabel_() + "_" + m_NodeCounter++;
-        
+
         // Print content
         if (!root) {
             string parent = m_parentsLabel.Peek();
@@ -47,7 +47,7 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
 
     public override int VisitCompile_unit(MATHLParser.Compile_unitContext context) {
 
-        Visit_Prologue(()=>"CompileUnit",true);
+        Visit_Prologue(() => "CompileUnit", true);
 
         base.VisitCompile_unit(context);
 
@@ -57,8 +57,8 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
         ProcessStartInfo start = new ProcessStartInfo();
         // Enter in the command line arguments, everything you would enter after the executable name itself
         start.Arguments = "-Tgif " +
-                          m_outputFile+ ".dot" + " -o " +
-                          m_outputFile+ ".gif";
+                          m_outputFile + ".dot" + " -o " +
+                          m_outputFile + ".gif";
         // Enter the executable to run, including the complete path
         start.FileName = "dot";
         // Do you want to show a console window?
@@ -78,19 +78,36 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
 
     }
 
-    
+    public override int VisitCommand_expression(MATHLParser.Command_expressionContext context) {
+        Visit_Prologue(() => "Command_Expression");
 
-    public override int VisitCommand(MATHLParser.CommandContext context) {
-        Visit_Prologue(() => "Command");
-
-        base.VisitCommand(context);
+        base.VisitCommand_expression(context);
 
         Visit_Epilogue();
 
         return m_NodeCounter;
     }
 
-    
+    public override int VisitCommand_declaration(MATHLParser.Command_declarationContext context) {
+        Visit_Prologue(() => "Command_Declaration");
+
+        base.VisitCommand_declaration(context);
+
+        Visit_Epilogue();
+
+        return m_NodeCounter;
+    }
+
+    public override int VisitCommand_commandblock(MATHLParser.Command_commandblockContext context) {
+        Visit_Prologue(() => "Command_CommandBlock");
+
+        base.VisitCommand_commandblock(context);
+
+        Visit_Epilogue();
+
+        return m_NodeCounter;
+    }
+
 
     public override int VisitCommand_termination(MATHLParser.Command_terminationContext context) {
         Visit_Prologue(() => "Command_termination");
@@ -184,27 +201,31 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
 
     public override int VisitExpression_multiplicationdivision(MATHLParser.Expression_multiplicationdivisionContext context) {
         Visit_Prologue(() => {
-            if (context.op != null) {
-                switch (context.op.Type) {
-                    case MATHLLexer.MULT:
-                        return "multiplication";
-                    case MATHLLexer.IDIV:
-                        return "idivision";
-                    case MATHLLexer.FDIV:
-                        return "fdivision";
-                    case MATHLLexer.MOD:
-                        return "modulo";
-                    default:
-                        throw new Exception("invalid operator");
-                }
-            }
-            else {
-                return "multiplication";
+            switch (context.op.Type) {
+                case MATHLLexer.MULT:
+                    return "multiplication";
+                case MATHLLexer.IDIV:
+                    return "idivision";
+                case MATHLLexer.FDIV:
+                    return "fdivision";
+                case MATHLLexer.MOD:
+                    return "modulo";
+                default:
+                    throw new Exception("invalid operator");
             }
         });
 
         base.VisitExpression_multiplicationdivision(context);
-         
+
+        Visit_Epilogue();
+        return m_NodeCounter;
+    }
+
+    public override int VisitExpression_multiplicationNoOperator(MATHLParser.Expression_multiplicationNoOperatorContext context) {
+        Visit_Prologue(() => "ImpliedMultiplication");
+
+        base.VisitExpression_multiplicationNoOperator(context);
+
         Visit_Epilogue();
         return m_NodeCounter;
     }
@@ -213,8 +234,7 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
         Visit_Prologue(() => {
             if (context.a.GetChild(0) is MATHLParser.Expression_IDENTIFIERContext) {
                 return "assignment";
-            }
-            else {
+            } else {
                 return "equation";
             }
         });
@@ -337,7 +357,7 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
             default:
                 break;
         }
-        
+
         return m_NodeCounter;
     }
 }

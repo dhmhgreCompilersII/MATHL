@@ -65,5 +65,34 @@ namespace MATHL.Visitors {
 
             return 0;
         }
+
+        public override int VisitCommand_Expression(CCommand_Expression node, params ASTElement[] args) {
+
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CCommand_Expression.COMMAND,
+                node.mc_contextNames[CCommand_Expression.COMMAND]);
+
+            return base.VisitCommand_Expression(node, args);
+        }
+
+        public override int VisitCommand_Declaration(CCommand_Declaration node, params ASTElement[] args) {
+            
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CCommand_Declaration.COMMAND,
+                node.mc_contextNames[CCommand_Declaration.COMMAND]);
+
+            return base.VisitCommand_Declaration(node, args);
+        }
+
+        public override int VisitCommand_CommandBlock(CCommand_CommandBlock node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CCommand_CommandBlock.COMMAND,
+                node.mc_contextNames[CCommand_CommandBlock.COMMAND]);
+
+            return base.VisitCommand_CommandBlock(node, args);
+        }
     }
 }

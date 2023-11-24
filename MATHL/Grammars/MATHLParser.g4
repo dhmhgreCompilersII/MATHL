@@ -18,9 +18,9 @@ compile_unit[Scope symtab]
 : command (command_termination command)*  command_termination?
 ;
 
-command : expression  {Console.WriteLine($"->{MMessage}");}		 		  
-		| declaration
-		| command_block
+command : expression  {Console.WriteLine($"->{MMessage}");}	#command_expression	 		  
+		| declaration										#command_declaration
+		| command_block										#command_commandblock
 		 ;
 
 command_termination : (SEMICOLON|NEWLINE) ;
@@ -105,9 +105,8 @@ expression returns [int result]
 			| a=expression op=(<assoc=left>'*'|
 							 <assoc=left>'/'|
 							 <assoc=left>IDIV|
-							 <assoc=left>'%')? b=expression  {
-												if ( $op !=null ){
-													switch ($op.type) {
+							 <assoc=left>'%') b=expression  {												
+												switch ($op.type) {
 														case MATHLLexer.MULT:
 															$result = $a.result * $b.result;
 														break;
@@ -119,12 +118,8 @@ expression returns [int result]
 														break;
 														case MATHLLexer.MOD:
 															$result = $a.result % $b.result;
-														break;
-													}
-												}
-												else{
-													$result = $a.result * $b.result;
-												}
+														break;													
+												}												
 												MMessage = $"{$result}";
 											} #expression_multiplicationdivision
 			| a=expression op=(<assoc=left>'+'|<assoc=left>'-') b=expression  {
@@ -137,7 +132,7 @@ expression returns [int result]
 													break;													
 												}
 												MMessage = $"{$result}";
-											} #expression_additionsubtraction
+											} #expression_additionsubtraction			
 			| a=expression '=' b=expression  {  if ( $a.ctx.GetChild(0) is ITerminalNode identifier ){
 												LSymbol sym = symtab.SearchSymbol(identifier.Symbol.Text,SymbolType.ST_VARIABLE);		
 												if ( sym != null ){
@@ -146,6 +141,10 @@ expression returns [int result]
 												}
 											 }
 										} #expression_equationassignment
+			| a=expression b=expression {
+											$result = $a.result * $b.result;
+											MMessage = $"{$result}";
+										} #expression_multiplicationNoOperator
 			;
 
 params : (expression (COMMA expression)+);  

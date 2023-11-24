@@ -65,6 +65,16 @@ namespace MATHL.Composite {
             return VisitChildren(node, args);
         }
 
-        
+        public virtual Result VisitCommand_Expression(CCommand_Expression node, params Params[] args) {
+            return VisitChildren(node, args);
+        }
+
+        public virtual Result VisitCommand_Declaration(CCommand_Declaration node, params Params[] args) {
+            return VisitChildren(node, args);
+        }
+
+        public virtual Result VisitCommand_CommandBlock(CCommand_CommandBlock node, params Params[] args) {
+            return VisitChildren(node, args);
+        }
     }
 }
