@@ -92,7 +92,7 @@ namespace MATHL.Visitors {
             CreateContextSubgraph(node, CCommand_CommandBlock.COMMAND,
                 node.mc_contextNames[CCommand_CommandBlock.COMMAND]);
 
-            return base.VisitCommand_CommandBlock(node, args);
+            return base.VisitCommand_CommandBlock(node, node);
         }
     }
 }

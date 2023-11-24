@@ -76,5 +76,6 @@ namespace MATHL.Composite {
         public virtual Result VisitCommand_CommandBlock(CCommand_CommandBlock node, params Params[] args) {
             return VisitChildren(node, args);
         }
+
     }
 }

@@ -23,6 +23,18 @@ public static class ANTLRExtensions {
         }
         return null;
     }
+    /// <summary>
+    /// This method executes the boilerplate code that is necessary to visit successor
+    /// in a specific context.
+    /// </summary>
+    /// <typeparam name="Result"></typeparam>
+    /// <param name="t">class that is extended</param>
+    /// <param name="node">the successor that is to visit</param>
+    /// <param name="context">the context of the current node where the successor resides</param>
+    /// <param name="contextsStack">transfers the context of the current node to the successor node</param>
+    /// <param name="parent">the node which is considered parent for the successor</param>
+    /// <param name="parentStack">transfers the parent to the successor node</param>
+    /// <returns></returns>
     public static Result VisitElementInContext<Result>(this AbstractParseTreeVisitor<Result> t,
         ParserRuleContext node, int context, Stack<int> contextsStack,
         ASTComposite parent, Stack<ASTComposite> parentStack) {
@@ -37,6 +49,18 @@ public static class ANTLRExtensions {
         return res;
     }
 
+    /// <summary>
+    /// This method executes the boilerplate code that is necessary to visit successors
+    /// in a specific context.
+    /// </summary>
+    /// <typeparam name="Result"></typeparam>
+    /// <param name="t">class that is extended</param>
+    /// <param name="nodeset">the list of nodes that is to visit</param>
+    /// <param name="context">the context of the current node where the successors reside</param>
+    /// <param name="contextsStack">transfers the context of the current node to the successor nodes</param>
+    /// <param name="parent">the node which is considered parent for the successors</param>
+    /// <param name="parentsStack">transfers the parent to the successor node</param>
+    /// <returns></returns>
     public static Result VisitElementsInContext<Result>(this AbstractParseTreeVisitor<Result> t,
         IEnumerable<IParseTree> nodeset, int context, Stack<int> contextsStack,
         ASTComposite parent, Stack<ASTComposite> parentsStack) {
