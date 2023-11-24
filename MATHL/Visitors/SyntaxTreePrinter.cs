@@ -127,15 +127,24 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
         return m_NodeCounter;
     }
 
-    public override int VisitDeclaration(MATHLParser.DeclarationContext context) {
-        Visit_Prologue(() => "Declaration");
+    public override int VisitDeclaration_variable(MATHLParser.Declaration_variableContext context) {
+        Visit_Prologue(() => "Variable_Declaration");
 
-        base.VisitDeclaration(context);
+        base.VisitDeclaration_variable(context);
 
         Visit_Epilogue();
         return m_NodeCounter;
     }
 
+    public override int VisitDeclaration_function(MATHLParser.Declaration_functionContext context) {
+        Visit_Prologue(() => "Function_Declaration");
+
+        base.VisitDeclaration_function(context);
+
+        Visit_Epilogue();
+        return m_NodeCounter;
+    }
+    
     public override int VisitType(MATHLParser.TypeContext context) {
         Visit_Prologue(() => "Type");
 

@@ -13,23 +13,23 @@ Parser Rules
 @parser::members {Scope symtab;}
 @lexer::members { Scope symtab;}
 
-compile_unit[Scope symtab]
+compile_unit[Scope symtab]																	// AST OK
 @init { this.symtab = symtab; }
 : command (command_termination command)*  command_termination?
 ;
 
-command : expression  {Console.WriteLine($"->{MMessage}");}	#command_expression	 		  
-		| declaration										#command_declaration
-		| command_block										#command_commandblock
+command : expression  {Console.WriteLine($"->{MMessage}");}	#command_expression	 		  // AST OK
+		| declaration										#command_declaration		  // AST OMMIT
+		| command_block										#command_commandblock	      // AST OMMIT
 		 ;
 
-command_termination : (SEMICOLON|NEWLINE) ;
-command_block : LB command (command_termination command)* command_termination* RB
+command_termination : (SEMICOLON|NEWLINE) ;													// AST OMMIT
+command_block : LB command (command_termination command)* command_termination* RB			// AST OK
 	;
 		
 
-declaration : variable_declaration
-			| function_declaration			
+declaration : variable_declaration	#declaration_variable		// AST OMMIT
+			| function_declaration	#declaration_function		// AST OMMIT
 			;
 
 type returns [LType tid] 

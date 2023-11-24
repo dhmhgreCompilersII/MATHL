@@ -33,10 +33,14 @@ namespace MATHL.Visitors {
             return base.VisitCommand_block(context);
         }
 
-        public override int VisitDeclaration(MATHLParser.DeclarationContext context) {
-            return base.VisitDeclaration(context);
+        public override int VisitDeclaration_variable(MATHLParser.Declaration_variableContext context) {
+            return base.VisitDeclaration_variable(context);
         }
 
+        public override int VisitDeclaration_function(MATHLParser.Declaration_functionContext context) {
+            return base.VisitDeclaration_function(context);
+        }
+        
         public override int VisitType(MATHLParser.TypeContext context) {
             return base.VisitType(context);
         }
