@@ -40,7 +40,7 @@ type returns [LType tid]
 	  
 
 variable_declarator [LType t] returns [string id]
-					: IDENTIFIER pds+=postfix_declarators* { $id = $IDENTIFIER.text;
+					: IDENTIFIER pds+=postfix_declarators* ( '=' expression )? { $id = $IDENTIFIER.text;
 															 // Declare symbol for new variable
 															 VariableSymbol vs=null;
 														     switch ( $t.MTypeId ){
@@ -68,7 +68,7 @@ variable_declarator [LType t] returns [string id]
 postfix_declarators : LBR RBR
 					;
 
-variable_declaration: type ( ','? ids+=variable_declarator[$type.tid] ( '=' expression )?)+ { 
+variable_declaration: type (  ids+=variable_declarator[$type.tid] ','? )+ { 
 		foreach ( var id in $ids ){
 			VariableSymbol vs = new VariableSymbol($variable_declarator.id,$type.tid);
 			symtab.DefineSymbol(vs, SymbolType.ST_VARIABLE);

@@ -31,8 +31,6 @@ namespace MATHL.Visitors {
             var res = this.VisitElementsInContext(context.command(),
                 CCommand_Expression.COMMAND, m_contextsStack, newNode, m_parentsStack);
             return newNode;
-
-
         }
 
         public override ASTElement VisitCommand_expression(MATHLParser.Command_expressionContext context) {
@@ -49,5 +47,38 @@ namespace MATHL.Visitors {
             return newNode;
         }
 
+        public override ASTElement VisitVariable_declaration(MATHLParser.Variable_declarationContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+
+            CDeclarationVariable newNode = new CDeclarationVariable();
+            parent.AddChild(parentContext, newNode);
+
+           var res = this.VisitElementsInContext(context._ids, CDeclarationVariable.DECLARATIONS, 
+                m_contextsStack, newNode, m_parentsStack);
+
+            return newNode;
+        }
+
+        public override ASTElement VisitVariable_declarator(MATHLParser.Variable_declaratorContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+
+            CDeclaratorVariable newNode = new CDeclaratorVariable();
+            parent.AddChild(parentContext, newNode);
+
+            var res = this.VisitTerminalInContext(context,context._IDENTIFIER,
+                CDeclaratorVariable.VARIABLENAME, m_contextsStack,newNode,m_parentsStack);
+
+            res = this.VisitElementsInContext(context._pds, CDeclaratorVariable.TYPE,
+                m_contextsStack, newNode, m_parentsStack);
+
+            if (context.expression() != null) {
+                res = this.VisitElementInContext(context.expression(), CDeclaratorVariable.INITIALIZATION,
+                    m_contextsStack, newNode, m_parentsStack);
+            }
+
+            return newNode;
+        }
     }
 }

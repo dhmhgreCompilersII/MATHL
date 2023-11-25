@@ -2,7 +2,6 @@
   "profiles": {
     "MATHL": {
       "commandName": "Project",
-      "commandLineArgs": "test.txt test1.txt",
       "workingDirectory": "$(ProjectDir)\\..\\Testbench"
     }
   }

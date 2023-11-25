@@ -30,13 +30,28 @@ namespace MATHL.Composite {
             mi_curContext = 0;
             mi_curNode = 0;
 
+            mi_curContext = 0;
+            while (mi_curContext < m_sourceNode.MContexts &&
+                   m_sourceNode.GetNumberOfContextNodes(mi_curContext) == 0) {
+                mi_curContext++;
+            }
+
+            if (mi_curContext == m_sourceNode.MContexts) {
+                m_endFlag = true;
+            }
+            else {
+                m_curNode = m_sourceNode.GetChild(mi_curContext, mi_curNode);
+                m_endFlag = false;
+            }
+
+            /*
             if (m_sourceNode.MContexts != 0 &&
                 m_sourceNode.GetNumberOfContextNodes(mi_curContext) != 0) {
                 m_curNode = m_sourceNode.GetChild(mi_curContext, mi_curNode);
                 m_endFlag = false;
             } else {
                 m_endFlag = true;
-            }
+            }*/
 
         }
 

@@ -73,18 +73,52 @@ namespace MATHL.Visitors {
             CreateContextSubgraph(node, CCommand_Expression.COMMAND,
                 node.mc_contextNames[CCommand_Expression.COMMAND]);
 
-            return base.VisitCommand_Expression(node, args);
+            return base.VisitCommand_Expression(node, node);
         }
 
-        public override int VisitCommand_Declaration(CCommand_Declaration node, params ASTElement[] args) {
+        public override int VisitDeclaration_Variable(CDeclarationVariable node, params ASTElement[] args) {
             
             m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
 
-            CreateContextSubgraph(node, CCommand_Declaration.COMMAND,
-                node.mc_contextNames[CCommand_Declaration.COMMAND]);
+            CreateContextSubgraph(node, CDeclarationVariable.TYPE,
+                node.mc_contextNames[CDeclarationVariable.TYPE]);
+            
+            CreateContextSubgraph(node, CDeclarationVariable.DECLARATIONS,
+                node.mc_contextNames[CDeclarationVariable.DECLARATIONS]);
 
-            return base.VisitCommand_Declaration(node, args);
+            return base.VisitDeclaration_Variable(node, node);
         }
+
+        public override int VisitDeclarator_Variable(CDeclaratorVariable node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CDeclaratorVariable.TYPE,
+                node.mc_contextNames[CDeclaratorVariable.TYPE]);
+
+            CreateContextSubgraph(node, CDeclaratorVariable.VARIABLENAME,
+                node.mc_contextNames[CDeclaratorVariable.VARIABLENAME]);
+
+            CreateContextSubgraph(node, CDeclaratorVariable.INITIALIZATION,
+                node.mc_contextNames[CDeclaratorVariable.INITIALIZATION]);
+
+            return base.VisitDeclarator_Variable(node, node);
+        }
+
+        public override int VisitDeclaration_Function(CDeclarationFunction node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CDeclarationFunction.TYPE,
+                node.mc_contextNames[CDeclarationFunction.TYPE]);
+
+            CreateContextSubgraph(node, CDeclarationFunction.FUNCTION_NAME,
+                node.mc_contextNames[CDeclarationFunction.FUNCTION_NAME]);
+
+            CreateContextSubgraph(node, CDeclarationFunction.PARAMETERS,
+                node.mc_contextNames[CDeclarationFunction.PARAMETERS]);
+            
+            return base.VisitDeclaration_Function(node, node);
+        }
+
 
         public override int VisitCommand_CommandBlock(CCommand_CommandBlock node, params ASTElement[] args) {
             m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
