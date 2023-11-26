@@ -35,7 +35,7 @@
 
   <ItemGroup>
     <None Include="..\.gitignore" Link=".gitignore" />
-    <None Include="..\Developer.notes" Link="Developer.notes" />
+    <None Include="..\Developer.notes.md" Link="Developer.notes.md" />
     <None Include="..\README.md" Link="README.md" />
     <None Include="..\Testbench\AST.dot" Link="AST.dot" />
     <None Include="..\Testbench\St.dot" Link="St.dot" />

@@ -369,4 +369,4 @@ FodyWeavers.xsd
 *.pdf
 *.gif
 *.dot
-*.notes
+*.notes.md
