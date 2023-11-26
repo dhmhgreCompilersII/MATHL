@@ -81,5 +81,14 @@ namespace MATHL.Composite {
         public virtual Result VisitDeclaration_Function(CDeclarationFunction node, params Params[] args) {
             return VisitChildren(node, args);
         }
+        public virtual Result VisitT_IntegerDataType(CIntType node, params Params[] args) {
+            return default(Result);
+        }
+        public virtual Result VisitT_FloatDataType(CFloatType node, params Params[] args) {
+            return default(Result);
+        }
+        public virtual Result VisitT_RangeDataType(CRangeType node, params Params[] args) {
+            return default(Result);
+        }
     }
 }

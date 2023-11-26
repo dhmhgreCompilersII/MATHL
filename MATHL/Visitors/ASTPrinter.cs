@@ -119,7 +119,6 @@ namespace MATHL.Visitors {
             return base.VisitDeclaration_Function(node, node);
         }
 
-
         public override int VisitCommand_CommandBlock(CCommand_CommandBlock node, params ASTElement[] args) {
             m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
 
@@ -127,6 +126,22 @@ namespace MATHL.Visitors {
                 node.mc_contextNames[CCommand_CommandBlock.COMMAND]);
 
             return base.VisitCommand_CommandBlock(node, node);
+        }
+
+        public override int VisitT_IntegerDataType(CIntType node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            return 0;
+        }
+
+        public override int VisitT_FloatDataType(CFloatType node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+            return 0;
+        }
+
+        public override int VisitT_RangeDataType(CRangeType node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+            return 0;
         }
     }
 }

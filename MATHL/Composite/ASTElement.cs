@@ -214,7 +214,7 @@ namespace MATHL.Composite {
         public ASTElement(int mType) {
             m_type = mType;
             m_serialNumber = ms_serialCounter++;
-            m_nodeName = "Node" + GetType().Name + m_serialNumber;
+            m_nodeName =  GetType().Name + m_serialNumber;
         }
 
         public virtual void SetParent(ASTComposite parent) {

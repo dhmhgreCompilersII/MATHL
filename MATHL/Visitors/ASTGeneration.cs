@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Antlr4.Runtime.Tree;
+using MATHL.TypeSystem;
 
 namespace MATHL.Visitors {
     public class ASTGeneration : MATHLParserBaseVisitor<ASTElement> {
@@ -57,6 +59,9 @@ namespace MATHL.Visitors {
            var res = this.VisitElementsInContext(context._ids, CDeclarationVariable.DECLARATIONS, 
                 m_contextsStack, newNode, m_parentsStack);
 
+           res = this.VisitElementInContext(context.type(), CDeclarationVariable.TYPE, m_contextsStack,
+               newNode, m_parentsStack);
+
             return newNode;
         }
 
@@ -78,6 +83,30 @@ namespace MATHL.Visitors {
                     m_contextsStack, newNode, m_parentsStack);
             }
 
+            return newNode;
+        }
+
+        public override ASTElement VisitTerminal(ITerminalNode node) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+
+            ASTElement newNode = null;
+
+            switch (node.Symbol.Type) {
+                case MATHLLexer.INT:
+                    newNode = new CIntType(node.GetText());
+                    parent.AddChild(parentContext, newNode);
+                    break;
+                case MATHLLexer.FLOAT:
+                    newNode = new CFloatType(node.GetText());
+                    parent.AddChild(parentContext, newNode);
+                    break;
+                case MATHLLexer.RANGE:
+                    newNode = new CRangeType(node.GetText());
+                    parent.AddChild(parentContext, newNode);
+                    break;
+
+            }
             return newNode;
         }
     }
