@@ -10,10 +10,10 @@ namespace MATHL.Composite {
 
     public enum NodeType {
         NT_NA = -1, NT_COMPILEUNIT, NT_COMMAND_EXPRESSION, NT_DECLARATION_VARIABLE, NT_DECLARATOR_VARIABLE,
-        NT_DECLARATION_FUNCTION, NT_COMMAND_COMMANDBLOCK, 
+        NT_DECLARATION_FUNCTION, NT_COMMAND_COMMANDBLOCK, NT_EXPRESSION_EQUATION,
         
         
-        T_INTTYPE, T_FLOATTYPE, T_RANGETYPE,
+        T_INTTYPE, T_FLOATTYPE, T_RANGETYPE,T_NUMBER,T_IDENTIFIER,
 
 
         NT_ADDITION, NT_SUBTRACTION, NT_MULTIPLICATION,
@@ -49,7 +49,24 @@ namespace MATHL.Composite {
             return visitor.VisitCommand_Expression(this, info);
         }
     }
-    
+
+    public class CExpression_Equation : ASTComposite {
+        public const int LHS = 0, RHS=1;
+        public readonly string[] mc_contextNames = { "LHS", "RHS" };
+
+        public CExpression_Equation() :
+            base(2, (int)NodeType.NT_EXPRESSION_EQUATION) {
+        }
+
+        public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v,
+            params Params[] info) {
+            MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
+            return visitor.VisitExpression_Equation(this, info);
+        }
+    }
+
+
+
     public class CCommand_CommandBlock : ASTComposite {
         public const int COMMAND = 0;
         public readonly string[] mc_contextNames = { "Command_CommandBlock" };
@@ -107,6 +124,37 @@ namespace MATHL.Composite {
             params Params[] info) {
             MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
             return visitor.VisitDeclaration_Function(this, info);
+        }
+    }
+
+    public class CNUMBER : ASTLeaf {
+        private LType m_type;
+
+        public override string MNodeName => m_nodeName + "_" + MStringLiteral;
+
+        public LType MType1 => m_type;
+
+        public CNUMBER(string leafLiteral) :
+            base(leafLiteral, (int)NodeType.T_NUMBER) {
+            m_type = new IntegerType();
+        }
+
+        public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v, params Params[] info) {
+            MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
+            return visitor.VisitT_NUMBER(this, info);
+        }
+    }
+
+    public class CIDENTIFIER : ASTLeaf {
+        
+        public override string MNodeName => m_nodeName + "_" + MStringLiteral;
+
+        public CIDENTIFIER(string leafLiteral) :
+            base(leafLiteral, (int)NodeType.T_IDENTIFIER) {
+        }
+        public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v, params Params[] info) {
+            MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
+            return visitor.VisitT_IDENTIFIER(this, info);
         }
     }
 

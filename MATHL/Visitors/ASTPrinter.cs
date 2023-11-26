@@ -76,6 +76,17 @@ namespace MATHL.Visitors {
             return base.VisitCommand_Expression(node, node);
         }
 
+        public override int VisitExpression_Equation(CExpression_Equation node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CExpression_Equation.LHS,
+                node.mc_contextNames[CExpression_Equation.LHS]);
+            CreateContextSubgraph(node, CExpression_Equation.RHS,
+                node.mc_contextNames[CExpression_Equation.RHS]);
+
+            return base.VisitExpression_Equation(node, node);
+        }
+
         public override int VisitDeclaration_Variable(CDeclarationVariable node, params ASTElement[] args) {
             
             m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
@@ -98,8 +109,11 @@ namespace MATHL.Visitors {
             CreateContextSubgraph(node, CDeclaratorVariable.VARIABLENAME,
                 node.mc_contextNames[CDeclaratorVariable.VARIABLENAME]);
 
-            CreateContextSubgraph(node, CDeclaratorVariable.INITIALIZATION,
-                node.mc_contextNames[CDeclaratorVariable.INITIALIZATION]);
+
+            if (node.GetNumberOfContextNodes(CDeclaratorVariable.INITIALIZATION) != 0) {
+                CreateContextSubgraph(node, CDeclaratorVariable.INITIALIZATION,
+                    node.mc_contextNames[CDeclaratorVariable.INITIALIZATION]);
+            }
 
             return base.VisitDeclarator_Variable(node, node);
         }
@@ -130,7 +144,6 @@ namespace MATHL.Visitors {
 
         public override int VisitT_IntegerDataType(CIntType node, params ASTElement[] args) {
             m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
-
             return 0;
         }
 
@@ -140,6 +153,16 @@ namespace MATHL.Visitors {
         }
 
         public override int VisitT_RangeDataType(CRangeType node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+            return 0;
+        }
+
+        public override int VisitT_NUMBER(CNUMBER node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+            return 0;
+        }
+
+        public override int VisitT_IDENTIFIER(CIDENTIFIER node, params ASTElement[] args) {
             m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
             return 0;
         }

@@ -30,12 +30,14 @@ namespace MATHL.Composite {
             mi_curContext = 0;
             mi_curNode = 0;
 
+            // Search for the first non-empty context
             mi_curContext = 0;
             while (mi_curContext < m_sourceNode.MContexts &&
                    m_sourceNode.GetNumberOfContextNodes(mi_curContext) == 0) {
                 mi_curContext++;
             }
 
+            // Initialize iterator
             if (mi_curContext == m_sourceNode.MContexts) {
                 m_endFlag = true;
             }
@@ -43,16 +45,6 @@ namespace MATHL.Composite {
                 m_curNode = m_sourceNode.GetChild(mi_curContext, mi_curNode);
                 m_endFlag = false;
             }
-
-            /*
-            if (m_sourceNode.MContexts != 0 &&
-                m_sourceNode.GetNumberOfContextNodes(mi_curContext) != 0) {
-                m_curNode = m_sourceNode.GetChild(mi_curContext, mi_curNode);
-                m_endFlag = false;
-            } else {
-                m_endFlag = true;
-            }*/
-
         }
 
         public bool End() {
@@ -64,7 +56,13 @@ namespace MATHL.Composite {
             if (mi_curNode < m_sourceNode.GetNumberOfContextNodes(mi_curContext)) {
                 m_curNode = m_sourceNode.GetChild(mi_curContext, mi_curNode);
             } else {
+                // Search the next non-empty context
                 mi_curContext++;
+                while (mi_curContext < m_sourceNode.MContexts &&
+                       m_sourceNode.GetNumberOfContextNodes(mi_curContext) == 0) {
+                    mi_curContext++;
+                }
+                
                 if (mi_curContext < m_sourceNode.MContexts) {
                     mi_curNode = 0;
                     m_curNode = m_sourceNode.GetChild(mi_curContext, mi_curNode);

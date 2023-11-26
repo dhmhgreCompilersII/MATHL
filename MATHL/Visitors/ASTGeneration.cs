@@ -49,6 +49,24 @@ namespace MATHL.Visitors {
             return newNode;
         }
 
+        public override ASTElement VisitExpression_equationassignment(MATHLParser.Expression_equationassignmentContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+
+
+            CExpression_Equation newNode = new CExpression_Equation();
+            parent.AddChild(parentContext, newNode);
+
+
+            var res = this.VisitElementInContext(context.a,
+                CExpression_Equation.LHS, m_contextsStack, newNode, m_parentsStack);
+            res = this.VisitElementInContext(context.b,
+                CExpression_Equation.RHS, m_contextsStack, newNode, m_parentsStack);
+            return newNode;
+
+        }
+
+
         public override ASTElement VisitVariable_declaration(MATHLParser.Variable_declarationContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
@@ -105,7 +123,14 @@ namespace MATHL.Visitors {
                     newNode = new CRangeType(node.GetText());
                     parent.AddChild(parentContext, newNode);
                     break;
-
+                case MATHLLexer.NUMBER:
+                    newNode = new CNUMBER(node.GetText());
+                    parent.AddChild(parentContext, newNode);
+                    break;
+                case MATHLLexer.IDENTIFIER:
+                    newNode = new CIDENTIFIER(node.GetText());
+                    parent.AddChild(parentContext, newNode);
+                    break;
             }
             return newNode;
         }
