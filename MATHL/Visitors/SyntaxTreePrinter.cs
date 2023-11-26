@@ -128,7 +128,7 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
     }
 
     public override int VisitDeclaration_variable(MATHLParser.Declaration_variableContext context) {
-        Visit_Prologue(() => "Variable_Declaration");
+        Visit_Prologue(() => "Declaration");
 
         base.VisitDeclaration_variable(context);
 
@@ -137,7 +137,7 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
     }
 
     public override int VisitDeclaration_function(MATHLParser.Declaration_functionContext context) {
-        Visit_Prologue(() => "Function_Declaration");
+        Visit_Prologue(() => "Declaration");
 
         base.VisitDeclaration_function(context);
 

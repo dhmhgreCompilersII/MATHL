@@ -9,4 +9,3 @@ using MATHL.TypeSystem;
 MATHLCommandLineProcessor mathlProcessor = new MATHLCommandLineProcessor();
 mathlProcessor.ParseCommandLineArguments(args);
 
-Console.ReadKey();

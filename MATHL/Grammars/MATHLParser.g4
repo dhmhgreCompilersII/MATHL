@@ -15,7 +15,7 @@ Parser Rules
 
 compile_unit[Scope symtab]																	// AST OK
 @init { this.symtab = symtab; }
-: command (command_termination command)*  command_termination?
+:  (command command_termination)+ (command  command_termination?)?
 ;
 
 command : expression  {Console.WriteLine($"->{MMessage}");}	#command_expression	 		  // AST OK
@@ -23,7 +23,7 @@ command : expression  {Console.WriteLine($"->{MMessage}");}	#command_expression	
 		| command_block										#command_commandblock	      // AST OMMIT
 		 ;
 
-command_termination : (SEMICOLON|NEWLINE) ;													// AST OMMIT
+command_termination : (SEMICOLON|NEWLINE)+ ;													// AST OMMIT
 command_block : LB command (command_termination command)* command_termination* RB			// AST OK
 	;
 		
