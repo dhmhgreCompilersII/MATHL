@@ -10,14 +10,12 @@ namespace MATHL.Composite {
 
     public enum NodeType {
         NT_NA = -1, NT_COMPILEUNIT, NT_COMMAND_EXPRESSION, NT_DECLARATION_VARIABLE, NT_DECLARATOR_VARIABLE,
-        NT_DECLARATION_FUNCTION, NT_COMMAND_COMMANDBLOCK, NT_EXPRESSION_EQUATION,
-        
+        NT_DECLARATION_FUNCTION, NT_COMMAND_COMMANDBLOCK, 
+        NT_EXPRESSION_EQUATION, NT_EXPRESSION_ADDITION, NT_EXPRESSION_SUBTRACTION, NT_EXPRESSION_MULTIPLICATION,
+        NT_EXPRESSION_FDIVISION, NT_EXPRESSION_IDIVISION, NT_EXPRESSION_MODULO,
         
         T_INTTYPE, T_FLOATTYPE, T_RANGETYPE,T_NUMBER,T_IDENTIFIER,
-
-
-        NT_ADDITION, NT_SUBTRACTION, NT_MULTIPLICATION,
-        NT_DIVISION, NT_IDENTIFIER, NT_NUMBER, NT_ASSIGNMENT
+        
     }
 
     public class CCompileUnit : ASTComposite {
@@ -64,9 +62,94 @@ namespace MATHL.Composite {
             return visitor.VisitExpression_Equation(this, info);
         }
     }
+    public class CExpression_Addition : ASTComposite {
+        public const int LHS = 0, RHS = 1;
+        public readonly string[] mc_contextNames = { "LHS", "RHS" };
+
+        public CExpression_Addition() :
+            base(2, (int)NodeType.NT_EXPRESSION_ADDITION) {
+        }
+
+        public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v,
+            params Params[] info) {
+            MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
+            return visitor.VisitExpression_Addition(this, info);
+        }
+    }
+    public class CExpression_Subtraction : ASTComposite {
+        public const int LHS = 0, RHS = 1;
+        public readonly string[] mc_contextNames = { "LHS", "RHS" };
+
+        public CExpression_Subtraction() :
+            base(2, (int)NodeType.NT_EXPRESSION_SUBTRACTION) {
+        }
+
+        public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v,
+            params Params[] info) {
+            MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
+            return visitor.VisitExpression_Subtraction(this, info);
+        }
+    }
 
 
+    public class CExpression_Multiplication : ASTComposite {
+        public const int LHS = 0, RHS = 1;
+        public readonly string[] mc_contextNames = { "LHS", "RHS" };
 
+        public CExpression_Multiplication() :
+            base(2, (int)NodeType.NT_EXPRESSION_MULTIPLICATION) {
+        }
+
+        public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v,
+            params Params[] info) {
+            MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
+            return visitor.VisitExpression_Multiplication(this, info);
+        }
+    }
+    public class CExpression_FDivision : ASTComposite {
+        public const int LHS = 0, RHS = 1;
+        public readonly string[] mc_contextNames = { "LHS", "RHS" };
+
+        public CExpression_FDivision() :
+            base(2, (int)NodeType.NT_EXPRESSION_FDIVISION) {
+        }
+
+        public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v,
+            params Params[] info) {
+            MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
+            return visitor.VisitExpression_FDivision(this, info);
+        }
+    }
+
+    public class CExpression_IDivision : ASTComposite {
+        public const int LHS = 0, RHS = 1;
+        public readonly string[] mc_contextNames = { "LHS", "RHS" };
+
+        public CExpression_IDivision() :
+            base(2, (int)NodeType.NT_EXPRESSION_IDIVISION) {
+        }
+
+        public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v,
+            params Params[] info) {
+            MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
+            return visitor.VisitExpression_IDivision(this, info);
+        }
+    }
+
+    public class CExpression_Modulo : ASTComposite {
+        public const int LHS = 0, RHS = 1;
+        public readonly string[] mc_contextNames = { "LHS", "RHS" };
+
+        public CExpression_Modulo() :
+            base(2, (int)NodeType.NT_EXPRESSION_MODULO) {
+        }
+
+        public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v,
+            params Params[] info) {
+            MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
+            return visitor.VisitExpression_Modulo(this, info);
+        }
+    }
     public class CCommand_CommandBlock : ASTComposite {
         public const int COMMAND = 0;
         public readonly string[] mc_contextNames = { "Command_CommandBlock" };
@@ -157,7 +240,6 @@ namespace MATHL.Composite {
             return visitor.VisitT_IDENTIFIER(this, info);
         }
     }
-
     public class CIntType : ASTLeaf {
         private LType m_type;
 
@@ -175,7 +257,6 @@ namespace MATHL.Composite {
             return visitor.VisitT_IntegerDataType(this, info);
         }
     }
-
     public class CFloatType : ASTLeaf {
         private LType m_type;
 
@@ -193,7 +274,6 @@ namespace MATHL.Composite {
             return visitor.VisitT_FloatDataType(this, info);
         }
     }
-
     public class CRangeType : ASTLeaf {
         private LType m_type;
 

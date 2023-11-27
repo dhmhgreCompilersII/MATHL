@@ -142,6 +142,78 @@ namespace MATHL.Visitors {
             return base.VisitCommand_CommandBlock(node, node);
         }
 
+        public override int VisitExpression_Addition(CExpression_Addition node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CExpression_Addition.LHS,
+                node.mc_contextNames[CExpression_Addition.LHS]);
+
+            CreateContextSubgraph(node, CExpression_Addition.RHS,
+                node.mc_contextNames[CExpression_Addition.RHS]);
+
+            return base.VisitExpression_Addition(node, node);
+        }
+
+        public override int VisitExpression_Subtraction(CExpression_Subtraction node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CExpression_Subtraction.LHS,
+                node.mc_contextNames[CExpression_Subtraction.LHS]);
+
+            CreateContextSubgraph(node, CExpression_Subtraction.RHS,
+                node.mc_contextNames[CExpression_Subtraction.RHS]);
+
+            return base.VisitExpression_Subtraction(node, node);
+        }
+
+        public override int VisitExpression_Multiplication(CExpression_Multiplication node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CExpression_Multiplication.LHS,
+                node.mc_contextNames[CExpression_Multiplication.LHS]);
+
+            CreateContextSubgraph(node, CExpression_Multiplication.RHS,
+                node.mc_contextNames[CExpression_Multiplication.RHS]);
+
+            return base.VisitExpression_Multiplication(node, node);
+        }
+
+        public override int VisitExpression_FDivision(CExpression_FDivision node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CExpression_FDivision.LHS,
+                node.mc_contextNames[CExpression_FDivision.LHS]);
+
+            CreateContextSubgraph(node, CExpression_FDivision.RHS,
+                node.mc_contextNames[CExpression_FDivision.RHS]);
+
+            return base.VisitExpression_FDivision(node, node);
+        }
+
+        public override int VisitExpression_IDivision(CExpression_IDivision node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CExpression_IDivision.LHS,
+                node.mc_contextNames[CExpression_IDivision.LHS]);
+
+            CreateContextSubgraph(node, CExpression_IDivision.RHS,
+                node.mc_contextNames[CExpression_IDivision.RHS]);
+
+            return base.VisitExpression_IDivision(node, node);
+        }
+
+        public override int VisitExpression_Modulo(CExpression_Modulo node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CExpression_Modulo.LHS,
+                node.mc_contextNames[CExpression_Modulo.LHS]);
+
+            CreateContextSubgraph(node, CExpression_Modulo.RHS,
+                node.mc_contextNames[CExpression_Modulo.RHS]);
+
+            return base.VisitExpression_Modulo(node, node);
+        }
+
         public override int VisitT_IntegerDataType(CIntType node, params ASTElement[] args) {
             m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
             return 0;

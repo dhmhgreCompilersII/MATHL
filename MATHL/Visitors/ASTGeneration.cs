@@ -104,6 +104,61 @@ namespace MATHL.Visitors {
             return newNode;
         }
 
+        public override ASTElement VisitExpression_additionsubtraction(MATHLParser.Expression_additionsubtractionContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+            int context_L=0, context_R=1;
+
+            ASTComposite newNode=null;
+            switch (context.op.Type) {
+                case MATHLLexer.PLUS:
+                    newNode = new CExpression_Addition();
+                    break;
+                case MATHLLexer.MINUS:
+                    newNode = new CExpression_Subtraction();
+                    break;
+            }
+            parent.AddChild(parentContext, newNode);
+
+            var res = this.VisitElementInContext(context.a, context_L,
+                m_contextsStack,newNode,m_parentsStack);
+
+            res = this.VisitElementInContext(context.b, context_R,
+                m_contextsStack, newNode, m_parentsStack);
+            
+            return newNode;
+        }
+
+        public override ASTElement VisitExpression_multiplicationdivision(MATHLParser.Expression_multiplicationdivisionContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+            int context_L = 0, context_R = 1;
+
+            ASTComposite newNode = null;
+            switch (context.op.Type) {
+                case MATHLLexer.MULT:
+                    newNode = new CExpression_Multiplication();
+                    break;
+                case MATHLLexer.IDIV:
+                    newNode = new CExpression_IDivision();
+                    break;
+                case MATHLLexer.MOD:
+                    newNode = new CExpression_Addition();
+                    break;
+                case MATHLLexer.FDIV:
+                    newNode = new CExpression_FDivision();
+                    break;
+            }
+            parent.AddChild(parentContext, newNode);
+
+            var res = this.VisitElementInContext(context.a, context_L,
+                m_contextsStack, newNode, m_parentsStack);
+
+            res = this.VisitElementInContext(context.b, context_R,
+                m_contextsStack, newNode, m_parentsStack);
+            return newNode;
+        }
+
         public override ASTElement VisitTerminal(ITerminalNode node) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();

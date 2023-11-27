@@ -72,7 +72,24 @@ namespace MATHL.Composite {
         public virtual Result VisitExpression_Equation(CExpression_Equation node, params Params[] args) {
             return VisitChildren(node, args);
         }
-
+        public virtual Result VisitExpression_Addition(CExpression_Addition node, params Params[] args) {
+            return VisitChildren(node, args);
+        }
+        public virtual Result VisitExpression_Subtraction(CExpression_Subtraction node, params Params[] args) {
+            return VisitChildren(node, args);
+        }
+        public virtual Result VisitExpression_Multiplication(CExpression_Multiplication node, params Params[] args) {
+            return VisitChildren(node, args);
+        }
+        public virtual Result VisitExpression_FDivision(CExpression_FDivision node, params Params[] args) {
+            return VisitChildren(node, args);
+        }
+        public virtual Result VisitExpression_IDivision(CExpression_IDivision node, params Params[] args) {
+            return VisitChildren(node, args);
+        }
+        public virtual Result VisitExpression_Modulo(CExpression_Modulo node, params Params[] args) {
+            return VisitChildren(node, args);
+        }
         public virtual Result VisitCommand_CommandBlock(CCommand_CommandBlock node, params Params[] args) {
             return VisitChildren(node, args);
         }
