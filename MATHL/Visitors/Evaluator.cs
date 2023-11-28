@@ -9,7 +9,6 @@ namespace MATHL.Visitors {
     public class Evaluator : MATHLParserBaseVisitor<int> {
 
         public override int VisitCompile_unit(MATHLParser.Compile_unitContext context) {
-
             return base.VisitCompile_unit(context);
         }
 

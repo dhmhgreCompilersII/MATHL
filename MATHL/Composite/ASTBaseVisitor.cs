@@ -96,6 +96,9 @@ namespace MATHL.Composite {
         public virtual Result VisitExpression_Modulo(CExpression_Modulo node, params Params[] args) {
             return VisitChildren(node, args);
         }
+        public virtual Result VisitExpression_Range(CExpression_Range node, params Params[] args) {
+            return VisitChildren(node, args);
+        }
         public virtual Result VisitCommand_CommandBlock(CCommand_CommandBlock node, params Params[] args) {
             return VisitChildren(node, args);
         }

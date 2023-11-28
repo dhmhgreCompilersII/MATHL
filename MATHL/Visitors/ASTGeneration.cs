@@ -100,6 +100,22 @@ namespace MATHL.Visitors {
                 res = this.VisitElementInContext(context.expression(), CDeclaratorVariable.INITIALIZATION,
                     m_contextsStack, newNode, m_parentsStack);
             }
+            return newNode;
+        }
+
+        public override ASTElement VisitRange(MATHLParser.RangeContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+            ASTComposite newNode = null;
+            newNode = new CExpression_Range();
+            parent.AddChild(parentContext, newNode);
+
+            var res = this.VisitElementInContext(context.a, CExpression_Range.START,
+                m_contextsStack, newNode, m_parentsStack);
+            res = this.VisitElementInContext(context.b, CExpression_Range.END,
+                m_contextsStack, newNode, m_parentsStack);
+            res = this.VisitElementInContext(context.c, CExpression_Range.STEP,
+                m_contextsStack, newNode, m_parentsStack);
 
             return newNode;
         }

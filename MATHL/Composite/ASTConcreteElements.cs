@@ -13,9 +13,9 @@ namespace MATHL.Composite {
         NT_DECLARATION_FUNCTION, NT_COMMAND_COMMANDBLOCK, 
         NT_EXPRESSION_EQUATION, NT_EXPRESSION_ADDITION, NT_EXPRESSION_SUBTRACTION, NT_EXPRESSION_MULTIPLICATION,
         NT_EXPRESSION_FDIVISION, NT_EXPRESSION_IDIVISION, NT_EXPRESSION_MODULO,NT_EXPRESSION_UNARYPLUS,
-        NT_EXPRESSION_UNARYMINUS,
-        
-        T_INTTYPE, T_FLOATTYPE, T_RANGETYPE,T_NUMBER,T_IDENTIFIER,
+        NT_EXPRESSION_UNARYMINUS, NT_EXPRESSION_RANGE,
+
+        T_INTTYPE, T_FLOATTYPE, T_RANGETYPE,T_NUMBER,T_IDENTIFIER
         
     }
 
@@ -173,6 +173,19 @@ namespace MATHL.Composite {
             return visitor.VisitExpression_Modulo(this, info);
         }
     }
+    public class CExpression_Range : ASTComposite {
+        public const int START = 0, END = 1 , STEP=2;
+        public readonly string[] mc_contextNames = { "Start", "End", "Step" };
+
+        public CExpression_Range() :
+            base(3, (int)NodeType.NT_EXPRESSION_RANGE) {
+        }
+        public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v,
+            params Params[] info) {
+            MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
+            return visitor.VisitExpression_Range(this, info);
+        }
+    }
     public class CCommand_CommandBlock : ASTComposite {
         public const int COMMAND = 0;
         public readonly string[] mc_contextNames = { "Command_CommandBlock" };
@@ -180,7 +193,6 @@ namespace MATHL.Composite {
         public CCommand_CommandBlock() :
             base(1, (int)NodeType.NT_COMMAND_COMMANDBLOCK) {
         }
-
         public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v,
             params Params[] info) {
             MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
