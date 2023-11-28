@@ -103,6 +103,26 @@ namespace MATHL.Visitors {
 
             return newNode;
         }
+        public override ASTElement VisitExpression_unaryprefixexpression(MATHLParser.Expression_unaryprefixexpressionContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+            int context_ = 0;
+            ASTComposite newNode = null;
+            switch (context.op.Type) {
+                case MATHLLexer.PLUS:
+                    newNode = new CExpression_UnaryPlus();
+                    break;
+                case MATHLLexer.MINUS:
+                    newNode = new CExpression_UnaryMinus();
+                    break;
+            }
+            parent.AddChild(parentContext, newNode);
+
+            var res = this.VisitElementInContext(context.expression(), context_,
+                m_contextsStack,newNode,m_parentsStack);
+
+            return newNode;
+        }
 
         public override ASTElement VisitExpression_additionsubtraction(MATHLParser.Expression_additionsubtractionContext context) {
             ASTComposite parent = m_parentsStack.Peek();
@@ -149,6 +169,21 @@ namespace MATHL.Visitors {
                     newNode = new CExpression_FDivision();
                     break;
             }
+            parent.AddChild(parentContext, newNode);
+
+            var res = this.VisitElementInContext(context.a, context_L,
+                m_contextsStack, newNode, m_parentsStack);
+
+            res = this.VisitElementInContext(context.b, context_R,
+                m_contextsStack, newNode, m_parentsStack);
+            return newNode;
+        }
+        public override ASTElement VisitExpression_multiplicationNoOperator(MATHLParser.Expression_multiplicationNoOperatorContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+            int context_L = 0, context_R = 1;
+
+            ASTComposite newNode = new CExpression_Multiplication();
             parent.AddChild(parentContext, newNode);
 
             var res = this.VisitElementInContext(context.a, context_L,

@@ -72,6 +72,12 @@ namespace MATHL.Composite {
         public virtual Result VisitExpression_Equation(CExpression_Equation node, params Params[] args) {
             return VisitChildren(node, args);
         }
+        public virtual Result VisitExpression_UnaryPlus(CExpression_UnaryPlus node, params Params[] args) {
+            return VisitChildren(node, args);
+        }
+        public virtual Result VisitExpression_UnaryMinus(CExpression_UnaryMinus node, params Params[] args) {
+            return VisitChildren(node, args);
+        }
         public virtual Result VisitExpression_Addition(CExpression_Addition node, params Params[] args) {
             return VisitChildren(node, args);
         }

@@ -142,6 +142,24 @@ namespace MATHL.Visitors {
             return base.VisitCommand_CommandBlock(node, node);
         }
 
+        public override int VisitExpression_UnaryPlus(CExpression_UnaryPlus node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CExpression_UnaryPlus.EXPR,
+                node.mc_contextNames[CExpression_UnaryPlus.EXPR]);
+
+            return base.VisitExpression_UnaryPlus(node, node);
+        }
+
+        public override int VisitExpression_UnaryMinus(CExpression_UnaryMinus node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CExpression_UnaryMinus.EXPR,
+                node.mc_contextNames[CExpression_UnaryMinus.EXPR]);
+
+            return base.VisitExpression_UnaryMinus(node, node);
+        }
+
         public override int VisitExpression_Addition(CExpression_Addition node, params ASTElement[] args) {
             m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
 
