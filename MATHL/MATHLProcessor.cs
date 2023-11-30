@@ -212,9 +212,9 @@ namespace MATHL {
 
         void InitializeProcessor() {
             m_symbolTable = new Scope(null, scope => {
-                scope.InitializeNamespace(SymbolType.ST_TYPENAME);
-                scope.InitializeNamespace(SymbolType.ST_VARIABLE);
-                scope.InitializeNamespace(SymbolType.ST_FUNCTION);
+                scope.InitializeNamespace(SymbolCategory.ST_TYPENAME);
+                scope.InitializeNamespace(SymbolCategory.ST_VARIABLE);
+                scope.InitializeNamespace(SymbolCategory.ST_FUNCTION);
             },
                 "global");
         }

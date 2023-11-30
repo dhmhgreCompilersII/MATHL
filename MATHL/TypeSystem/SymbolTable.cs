@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace MATHL.TypeSystem {
     public class Scope: IScope {
 
-        private Dictionary<SymbolType, Dictionary<string, LSymbol>> m_symbolTable =
-            new Dictionary<SymbolType, Dictionary<string, LSymbol>>();
+        private Dictionary<SymbolCategory, Dictionary<string, LSymbol>> m_symbolTable =
+            new Dictionary<SymbolCategory, Dictionary<string, LSymbol>>();
 
         private string m_scopename;
         private IScope m_parentScope;
@@ -19,13 +19,13 @@ namespace MATHL.TypeSystem {
             init(this);
         }
 
-        public void InitializeNamespace(SymbolType type) {
+        public void InitializeNamespace(SymbolCategory type) {
             if (!m_symbolTable.ContainsKey(type)) {
                 m_symbolTable[type] = new Dictionary<string, LSymbol>();
             }
         }
 
-        public bool DefineSymbol(LSymbol symbol, SymbolType symbolType) {
+        public bool DefineSymbol(LSymbol symbol, SymbolCategory symbolType) {
             if (!m_symbolTable[symbolType].ContainsKey(symbol.MName)) {
                 m_symbolTable[symbolType][symbol.MName] = symbol;
                 return true;
@@ -33,8 +33,13 @@ namespace MATHL.TypeSystem {
             return false;
 
         }
-        public LSymbol SearchSymbol(string name, SymbolType symbolType) {
-            return m_symbolTable[symbolType][name];
+        public LSymbol SearchSymbol(string name, SymbolCategory symbolType) {
+            if (m_symbolTable[symbolType].ContainsKey(name)) {
+                return m_symbolTable[symbolType][name];
+            }
+            else {
+                return null;
+            }
         }
 
         public IScope M_EnclosingScope {
@@ -66,7 +71,7 @@ namespace MATHL.TypeSystem {
                 str.AppendLine();
             }
 
-            foreach (KeyValuePair<SymbolType, Dictionary<string, LSymbol>> keyValuePair in m_symbolTable) {
+            foreach (KeyValuePair<SymbolCategory, Dictionary<string, LSymbol>> keyValuePair in m_symbolTable) {
                 str.Append("Namespace :" + keyValuePair.Key);
                 str.AppendLine();
                 foreach (var lSymbol in m_symbolTable[keyValuePair.Key]) {

@@ -10,8 +10,11 @@ Parser Rules
 @header {
   using MATHL.TypeSystem;
 }
-@parser::members {Scope symtab;}
-@lexer::members { Scope symtab;}
+@parser::members {Scope symtab;
+				  public static bool isFunction;
+					}
+@lexer::members { Scope symtab;
+				   }
 
 compile_unit[Scope symtab]																	// AST OK
 @init { this.symtab = symtab; }
@@ -60,7 +63,7 @@ variable_declarator [LType t] returns [string id]
 																default:
 																break;
 															 }
-																symtab.DefineSymbol(vs, SymbolType.ST_VARIABLE);
+																symtab.DefineSymbol(vs, SymbolCategory.ST_VARIABLE);
 															
 														   }	
 					;
@@ -71,27 +74,40 @@ postfix_declarators : LBR RBR
 variable_declaration: type (  ids+=variable_declarator[$type.tid] ','? )+ { 
 		foreach ( var id in $ids ){
 			VariableSymbol vs = new VariableSymbol($variable_declarator.id,$type.tid);
-			symtab.DefineSymbol(vs, SymbolType.ST_VARIABLE);
+			symtab.DefineSymbol(vs, SymbolCategory.ST_VARIABLE);
 		}
 	}
 					;
 
-function_declaration : type IDENTIFIER '(' (variable_declaration (COMMA variable_declaration )*)? ')'
+function_declaration : type IDENTIFIER '(' (variable_declaration (COMMA variable_declaration )*)? ')' { 
+																FunctionSymbol vs = new FunctionSymbol($IDENTIFIER.text,$type.tid);																
+																symtab.DefineSymbol(vs,SymbolCategory.ST_FUNCTION); 
+																									  }
 					;
+
+
+
 
 
 expression returns [int result] 
 			:  NUMBER		{ $result = Int32.Parse($NUMBER.text);
 								MMessage = $"={$result}";	
 							} #expression_NUMBER
-			| IDENTIFIER 	{ LSymbol symbol = symtab.SearchSymbol($IDENTIFIER.text,SymbolType.ST_VARIABLE); 
-										  $result = symbol.MValue;
-										  MMessage = $"={$result}";} #expression_IDENTIFIER
-			| range	 		{ 
-							   					MMessage = $"={$range.r}";
-											} #expression_range
-			| IDENTIFIER '(' params ')' { symtab.SearchSymbol($IDENTIFIER.text,SymbolType.ST_FUNCTION); }  #expression_functioncall
-			| '(' expression ')'  { $result = $expression.result; } #expression_parenthesizedexpression
+			| IDENTIFIER 	{ LSymbol identifierSymbol = symtab.SearchSymbol($IDENTIFIER.text,SymbolCategory.ST_VARIABLE); 						
+							  isFunction = identifierSymbol==null ? true:false;
+							  if (identifierSymbol!= null ){
+								$result = identifierSymbol.MValue;
+								MMessage = $"={$result}";}
+							  }
+
+							  {isFunction}? 
+
+							  #expression_IDENTIFIER
+			| range	 		{ MMessage = $"={$range.text}"; } #expression_range
+			| {isFunction}? IDENTIFIER LP params? RP { symtab.SearchSymbol($IDENTIFIER.text,SymbolCategory.ST_FUNCTION); }  #expression_functioncall
+			
+										  
+			| LP expression RP  { $result = $expression.result; } #expression_parenthesizedexpression
 			| op=('+'|'-') expression   { switch ($op.type) {
 											case MATHLLexer.PLUS:
 												$result = $expression.result;
@@ -134,20 +150,20 @@ expression returns [int result]
 												MMessage = $"{$result}";
 											} #expression_additionsubtraction			
 			| a=expression '=' b=expression  {  if ( $a.ctx.GetChild(0) is ITerminalNode identifier ){
-												LSymbol sym = symtab.SearchSymbol(identifier.Symbol.Text,SymbolType.ST_VARIABLE);		
+												LSymbol sym = symtab.SearchSymbol(identifier.Symbol.Text,SymbolCategory.ST_VARIABLE);		
 												if ( sym != null ){
 													sym.MValue = $b.result;
 													MMessage = $"{sym.MName}={$b.result}";
 												}
 											 }
 										} #expression_equationassignment
-			| a=expression b=expression {
+			|  a=expression  b=expression  {
 											$result = $a.result * $b.result;
 											MMessage = $"{$result}";
 										} #expression_multiplicationNoOperator
 			;
 
-params : (expression (COMMA expression)+);  
+params : expression (COMMA expression)*;  
 
 range returns [CRange r] : 
 	LBR a=expression? COLON b=expression? COLON c=expression? RBR {

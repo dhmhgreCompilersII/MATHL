@@ -13,7 +13,7 @@ namespace MATHL.Composite {
         NT_DECLARATION_FUNCTION, NT_COMMAND_COMMANDBLOCK, 
         NT_EXPRESSION_EQUATION, NT_EXPRESSION_ADDITION, NT_EXPRESSION_SUBTRACTION, NT_EXPRESSION_MULTIPLICATION,
         NT_EXPRESSION_FDIVISION, NT_EXPRESSION_IDIVISION, NT_EXPRESSION_MODULO,NT_EXPRESSION_UNARYPLUS,
-        NT_EXPRESSION_UNARYMINUS, NT_EXPRESSION_RANGE,
+        NT_EXPRESSION_UNARYMINUS, NT_EXPRESSION_RANGE,NT_EXPRESSION_FUNCTIONCALL,
 
         T_INTTYPE, T_FLOATTYPE, T_RANGETYPE,T_NUMBER,T_IDENTIFIER
         
@@ -33,6 +33,7 @@ namespace MATHL.Composite {
             return visitor.VisitCompileUnit(this, info);
         }
     }
+    
     public class CCommand_Expression : ASTComposite {
         public const int COMMAND = 0;
         public readonly string[] mc_contextNames = { "Command_Expression" };
@@ -45,6 +46,20 @@ namespace MATHL.Composite {
             params Params[] info) {
             MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
             return visitor.VisitCommand_Expression(this, info);
+        }
+    }
+    public class CExpression_FunctionCall : ASTComposite {
+        public const int NAME = 0, PARAMS= 1;
+        public readonly string[] mc_contextNames = { "FUNCTIONNAME", "ARGUMENTS" };
+
+        public CExpression_FunctionCall() :
+            base(2, (int)NodeType.NT_EXPRESSION_FUNCTIONCALL) {
+        }
+
+        public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v,
+            params Params[] info) {
+            MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
+            return visitor.VisitExpression_FunctionCall(this, info);
         }
     }
     public class CExpression_Equation : ASTComposite {

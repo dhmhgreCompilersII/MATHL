@@ -23,6 +23,23 @@ namespace MATHL.Visitors {
             return m_root;
         }
 
+        public override ASTElement VisitFunction_declaration(MATHLParser.Function_declarationContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+
+            CDeclarationFunction newNode = new CDeclarationFunction();
+            parent.AddChild(parentContext, newNode);
+
+            var res = this.VisitElementInContext(context.type(), CDeclarationFunction.TYPE,
+                m_contextsStack, newNode, m_parentsStack);
+            res = this.VisitTerminalInContext(context,context.IDENTIFIER().Symbol,CDeclarationFunction.FUNCTION_NAME,
+                m_contextsStack,newNode,m_parentsStack);
+            res = this.VisitElementsInContext(context.variable_declaration(), CDeclarationFunction.PARAMETERS,
+                m_contextsStack, newNode, m_parentsStack);
+
+            return newNode;
+        }
+
         public override ASTElement VisitCommand_block(MATHLParser.Command_blockContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
@@ -64,6 +81,21 @@ namespace MATHL.Visitors {
                 CExpression_Equation.RHS, m_contextsStack, newNode, m_parentsStack);
             return newNode;
 
+        }
+
+        public override ASTElement VisitExpression_functioncall(MATHLParser.Expression_functioncallContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+            
+            CExpression_FunctionCall newNode = new CExpression_FunctionCall();
+            parent.AddChild(parentContext, newNode);
+
+            var res = this.VisitTerminalInContext(context,context._IDENTIFIER,
+                CExpression_FunctionCall.NAME,m_contextsStack,newNode,m_parentsStack);
+            
+            res = this.VisitElementInContext(context.@params(),CExpression_FunctionCall.PARAMS,m_contextsStack,
+                newNode,m_parentsStack);
+            return newNode;
         }
 
 
@@ -119,6 +151,8 @@ namespace MATHL.Visitors {
 
             return newNode;
         }
+
+
         public override ASTElement VisitExpression_unaryprefixexpression(MATHLParser.Expression_unaryprefixexpressionContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();

@@ -1,7 +1,7 @@
 
 namespace MATHL.TypeSystem {
     // The base class of symbols of various categories
-    public enum SymbolType {
+    public enum SymbolCategory {
         ST_NA, ST_VARIABLE, ST_FUNCTION, ST_TYPENAME
     }
 
@@ -9,12 +9,12 @@ namespace MATHL.TypeSystem {
         string m_name;
         private LType m_type;
         private int value;
-        private SymbolType m_symbolType;
+        private SymbolCategory m_symbolCategory;
 
-        public LSymbol(string mName, SymbolType mSymbolType,LType mType) {
+        public LSymbol(string mName, SymbolCategory mSymbolType,LType mType) {
             m_name = mName;
             m_type = mType;
-            m_symbolType = mSymbolType;
+            m_symbolCategory = mSymbolType;
         }
 
         public string MName => m_name;
@@ -26,7 +26,7 @@ namespace MATHL.TypeSystem {
             set => this.value = value;
         }
 
-        public SymbolType MSymbolType => m_symbolType;
+        public SymbolCategory MSymbolCategory => m_symbolCategory;
 
         public override string ToString() {
             return MName + ":" + m_type;
@@ -35,16 +35,16 @@ namespace MATHL.TypeSystem {
 
     public class VariableSymbol : LSymbol {
         public VariableSymbol(string mName, LType mType) :
-            base(mName, SymbolType.ST_VARIABLE, mType) { }
+            base(mName, SymbolCategory.ST_VARIABLE, mType) { }
     }
 
     public class FunctionSymbol : LSymbol {
         public FunctionSymbol(string mName, LType mType) :
-            base(mName, SymbolType.ST_FUNCTION, mType) { }
+            base(mName, SymbolCategory.ST_FUNCTION, mType) { }
     }
 
     public class TypenameSymbol : LSymbol {
         public TypenameSymbol(string mName, LType mType) :
-            base(mName, SymbolType.ST_TYPENAME, mType) { }
+            base(mName, SymbolCategory.ST_TYPENAME, mType) { }
     }
 }

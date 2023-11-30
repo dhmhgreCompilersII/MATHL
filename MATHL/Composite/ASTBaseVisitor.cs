@@ -65,10 +65,15 @@ namespace MATHL.Composite {
             return VisitChildren(node, args);
         }
 
+        public virtual Result VisitDeclaration_Function(CDeclarationFunction node, params Params[] args) {
+            return VisitChildren(node, args);
+        }
         public virtual Result VisitCommand_Expression(CCommand_Expression node, params Params[] args) {
             return VisitChildren(node, args);
         }
-
+        public virtual Result VisitExpression_FunctionCall(CExpression_FunctionCall node, params Params[] args) {
+            return VisitChildren(node, args);
+        }
         public virtual Result VisitExpression_Equation(CExpression_Equation node, params Params[] args) {
             return VisitChildren(node, args);
         }
@@ -106,9 +111,6 @@ namespace MATHL.Composite {
             return VisitChildren(node, args);
         }
         public virtual Result VisitDeclarator_Variable(CDeclaratorVariable node, params Params[] args) {
-            return VisitChildren(node, args);
-        }
-        public virtual Result VisitDeclaration_Function(CDeclarationFunction node, params Params[] args) {
             return VisitChildren(node, args);
         }
         public virtual Result VisitT_IntegerDataType(CIntType node, params Params[] args) {

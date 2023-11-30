@@ -75,7 +75,19 @@ public static class ANTLRExtensions {
         parentsStack.Pop();
         return res;
     }
-
+    /// <summary>
+    /// This method visits a token of a ParserRuleContext node passing the appropriate information
+    /// from parent node
+    /// </summary>
+    /// <typeparam name="Result"></typeparam>
+    /// <param name="t"></param>
+    /// <param name="tokenParent">ParserRuleContext parent node of the terminal node</param>
+    /// <param name="node">IToken node child of tokenParent</param>
+    /// <param name="context">context of parent that is to place the child node</param>
+    /// <param name="s">stack of parent contexts</param>
+    /// <param name="parent">ASTElement parent node of the Terminal child node</param>
+    /// <param name="parentStack">stack of ASTElement parents</param>
+    /// <returns></returns>
     public static Result VisitTerminalInContext<Result>(this AbstractParseTreeVisitor<Result> t,
         ParserRuleContext tokenParent, IToken node, int context, Stack<int> s,
         ASTComposite parent, Stack<ASTComposite> parentStack) {

@@ -155,6 +155,19 @@ namespace MATHL.Visitors {
             return base.VisitExpression_Range(node, node);
         }
 
+
+
+        public override int VisitExpression_FunctionCall(CExpression_FunctionCall node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CExpression_FunctionCall.NAME,
+                node.mc_contextNames[CExpression_FunctionCall.NAME]);
+            CreateContextSubgraph(node, CExpression_FunctionCall.PARAMS,
+                node.mc_contextNames[CExpression_FunctionCall.PARAMS]);
+
+            return base.VisitExpression_FunctionCall(node, node);
+        }
+
         public override int VisitExpression_UnaryPlus(CExpression_UnaryPlus node, params ASTElement[] args) {
             m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
 
