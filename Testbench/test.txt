@@ -1,4 +1,5 @@
 int a(int b)
-5a(1)
+3a(5)
 int b
-5b(1)
+b=2
+6b(8)

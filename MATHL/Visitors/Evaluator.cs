@@ -1,12 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
+using MATHL.TypeSystem;
 
 namespace MATHL.Visitors {
     public class Evaluator : MATHLParserBaseVisitor<int> {
+        private MATHLExecutionEnvironment m_executionEnvironment;
+        public Evaluator() {
+            m_executionEnvironment = MATHLExecutionEnvironment.GetInstance();
+        }
 
         public override int VisitCompile_unit(MATHLParser.Compile_unitContext context) {
             return base.VisitCompile_unit(context);
@@ -61,35 +69,88 @@ namespace MATHL.Visitors {
         }
 
         public override int VisitExpression_IDENTIFIER(MATHLParser.Expression_IDENTIFIERContext context) {
-            return base.VisitExpression_IDENTIFIER(context);
+            IToken identifier = context._IDENTIFIER;
+            LSymbol idSymbol =
+                m_executionEnvironment.MSymbolTable.SearchSymbol(identifier.Text, SymbolCategory.ST_VARIABLE);
+            return idSymbol.MValue;
+        }
+        public override int VisitExpression_NUMBER(MATHLParser.Expression_NUMBERContext context) {
+            IToken number = context._NUMBER;
+            return Int32.Parse(number.Text);
         }
 
         public override int VisitExpression_parenthesizedexpression(MATHLParser.Expression_parenthesizedexpressionContext context) {
-            return base.VisitExpression_parenthesizedexpression(context);
+            return Visit(context._expression);
         }
 
         public override int VisitExpression_multiplicationdivision(MATHLParser.Expression_multiplicationdivisionContext context) {
-            return base.VisitExpression_multiplicationdivision(context);
+
+            int lhv = Visit(context.a);
+            int rhv = Visit(context.b);
+
+            switch (context.op.Type) {
+                case MATHLLexer.MULT:
+                    return lhv + rhv;
+                case MATHLLexer.IDIV:
+                    return lhv / rhv;
+                case MATHLLexer.FDIV:
+                    return lhv / rhv;
+                case MATHLLexer.MOD:
+                    return lhv % rhv;
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         public override int VisitExpression_equationassignment(MATHLParser.Expression_equationassignmentContext context) {
-            return base.VisitExpression_equationassignment(context);
-        }
 
-        public override int VisitExpression_NUMBER(MATHLParser.Expression_NUMBERContext context) {
-            return base.VisitExpression_NUMBER(context);
-        }
+            var lhs = context.a;
+            var rhs = context.b;
+            int result=Visit(rhs) ;
 
+            if (lhs is MATHLParser.Expression_IDENTIFIERContext expression_id) {
+                IToken identifier = expression_id._IDENTIFIER;
+                LSymbol idLSymbol =
+                    m_executionEnvironment.MSymbolTable.SearchSymbol(identifier.Text, SymbolCategory.ST_VARIABLE);
+                result = Visit(rhs);
+                idLSymbol.MValue = result;
+            }
+            else {
+
+            }
+            return result;
+        }
+        
         public override int VisitExpression_functioncall(MATHLParser.Expression_functioncallContext context) {
             return base.VisitExpression_functioncall(context);
         }
 
         public override int VisitExpression_unaryprefixexpression(MATHLParser.Expression_unaryprefixexpressionContext context) {
-            return base.VisitExpression_unaryprefixexpression(context);
+            int uv = Visit(context._expression);
+
+            switch (context.op.Type) {
+                case MATHLLexer.PLUS:
+                    return uv;
+                case MATHLLexer.MINUS:
+                    return -uv;
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         public override int VisitExpression_additionsubtraction(MATHLParser.Expression_additionsubtractionContext context) {
-            return base.VisitExpression_additionsubtraction(context);
+
+            int lhv = Visit(context.a);
+            int rhv = Visit(context.b);
+
+            switch (context.op.Type) {
+                case MATHLLexer.PLUS:
+                    return lhv + rhv;
+                case MATHLLexer.MINUS:
+                    return lhv - rhv;
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         public override int VisitExpression_range(MATHLParser.Expression_rangeContext context) {
@@ -105,18 +166,6 @@ namespace MATHL.Visitors {
         }
 
         public override int VisitTerminal(ITerminalNode node) {
-
-            switch (node.Symbol.Type) {
-                case MATHLLexer.NUMBER:
-
-                    break;
-                case MATHLLexer.IDENTIFIER:
-
-                    break;
-                default:
-                    break;
-            }
-
             return base.VisitTerminal(node);
         }
     }

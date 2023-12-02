@@ -40,6 +40,7 @@ namespace MATHL.Visitors {
             return newNode;
         }
 
+
         public override ASTElement VisitCommand_block(MATHLParser.Command_blockContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
