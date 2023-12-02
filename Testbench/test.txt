@@ -1,5 +1,4 @@
 int a(int b)
 5a(1)
-int c
-c=12
-5c
+int b
+5b(1)

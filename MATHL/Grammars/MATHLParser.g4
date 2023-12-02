@@ -11,7 +11,7 @@ Parser Rules
   using MATHL.TypeSystem;
 }
 @parser::members {Scope symtab;
-				  public static bool isFunction;
+				  bool isFunction;
 					}
 @lexer::members { Scope symtab;
 				   }
@@ -89,18 +89,25 @@ function_declaration : type IDENTIFIER '(' (variable_declaration (COMMA variable
 
 
 
-expression returns [int result] 
+expression returns [int result]
+@init{
+	IToken x = TokenStream.LT(1); /*****/
+	if ( x.Type == MATHLParser.IDENTIFIER ){
+		LSymbol identifierSymbol_ = symtab.SearchSymbol(x.Text,SymbolCategory.ST_FUNCTION);	
+		isFunction = (identifierSymbol_==null)?false:true;
+
+	}
+	   				  
+}
+
 			:  NUMBER		{ $result = Int32.Parse($NUMBER.text);
 								MMessage = $"={$result}";	
 							} #expression_NUMBER
-			| IDENTIFIER 	{ LSymbol identifierSymbol = symtab.SearchSymbol($IDENTIFIER.text,SymbolCategory.ST_VARIABLE); 						
-							  isFunction = identifierSymbol==null ? true:false;
+			|  {!isFunction}? IDENTIFIER 	{ LSymbol identifierSymbol = symtab.SearchSymbol($IDENTIFIER.text,SymbolCategory.ST_VARIABLE); 													  
 							  if (identifierSymbol!= null ){
 								$result = identifierSymbol.MValue;
 								MMessage = $"={$result}";}
-							  }
-
-							  {isFunction}? 
+							  }						  
 
 							  #expression_IDENTIFIER
 			| range	 		{ MMessage = $"={$range.text}"; } #expression_range
