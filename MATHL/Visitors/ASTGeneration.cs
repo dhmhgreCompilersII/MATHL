@@ -36,10 +36,23 @@ namespace MATHL.Visitors {
                 m_contextsStack,newNode,m_parentsStack);
             res = this.VisitElementsInContext(context.variable_declaration(), CDeclarationFunction.PARAMETERS,
                 m_contextsStack, newNode, m_parentsStack);
+            res = this.VisitElementInContext(context.command_block(), CDeclarationFunction.BODY,
+                m_contextsStack, newNode, m_parentsStack);
 
             return newNode;
         }
 
+        public override ASTElement VisitCommand_return(MATHLParser.Command_returnContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+
+            CCommand_Return newNode = new CCommand_Return();
+            parent.AddChild(parentContext, newNode);
+
+            var res = this.VisitElementInContext(context.expression(),
+                CCommand_Return.EXPRESSION, m_contextsStack, newNode, m_parentsStack);
+            return newNode;
+        }
 
         public override ASTElement VisitCommand_block(MATHLParser.Command_blockContext context) {
             ASTComposite parent = m_parentsStack.Peek();

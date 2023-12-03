@@ -107,6 +107,9 @@ namespace MATHL.Composite {
         public virtual Result VisitCommand_CommandBlock(CCommand_CommandBlock node, params Params[] args) {
             return VisitChildren(node, args);
         }
+        public virtual Result VisitCommand_Return(CCommand_Return node, params Params[] args) {
+            return VisitChildren(node, args);
+        }
         public virtual Result VisitDeclaration_Variable(CDeclarationVariable node, params Params[] args) {
             return VisitChildren(node, args);
         }

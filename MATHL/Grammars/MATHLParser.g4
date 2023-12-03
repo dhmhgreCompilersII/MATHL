@@ -23,11 +23,13 @@ compile_unit[Scope symtab]																	// AST OK
 
 command : expression  {Console.WriteLine($"->{MMessage}");}	#command_expression	 		  // AST OK
 		| declaration										#command_declaration		  // AST OMMIT
-		| command_block										#command_commandblock	      // AST OMMIT
-		 ;
+		| command_block										#command_commandblock	      // AST OMMIT		
+		| RETURN expression									#command_return	
+		;
 
 command_termination : (SEMICOLON|NEWLINE)+ ;													// AST OMMIT
-command_block : LB command (command_termination command)* command_termination* RB			// AST OK
+command_block : LB command_termination* command (command_termination+ command)* command_termination* RB			// AST OK
+			 |  LB command_termination* RB
 	;
 		
 
@@ -78,7 +80,7 @@ variable_declaration: type (  ids+=variable_declarator[$type.tid] ','? )+ {
 	}
 					;
 
-function_declaration : type IDENTIFIER '(' (variable_declaration (COMMA variable_declaration )*)? ')' { 
+function_declaration : type IDENTIFIER '(' (variable_declaration (COMMA variable_declaration )*)? ')' command_block { 
 																FunctionSymbol vs = new FunctionSymbol($IDENTIFIER.text,$type.tid);																
 																symtab.DefineSymbol(vs,SymbolCategory.ST_FUNCTION); 
 																									  }

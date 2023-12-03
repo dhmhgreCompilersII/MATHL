@@ -10,7 +10,7 @@ namespace MATHL.Composite {
 
     public enum NodeType {
         NT_NA = -1, NT_COMPILEUNIT, NT_COMMAND_EXPRESSION, NT_DECLARATION_VARIABLE, NT_DECLARATOR_VARIABLE,
-        NT_DECLARATION_FUNCTION, NT_COMMAND_COMMANDBLOCK, 
+        NT_DECLARATION_FUNCTION, NT_COMMAND_COMMANDBLOCK, NT_COMMAND_RETURN,
         NT_EXPRESSION_EQUATION, NT_EXPRESSION_ADDITION, NT_EXPRESSION_SUBTRACTION, NT_EXPRESSION_MULTIPLICATION,
         NT_EXPRESSION_FDIVISION, NT_EXPRESSION_IDIVISION, NT_EXPRESSION_MODULO,NT_EXPRESSION_UNARYPLUS,
         NT_EXPRESSION_UNARYMINUS, NT_EXPRESSION_RANGE,NT_EXPRESSION_FUNCTIONCALL,
@@ -214,6 +214,20 @@ namespace MATHL.Composite {
             return visitor.VisitCommand_CommandBlock(this, info);
         }
     }
+
+    public class CCommand_Return : ASTComposite {
+        public const int EXPRESSION = 0;
+        public readonly string[] mc_contextNames = { "CommandReturn_Expression" };
+
+        public CCommand_Return() :
+            base(1, (int)NodeType.NT_COMMAND_RETURN) {
+        }
+        public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v,
+            params Params[] info) {
+            MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
+            return visitor.VisitCommand_Return(this, info);
+        }
+    }
     public class CDeclarationVariable : ASTComposite {
         public const int TYPE=0, DECLARATIONS = 1;
         public readonly string[] mc_contextNames = { "Type","Declaration_Declarators" };
@@ -243,11 +257,11 @@ namespace MATHL.Composite {
         }
     }
     public class CDeclarationFunction : ASTComposite {
-        public const int TYPE = 0, FUNCTION_NAME=1, PARAMETERS = 2;
-        public readonly string[] mc_contextNames = { "ReturnType", "FunctionName", "Parameters"};
+        public const int TYPE = 0, FUNCTION_NAME=1, PARAMETERS = 2, BODY=3;
+        public readonly string[] mc_contextNames = { "ReturnType", "FunctionName", "Parameters", "FunctionBody"};
 
         public CDeclarationFunction() :
-            base(3, (int)NodeType.NT_DECLARATION_FUNCTION) {
+            base(4, (int)NodeType.NT_DECLARATION_FUNCTION) {
         }
 
         public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v,

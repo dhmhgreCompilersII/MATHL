@@ -8,6 +8,7 @@ Lexer Rules
 INT : 'int';
 FLOAT : 'float';
 RANGE : 'range';
+RETURN : 'return';
 LP : '(';
 RP : ')';
 LB : '{';

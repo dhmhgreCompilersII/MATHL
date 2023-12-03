@@ -107,8 +107,15 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
 
         return m_NodeCounter;
     }
+    public override int VisitCommand_return(MATHLParser.Command_returnContext context) {
+        Visit_Prologue(() => "Command_Return");
 
+        base.VisitCommand_return(context);
 
+        Visit_Epilogue();
+
+        return m_NodeCounter;
+    }
     public override int VisitCommand_termination(MATHLParser.Command_terminationContext context) {
         Visit_Prologue(() => "Command_termination");
 

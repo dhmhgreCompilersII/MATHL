@@ -129,8 +129,19 @@ namespace MATHL.Visitors {
 
             CreateContextSubgraph(node, CDeclarationFunction.PARAMETERS,
                 node.mc_contextNames[CDeclarationFunction.PARAMETERS]);
-            
+            CreateContextSubgraph(node, CDeclarationFunction.BODY,
+                node.mc_contextNames[CDeclarationFunction.BODY]);
+
             return base.VisitDeclaration_Function(node, node);
+        }
+
+        public override int VisitCommand_Return(CCommand_Return node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CCommand_Return.EXPRESSION,
+                node.mc_contextNames[CCommand_Return.EXPRESSION]);
+
+            return base.VisitCommand_Return(node, node);
         }
 
         public override int VisitCommand_CommandBlock(CCommand_CommandBlock node, params ASTElement[] args) {
