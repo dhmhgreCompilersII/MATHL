@@ -1,4 +1,6 @@
 
+using MATHL.Composite;
+
 namespace MATHL.TypeSystem {
     // The base class of symbols of various categories
     public enum SymbolCategory {
@@ -39,8 +41,19 @@ namespace MATHL.TypeSystem {
     }
 
     public class FunctionSymbol : LSymbol {
+        private List<VariableSymbol> m_ParameterSymbols;
+        ASTElement m_FunctionBody;
+
         public FunctionSymbol(string mName, LType mType) :
-            base(mName, SymbolCategory.ST_FUNCTION, mType) { }
+            base(mName, SymbolCategory.ST_FUNCTION, mType) {
+            m_ParameterSymbols = new List<VariableSymbol>();
+        }
+        public void AddParameter(VariableSymbol p) {
+            m_ParameterSymbols.Add(p);
+        }
+        public void AddFunctionRoot(ASTElement r) {
+            m_FunctionBody = r;
+        }
     }
 
     public class TypenameSymbol : LSymbol {

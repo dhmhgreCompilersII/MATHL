@@ -259,9 +259,13 @@ namespace MATHL.Composite {
     public class CDeclarationFunction : ASTComposite {
         public const int TYPE = 0, FUNCTION_NAME=1, PARAMETERS = 2, BODY=3;
         public readonly string[] mc_contextNames = { "ReturnType", "FunctionName", "Parameters", "FunctionBody"};
+        private string m_functionName;
 
-        public CDeclarationFunction() :
+        public string MFunctionName => m_functionName;
+
+        public CDeclarationFunction(string functionName) :
             base(4, (int)NodeType.NT_DECLARATION_FUNCTION) {
+            m_functionName = functionName;
         }
 
         public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v,
@@ -339,7 +343,7 @@ namespace MATHL.Composite {
 
         public override string MNodeName => m_nodeName + "_" + MStringLiteral;
 
-        public LType MType1 => m_type;
+        public LType MType => m_type;
 
         public CRangeType(string leafLiteral) :
             base(leafLiteral, (int)NodeType.T_RANGETYPE) {

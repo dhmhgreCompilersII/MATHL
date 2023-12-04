@@ -13,6 +13,7 @@ namespace MATHL.Visitors {
         private Stack<ASTComposite> m_parentsStack = new Stack<ASTComposite>();
         private Stack<int> m_contextsStack = new Stack<int>();
 
+
         public override ASTElement VisitCompile_unit(MATHLParser.Compile_unitContext context) {
 
             CCompileUnit newNode = new CCompileUnit();
@@ -27,7 +28,7 @@ namespace MATHL.Visitors {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
 
-            CDeclarationFunction newNode = new CDeclarationFunction();
+            CDeclarationFunction newNode = new CDeclarationFunction(context.IDENTIFIER().Symbol.Text);
             parent.AddChild(parentContext, newNode);
 
             var res = this.VisitElementInContext(context.type(), CDeclarationFunction.TYPE,
@@ -59,8 +60,13 @@ namespace MATHL.Visitors {
             int parentContext = m_contextsStack.Peek();
 
             CCommand_CommandBlock newNode = new CCommand_CommandBlock();
+            if (parent is CDeclarationFunction df) {
+                    FunctionSymbol? fs = MATHLExecutionEnvironment.GetInstance().MSymbolTable
+                        .SearchSymbol(df.MFunctionName, SymbolCategory.ST_FUNCTION) as FunctionSymbol;
+                    fs.AddFunctionRoot(newNode);
+            }
             parent.AddChild(parentContext, newNode);
-
+            
             var res = this.VisitElementsInContext(context.command(),
                 CCommand_Expression.COMMAND, m_contextsStack, newNode, m_parentsStack);
             return newNode;

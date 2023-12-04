@@ -72,9 +72,12 @@ variable_declarator [LType t] returns [string id]
 postfix_declarators : LBR RBR
 					;
 
-variable_declaration: type (  ids+=variable_declarator[$type.tid] ','? )+ { 
+variable_declaration returns [List<VariableSymbol> VSymbols]
+: type (  ids+=variable_declarator[$type.tid] ','? )+ { 
+		$VSymbols = new List<VariableSymbol>();
 		foreach ( var id in $ids ){
 			VariableSymbol vs = new VariableSymbol($variable_declarator.id,$type.tid);
+			$VSymbols.Add(vs);
 			symtab.DefineSymbol(vs, SymbolCategory.ST_VARIABLE);
 		}
 	}
@@ -84,8 +87,12 @@ function_declaration : type IDENTIFIER '(' { /* DECLARE FUNCTION TO SYMBOLTABLE 
 											FunctionSymbol vs = new FunctionSymbol($IDENTIFIER.text,$type.tid);																
 											symtab.DefineSymbol(vs,SymbolCategory.ST_FUNCTION); 
 								           }
-(variable_declaration (COMMA variable_declaration )*)? ')' command_block 
-					;
+(variable_declaration (COMMA variable_declaration )*)? ')' {
+															 foreach (var vsymbol in $variable_declaration.VSymbols ){
+																vs.AddParameter(vsymbol);
+															 }
+														   }
+command_block ;
 
 
 

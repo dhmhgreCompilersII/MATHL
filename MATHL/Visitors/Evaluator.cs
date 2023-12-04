@@ -124,6 +124,10 @@ namespace MATHL.Visitors {
         
         public override int VisitExpression_functioncall(MATHLParser.Expression_functioncallContext context) {
 
+            // Map arguments
+
+            // Get access to the function body
+
 
 
             return base.VisitExpression_functioncall(context);

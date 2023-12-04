@@ -46,7 +46,6 @@ namespace MATHL.TypeSystem {
                 return null;
             }
         }
-
         public IScope M_EnclosingScope {
             get { return m_parentScope; }
         }
