@@ -45,6 +45,7 @@ namespace MATHL.Visitors {
         }
 
         public override int VisitDeclaration_function(MATHLParser.Declaration_functionContext context) {
+
             return base.VisitDeclaration_function(context);
         }
         

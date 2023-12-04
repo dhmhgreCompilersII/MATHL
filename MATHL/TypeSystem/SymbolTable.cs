@@ -5,6 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MATHL.TypeSystem {
+    // Scope is a associative collection that keeps distinct namespaces for 
+    // different program entities ( i.e functions, variables, types ) distinguished
+    // by SymbolCategory enum. Scope supports lexical scoping thus, each scope
+    // points to the parent scope. Each scope has a name taken from the closest
+    // code element it which it belongs ( i.e command_block , function , global )
     public class Scope: IScope {
 
         private Dictionary<SymbolCategory, Dictionary<string, LSymbol>> m_symbolTable =

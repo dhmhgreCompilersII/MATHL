@@ -12,4 +12,13 @@ namespace MATHL.TypeSystem {
         public IScope M_EnclosingScope { get; }
         public string M_ScopeName { get; }
     }
+
+    public interface IScopeSystem {
+
+        IScope M_CurrentScope { get; }
+
+        public IScope EnterScope(string scopename);
+        public IScope ExitScope();
+
+    }
 }

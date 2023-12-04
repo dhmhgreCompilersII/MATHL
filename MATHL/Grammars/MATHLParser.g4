@@ -2,7 +2,6 @@ parser grammar MATHLParser;
 
 options { tokenVocab = MATHLLexer; }
 
-
 /* 
 Parser Rules
 */
@@ -11,6 +10,7 @@ Parser Rules
   using MATHL.TypeSystem;
 }
 @parser::members {Scope symtab;
+				  
 				  bool isFunction; /* predicate */
 					}
 @lexer::members { Scope symtab;
@@ -80,10 +80,11 @@ variable_declaration: type (  ids+=variable_declarator[$type.tid] ','? )+ {
 	}
 					;
 
-function_declaration : type IDENTIFIER '(' (variable_declaration (COMMA variable_declaration )*)? ')' command_block { 
-																FunctionSymbol vs = new FunctionSymbol($IDENTIFIER.text,$type.tid);																
-																symtab.DefineSymbol(vs,SymbolCategory.ST_FUNCTION); 
-																									  }
+function_declaration : type IDENTIFIER '(' { /* DECLARE FUNCTION TO SYMBOLTABLE AND ENTER SCOPE */ 
+											FunctionSymbol vs = new FunctionSymbol($IDENTIFIER.text,$type.tid);																
+											symtab.DefineSymbol(vs,SymbolCategory.ST_FUNCTION); 
+								           }
+(variable_declaration (COMMA variable_declaration )*)? ')' command_block 
 					;
 
 
