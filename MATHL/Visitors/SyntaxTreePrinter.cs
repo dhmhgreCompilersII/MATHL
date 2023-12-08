@@ -237,15 +237,15 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
         return m_NodeCounter;
     }
 
-    public override int VisitExpression_multiplicationNoOperator(MATHLParser.Expression_multiplicationNoOperatorContext context) {
-        Visit_Prologue(() => "ImpliedMultiplication");
+    public override int VisitExpression_context(MATHLParser.Expression_contextContext context) {
+        Visit_Prologue(() => "ImpliedOperation");
 
-        base.VisitExpression_multiplicationNoOperator(context);
+        base.VisitExpression_context(context);
 
         Visit_Epilogue();
         return m_NodeCounter;
     }
-
+    
     public override int VisitExpression_equationassignment(MATHLParser.Expression_equationassignmentContext context) {
         Visit_Prologue(() => {
             if (context.a.GetChild(0) is MATHLParser.Expression_IDENTIFIERContext) {
@@ -269,16 +269,7 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
         Visit_Epilogue();
         return m_NodeCounter;
     }
-
-    public override int VisitExpression_functioncall(MATHLParser.Expression_functioncallContext context) {
-        Visit_Prologue(() => "functioncall");
-
-        base.VisitExpression_functioncall(context);
-
-        Visit_Epilogue();
-        return m_NodeCounter;
-    }
-
+    
     public override int VisitExpression_unaryprefixexpression(MATHLParser.Expression_unaryprefixexpressionContext context) {
         Visit_Prologue(() => {
             switch (context.op.Type) {

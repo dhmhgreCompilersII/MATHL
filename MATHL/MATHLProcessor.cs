@@ -78,13 +78,15 @@ namespace MATHL {
             MATHLLexer lexer = new MATHLLexer(antlrstream);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             MATHLParser parser = new MATHLParser(tokens);
-            IParseTree tree = parser.compile_unit(m_environment.MSymbolTable);
+            IParseTree tree = parser.compile_unit();
             SyntaxTreePrinter stPrinter = new SyntaxTreePrinter("St");
             stPrinter.Visit(tree);
             ASTGeneration astgen = new ASTGeneration();
             var asttree =astgen.Visit(tree);
             ASTPrinter astprinter = new ASTPrinter("AST.dot");
             astprinter.Visit(asttree);
+            Evaluator evaluator = new Evaluator();
+            evaluator.Visit(tree);
         }
     }
 

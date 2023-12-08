@@ -70,18 +70,18 @@ namespace MATHL.Visitors {
         }
 
         public override int VisitExpression_IDENTIFIER(MATHLParser.Expression_IDENTIFIERContext context) {
-            IToken identifier = context._IDENTIFIER;
+            IToken identifier = context.IDENTIFIER().Symbol;
             LSymbol idSymbol =
                 m_executionEnvironment.MSymbolTable.SearchSymbol(identifier.Text, SymbolCategory.ST_VARIABLE);
             return idSymbol.MValue;
         }
         public override int VisitExpression_NUMBER(MATHLParser.Expression_NUMBERContext context) {
-            IToken number = context._NUMBER;
+            IToken number = context.NUMBER().Symbol;
             return Int32.Parse(number.Text);
         }
 
         public override int VisitExpression_parenthesizedexpression(MATHLParser.Expression_parenthesizedexpressionContext context) {
-            return Visit(context._expression);
+            return Visit(context.expression());
         }
 
         public override int VisitExpression_multiplicationdivision(MATHLParser.Expression_multiplicationdivisionContext context) {
@@ -110,7 +110,7 @@ namespace MATHL.Visitors {
             int result=Visit(rhs) ;
 
             if (lhs is MATHLParser.Expression_IDENTIFIERContext expression_id) {
-                IToken identifier = expression_id._IDENTIFIER;
+                IToken identifier = expression_id.IDENTIFIER().Symbol;
                 LSymbol idLSymbol =
                     m_executionEnvironment.MSymbolTable.SearchSymbol(identifier.Text, SymbolCategory.ST_VARIABLE);
                 result = Visit(rhs);
@@ -122,19 +122,9 @@ namespace MATHL.Visitors {
             return result;
         }
         
-        public override int VisitExpression_functioncall(MATHLParser.Expression_functioncallContext context) {
-
-            // Map arguments
-
-            // Get access to the function body
-
-
-
-            return base.VisitExpression_functioncall(context);
-        }
 
         public override int VisitExpression_unaryprefixexpression(MATHLParser.Expression_unaryprefixexpressionContext context) {
-            int uv = Visit(context._expression);
+            int uv = Visit(context.expression());
 
             switch (context.op.Type) {
                 case MATHLLexer.PLUS:
