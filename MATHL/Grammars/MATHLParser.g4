@@ -49,13 +49,9 @@ postfix_declarators : LBR RBR;
 
 function_declaration : type IDENTIFIER '(' (variable_declaration (COMMA variable_declaration )*)? ')' command_block ;
 
-
-
-
-
 expression 
-			:  number														  #expression_NUMBER
-			|  IDENTIFIER 												 	  #expression_IDENTIFIER
+			: number														  #expression_NUMBER
+			| IDENTIFIER 												 	  #expression_IDENTIFIER
 			| range	 														  #expression_range												  
 			| LP expression RP												  #expression_parenthesizedexpression
 			| op=('+'|'-') expression										  #expression_unaryprefixexpression

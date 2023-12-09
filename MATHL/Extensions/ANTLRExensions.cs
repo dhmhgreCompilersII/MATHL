@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 public static class ANTLRExtensions {
 
+    
     private static ITerminalNode GetTerminalNode<Result>(this AbstractParseTreeVisitor<Result> t,
         ParserRuleContext node, IToken terminal) {
 
@@ -49,6 +50,28 @@ public static class ANTLRExtensions {
         return res;
     }
 
+    public static Result VisitElementInContext<Result,Param>(this AbstractParseTreeVisitor<Result> t,
+        ParserRuleContext node, int context, Stack<int> contextsStack,
+        ASTComposite parent, Stack<ASTComposite> parentStack,
+        Stack<Param> infoStack=null, Param param=default(Param)) {
+        Result res = default(Result);
+
+        parentStack.Push(parent);
+        contextsStack.Push(context);
+        if (infoStack != null) {
+            infoStack.Push(param);
+        }
+
+        res = t.Visit(node);     // Visits a particular element
+
+        contextsStack.Pop();
+        parentStack.Pop();
+        if (infoStack != null) {
+            infoStack.Pop();
+        }
+        return res;
+    }
+
     /// <summary>
     /// This method executes the boilerplate code that is necessary to visit successors
     /// in a specific context.
@@ -75,6 +98,32 @@ public static class ANTLRExtensions {
         parentsStack.Pop();
         return res;
     }
+
+
+    public static Result VisitElementsInContext<Result,Param>(this AbstractParseTreeVisitor<Result> t,
+        IEnumerable<IParseTree> nodeset, int context, Stack<int> contextsStack,
+        ASTComposite parent, Stack<ASTComposite> parentsStack,
+        Stack<Param> infoStack = null, Param param = default(Param)) {
+        Result res = default(Result);
+
+        parentsStack.Push(parent);
+        contextsStack.Push(context);
+        if (infoStack != null) {
+            infoStack.Push(param);
+        }
+
+        foreach (IParseTree node in nodeset) {
+            res = t.Visit(node);
+        }
+
+        contextsStack.Pop();
+        parentsStack.Pop();
+        if (infoStack != null) {
+            infoStack.Pop();
+        }
+        return res;
+    }
+
     /// <summary>
     /// This method visits a token of a ParserRuleContext node passing the appropriate information
     /// from parent node
@@ -96,6 +145,28 @@ public static class ANTLRExtensions {
         Result res = t.Visit(GetTerminalNode<Result>(t, tokenParent, node));
         s.Pop();
         parentStack.Pop();
+        return res;
+    }
+
+    public static Result VisitTerminalInContext<Result,Param>(this AbstractParseTreeVisitor<Result> t,
+        ParserRuleContext tokenParent, IToken node, int context, Stack<int> s,
+        ASTComposite parent, Stack<ASTComposite> parentStack,
+        Stack<Param> infoStack = null, Param param = default(Param)) {
+
+        parentStack.Push(parent);
+        s.Push(context);
+        if (infoStack != null) {
+            infoStack.Push(param);
+        }
+
+        Result res = t.Visit(GetTerminalNode<Result>(t, tokenParent, node));
+
+        s.Pop();
+        parentStack.Pop();
+        if (infoStack != null) {
+            infoStack.Pop();
+        }
+
         return res;
     }
 }
