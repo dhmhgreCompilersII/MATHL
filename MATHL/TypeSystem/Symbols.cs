@@ -51,11 +51,15 @@ namespace MATHL.TypeSystem {
         private List<VariableSymbol> m_ParameterSymbols;
         ASTElement m_FunctionBody;
 
-        public FunctionSymbol(string mName, LType mType) :
+        public FunctionSymbol(string mName, LType mType,
+            List<VariableSymbol> parameters) :
             base(mName, SymbolCategory.ST_FUNCTION, mType) {
             m_ParameterSymbols = new List<VariableSymbol>();
+            foreach (VariableSymbol parameter in parameters) {
+                AddParameter(parameter);
+            }
         }
-        public void AddParameter(VariableSymbol p) {
+        private void AddParameter(VariableSymbol p) {
             m_ParameterSymbols.Add(p);
         }
         public void AddFunctionRoot(ASTElement r) {

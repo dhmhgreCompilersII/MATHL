@@ -1,7 +1,9 @@
+using System.Text;
+
 namespace MATHL.TypeSystem {
 
     public enum TypeID {
-        TID_INTEGER, TID_FLOAT, TID_RANGE
+        TID_INTEGER, TID_FLOAT, TID_RANGE, TID_FUNCTION
     }
 
     public class LType {
@@ -31,6 +33,37 @@ namespace MATHL.TypeSystem {
 
         public override string ToString() {
             return "FloatingType";
+        }
+    }
+    public class FunctionType : LType {
+        private List<LType> m_parameters = new List<LType>();
+        private LType m_returnType;
+        public FunctionType(LType returnType, List<LType> parameters) :
+            base(TypeID.TID_FUNCTION, "Function") {
+            m_returnType = returnType;
+            m_typename += m_returnType + ",function";
+            foreach (LType parameter in parameters) {
+                AddParameter(parameter);
+            }
+        }
+
+        public override string ToString() {
+            StringBuilder typename = new StringBuilder($"{m_returnType} <f>(");
+            int i = 0;
+            foreach (LType type in m_parameters) {
+                if (i > 0) {
+                    typename.Append(", ");
+                }
+                typename.Append(type.ToString());
+                i++;
+            }
+            typename.Append(")");
+            return typename.ToString();
+        }
+
+        private void AddParameter(LType param) {
+            m_parameters.Add(param);
+            m_typename += "," + param.MTypename;
         }
     }
 

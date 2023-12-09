@@ -55,6 +55,7 @@ namespace MATHL.TypeSystem {
             reportFile.WriteLine("---- REPORTING SCOPESYSTEM CONTENTS -----\n");
 
             foreach (KeyValuePair<string, Scope> keyValuePair in m_scopes) {
+                reportFile.WriteLine($"------------------------------------");
                 reportFile.WriteLine($"---- SCOPE {keyValuePair.Key} ------");
                 reportFile.WriteLine(keyValuePair.Value);
                 reportFile.WriteLine();
