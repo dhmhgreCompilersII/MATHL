@@ -13,7 +13,6 @@ namespace MATHL.Visitors {
         private Stack<ASTComposite> m_parentsStack = new Stack<ASTComposite>();
         private Stack<int> m_contextsStack = new Stack<int>();
 
-
         public override ASTElement VisitCompile_unit(MATHLParser.Compile_unitContext context) {
 
             CCompileUnit newNode = new CCompileUnit();
@@ -22,6 +21,83 @@ namespace MATHL.Visitors {
             var res =this.VisitElementsInContext(context.command(),
                 CCompileUnit.COMMANDS,m_contextsStack, newNode, m_parentsStack);
             return m_root;
+        }
+
+        public override ASTElement VisitCommand_expression(MATHLParser.Command_expressionContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+            
+            CCommand_Expression newNode = new CCommand_Expression();
+            parent.AddChild(parentContext, newNode);
+            
+            var res = this.VisitElementInContext(context.expression(),
+                CCommand_Expression.COMMAND, m_contextsStack, newNode, m_parentsStack);
+            return newNode;
+        }
+
+        public override ASTElement VisitCommand_return(MATHLParser.Command_returnContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+
+            CCommand_Return newNode = new CCommand_Return();
+            parent.AddChild(parentContext, newNode);
+
+            var res = this.VisitElementInContext(context.expression(),
+                CCommand_Return.EXPRESSION, m_contextsStack, newNode, m_parentsStack);
+            return newNode;
+        }
+
+        public override ASTElement VisitCommand_block(MATHLParser.Command_blockContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+
+            CCommand_CommandBlock newNode = new CCommand_CommandBlock();
+            /*if (parent is CDeclarationFunction df) {
+                FunctionSymbol? fs = MATHLExecutionEnvironment.GetInstance().MSymbolTable
+                    .SearchSymbol(df.MFunctionName, SymbolCategory.ST_FUNCTION) as FunctionSymbol;
+                fs.AddFunctionRoot(newNode);
+            }*/
+            parent.AddChild(parentContext, newNode);
+
+            var res = this.VisitElementsInContext(context.command(),
+                CCommand_Expression.COMMAND, m_contextsStack, newNode, m_parentsStack);
+            return newNode;
+        }
+
+        public override ASTElement VisitVariable_declaration(MATHLParser.Variable_declarationContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+
+            CDeclarationVariable newNode = new CDeclarationVariable();
+            parent.AddChild(parentContext, newNode);
+
+            var res = this.VisitElementsInContext(context.variable_declarator(), CDeclarationVariable.DECLARATIONS,
+                m_contextsStack, newNode, m_parentsStack);
+
+            res = this.VisitElementInContext(context.type(), CDeclarationVariable.TYPE, m_contextsStack,
+                newNode, m_parentsStack);
+
+            return newNode;
+        }
+
+        public override ASTElement VisitVariable_declarator(MATHLParser.Variable_declaratorContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+
+            CDeclaratorVariable newNode = new CDeclaratorVariable();
+            parent.AddChild(parentContext, newNode);
+
+            var res = this.VisitTerminalInContext(context, context.IDENTIFIER().Symbol,
+                CDeclaratorVariable.VARIABLENAME, m_contextsStack, newNode, m_parentsStack);
+
+            res = this.VisitElementsInContext(context._pds, CDeclaratorVariable.TYPE,
+                m_contextsStack, newNode, m_parentsStack);
+
+            if (context.expression() != null) {
+                res = this.VisitElementInContext(context.expression(), CDeclaratorVariable.INITIALIZATION,
+                    m_contextsStack, newNode, m_parentsStack);
+            }
+            return newNode;
         }
 
         public override ASTElement VisitFunction_declaration(MATHLParser.Function_declarationContext context) {
@@ -43,53 +119,9 @@ namespace MATHL.Visitors {
             return newNode;
         }
 
-        public override ASTElement VisitCommand_return(MATHLParser.Command_returnContext context) {
-            ASTComposite parent = m_parentsStack.Peek();
-            int parentContext = m_contextsStack.Peek();
-
-            CCommand_Return newNode = new CCommand_Return();
-            parent.AddChild(parentContext, newNode);
-
-            var res = this.VisitElementInContext(context.expression(),
-                CCommand_Return.EXPRESSION, m_contextsStack, newNode, m_parentsStack);
-            return newNode;
-        }
-
-        public override ASTElement VisitCommand_block(MATHLParser.Command_blockContext context) {
-            ASTComposite parent = m_parentsStack.Peek();
-            int parentContext = m_contextsStack.Peek();
-
-            CCommand_CommandBlock newNode = new CCommand_CommandBlock();
-            if (parent is CDeclarationFunction df) {
-                    FunctionSymbol? fs = MATHLExecutionEnvironment.GetInstance().MSymbolTable
-                        .SearchSymbol(df.MFunctionName, SymbolCategory.ST_FUNCTION) as FunctionSymbol;
-                    fs.AddFunctionRoot(newNode);
-            }
-            parent.AddChild(parentContext, newNode);
-            
-            var res = this.VisitElementsInContext(context.command(),
-                CCommand_Expression.COMMAND, m_contextsStack, newNode, m_parentsStack);
-            return newNode;
-        }
-
-        public override ASTElement VisitCommand_expression(MATHLParser.Command_expressionContext context) {
-            ASTComposite parent = m_parentsStack.Peek();
-            int parentContext = m_contextsStack.Peek();
-
-
-            CCommand_Expression newNode = new CCommand_Expression();
-            parent.AddChild(parentContext,newNode);
-
-
-            var res = this.VisitElementInContext(context.expression(),
-                CCommand_Expression.COMMAND,m_contextsStack, newNode, m_parentsStack);
-            return newNode;
-        }
-
         public override ASTElement VisitExpression_equationassignment(MATHLParser.Expression_equationassignmentContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
-
 
             CExpression_Equation newNode = new CExpression_Equation();
             parent.AddChild(parentContext, newNode);
@@ -103,41 +135,9 @@ namespace MATHL.Visitors {
 
         }
         
-        public override ASTElement VisitVariable_declaration(MATHLParser.Variable_declarationContext context) {
-            ASTComposite parent = m_parentsStack.Peek();
-            int parentContext = m_contextsStack.Peek();
+        
 
-            CDeclarationVariable newNode = new CDeclarationVariable();
-            parent.AddChild(parentContext, newNode);
-
-           var res = this.VisitElementsInContext(context.variable_declarator(), CDeclarationVariable.DECLARATIONS, 
-                m_contextsStack, newNode, m_parentsStack);
-
-           res = this.VisitElementInContext(context.type(), CDeclarationVariable.TYPE, m_contextsStack,
-               newNode, m_parentsStack);
-
-            return newNode;
-        }
-
-        public override ASTElement VisitVariable_declarator(MATHLParser.Variable_declaratorContext context) {
-            ASTComposite parent = m_parentsStack.Peek();
-            int parentContext = m_contextsStack.Peek();
-
-            CDeclaratorVariable newNode = new CDeclaratorVariable();
-            parent.AddChild(parentContext, newNode);
-
-            var res = this.VisitTerminalInContext(context,context.IDENTIFIER().Symbol,
-                CDeclaratorVariable.VARIABLENAME, m_contextsStack,newNode,m_parentsStack);
-
-            res = this.VisitElementsInContext(context._pds, CDeclaratorVariable.TYPE,
-                m_contextsStack, newNode, m_parentsStack);
-
-            if (context.expression() != null) {
-                res = this.VisitElementInContext(context.expression(), CDeclaratorVariable.INITIALIZATION,
-                    m_contextsStack, newNode, m_parentsStack);
-            }
-            return newNode;
-        }
+        
 
         public override ASTElement VisitRange(MATHLParser.RangeContext context) {
             ASTComposite parent = m_parentsStack.Peek();
@@ -268,10 +268,10 @@ namespace MATHL.Visitors {
                     newNode = new CRangeType(node.GetText());
                     parent.AddChild(parentContext, newNode);
                     break;
-                case MATHLLexer.NUMBER:
+                /*case MATHLLexer.NUMBER:
                     newNode = new CNUMBER(node.GetText());
                     parent.AddChild(parentContext, newNode);
-                    break;
+                    break;*/
                 case MATHLLexer.IDENTIFIER:
                     newNode = new CIDENTIFIER(node.GetText());
                     parent.AddChild(parentContext, newNode);

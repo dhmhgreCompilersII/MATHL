@@ -344,8 +344,14 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
                     return nodelabel;
                 });
                 break;
-            case MATHLLexer.NUMBER:
-                nodelabel = "NUMBER_" + node.Symbol.Text;
+            case MATHLLexer.INTEGER:
+                nodelabel = "INTEGER_" + node.Symbol.Text;
+                Visit_Prologue(() => {
+                    return nodelabel;
+                });
+                break;
+            case MATHLLexer.FLOATING:
+                nodelabel = "FLOATING_" + node.Symbol.Text;
                 Visit_Prologue(() => {
                     return nodelabel;
                 });
@@ -358,7 +364,8 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
 
         switch (node.Symbol.Type) {
             case MATHLLexer.IDENTIFIER:
-            case MATHLLexer.NUMBER:
+            case MATHLLexer.INTEGER:
+            case MATHLLexer.FLOATING:
                 Visit_Epilogue();
                 break;
             default:

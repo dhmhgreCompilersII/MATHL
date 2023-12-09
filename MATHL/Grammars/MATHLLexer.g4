@@ -5,6 +5,10 @@ lexer grammar MATHLLexer;
 Lexer Rules
 */
 
+fragment NATURAL: [1-9][0-9]*;
+fragment SIGN: [+-];
+fragment EXPONENT : ([EeXx]|'10^')SIGN? NATURAL;
+
 INT : 'int';
 FLOAT : 'float';
 RANGE : 'range';
@@ -26,7 +30,8 @@ SEMICOLON : ';' ;
 COLON : ':';
 COMMA : ',';
 IDENTIFIER : [a-zA-Z][a-zA-Z0-9_]* ;
-NUMBER : '0'|[1-9][0-9]* ;
+INTEGER : '0'|SIGN? NATURAL;
+FLOATING : SIGN? (NATURAL?'.'NATURAL EXPONENT?)|(NATURAL'.'NATURAL? EXPONENT?);
+
 NEWLINE :'\r'?'\n' ; 
 SPACE :[ \t] ->skip;
-

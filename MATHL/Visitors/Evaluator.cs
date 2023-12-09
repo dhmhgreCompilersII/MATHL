@@ -71,14 +71,15 @@ namespace MATHL.Visitors {
 
         public override int VisitExpression_IDENTIFIER(MATHLParser.Expression_IDENTIFIERContext context) {
             IToken identifier = context.IDENTIFIER().Symbol;
-            LSymbol idSymbol =
+            /*LSymbol idSymbol =
                 m_executionEnvironment.MSymbolTable.SearchSymbol(identifier.Text, SymbolCategory.ST_VARIABLE);
-            return idSymbol.MValue;
+            return idSymbol.MValue;*/
+            return 0;
         }
-        public override int VisitExpression_NUMBER(MATHLParser.Expression_NUMBERContext context) {
+        /*public override int VisitExpression_NUMBER(MATHLParser.Expression_NUMBERContext context) {
             IToken number = context.NUMBER().Symbol;
             return Int32.Parse(number.Text);
-        }
+        }*/
 
         public override int VisitExpression_parenthesizedexpression(MATHLParser.Expression_parenthesizedexpressionContext context) {
             return Visit(context.expression());
@@ -111,10 +112,10 @@ namespace MATHL.Visitors {
 
             if (lhs is MATHLParser.Expression_IDENTIFIERContext expression_id) {
                 IToken identifier = expression_id.IDENTIFIER().Symbol;
-                LSymbol idLSymbol =
+                /*LSymbol idLSymbol =
                     m_executionEnvironment.MSymbolTable.SearchSymbol(identifier.Text, SymbolCategory.ST_VARIABLE);
                 result = Visit(rhs);
-                idLSymbol.MValue = result;
+                idLSymbol.MValue = result;*/
             }
             else {
 

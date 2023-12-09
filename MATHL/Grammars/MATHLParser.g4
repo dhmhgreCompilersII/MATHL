@@ -40,15 +40,12 @@ type
 	 | FLOAT 
 	 | RANGE 
 	 ;
-  
 
-variable_declarator : IDENTIFIER pds+=postfix_declarators* ( '=' expression )? 
-					;
+variable_declaration : type variable_declarator ( ',' variable_declarator )* ;   
 
-postfix_declarators : LBR RBR
-					;
+variable_declarator : IDENTIFIER pds+=postfix_declarators* ( '=' expression )? 	;
 
-variable_declaration : type variable_declarator ( ',' variable_declarator )* ; 
+postfix_declarators : LBR RBR;
 
 function_declaration : type IDENTIFIER '(' (variable_declaration (COMMA variable_declaration )*)? ')' command_block ;
 
@@ -57,7 +54,7 @@ function_declaration : type IDENTIFIER '(' (variable_declaration (COMMA variable
 
 
 expression 
-			:  NUMBER														  #expression_NUMBER
+			:  number														  #expression_NUMBER
 			|  IDENTIFIER 												 	  #expression_IDENTIFIER
 			| range	 														  #expression_range												  
 			| LP expression RP												  #expression_parenthesizedexpression
@@ -70,6 +67,10 @@ expression
 			| a=expression '=' b=expression									  #expression_equationassignment
 			| a=expression  b=expression									  #expression_context
 			;
+
+number :  INTEGER
+		| FLOATING
+		;
 
 params : expression (COMMA expression)*
 ;  
