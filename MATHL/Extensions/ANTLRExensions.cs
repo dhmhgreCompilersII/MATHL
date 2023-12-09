@@ -72,6 +72,17 @@ public static class ANTLRExtensions {
         return res;
     }
 
+    public static Result VisitElementInContext<Result, Param>(this AbstractParseTreeVisitor<Result> t,
+        ParserRuleContext node, Stack<Param> infoStack, Param param) {
+        Result res = default(Result);
+        
+        infoStack.Push(param);
+        res = t.Visit(node);     // Visits a particular element
+        infoStack.Pop();
+
+        return res;
+    }
+
     /// <summary>
     /// This method executes the boilerplate code that is necessary to visit successors
     /// in a specific context.
@@ -121,6 +132,18 @@ public static class ANTLRExtensions {
         if (infoStack != null) {
             infoStack.Pop();
         }
+        return res;
+    }
+
+    public static Result VisitElementsInContext<Result, Param>(this AbstractParseTreeVisitor<Result> t,
+        IEnumerable<IParseTree> nodeset, Stack<Param> infoStack = null, Param param = default(Param)) {
+        Result res = default(Result);
+        
+        infoStack.Push(param);
+        foreach (IParseTree node in nodeset) {
+            res = t.Visit(node);
+        }
+        infoStack.Pop();
         return res;
     }
 

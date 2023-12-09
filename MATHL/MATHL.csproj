@@ -29,6 +29,7 @@
   <ItemGroup>
     <Content Include="..\Testbench\AST.gif" Link="AST.gif" />
     <Content Include="..\Testbench\St.gif" Link="St.gif" />
+    <Content Include="..\Testbench\SymbolTable.txt" Link="SymbolTable.txt" />
     <Content Include="..\Testbench\test.txt" Link="test.txt" />
     <Content Include="..\Testbench\test1.txt" Link="test1.txt" />
   </ItemGroup>

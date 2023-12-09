@@ -1,0 +1,18 @@
+---- REPORTING SCOPESYSTEM CONTENTS -----
+
+---- SCOPE global ------
+NAME:global
+PARENT SCOPE:  NONE. Its the root scope
+
+NAMESPACE :ST_TYPENAME
+		---- EMPTY ----
+
+NAMESPACE :ST_VARIABLE
+	b:IntegerType
+	a:IntegerType
+	c:IntegerType
+NAMESPACE :ST_FUNCTION
+		---- EMPTY ----
+
+
+

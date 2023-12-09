@@ -10,17 +10,18 @@ namespace MATHL.TypeSystem {
     // by SymbolCategory enum. Scope supports lexical scoping thus, each scope
     // points to the parent scope. Each scope has a name taken from the closest
     // code element it which it belongs ( i.e command_block , function , global )
-    public class Scope: IScope {
+    public class Scope {
 
         private Dictionary<SymbolCategory, Dictionary<string, LSymbol>> m_symbolTable =
             new Dictionary<SymbolCategory, Dictionary<string, LSymbol>>();
 
         private string m_scopename;
-        private IScope m_parentScope;
+        private Scope m_parentScope;
 
-        public Scope(IScope parentScope,Action<Scope> init, string scopeName) {
+        public Scope(Scope parentScope,Action<Scope> init, string scopeName) {
             m_scopename = scopeName;
             m_parentScope = parentScope;
+            // Passing this to be able to initialize the object externally
             init(this);
         }
 
@@ -46,7 +47,7 @@ namespace MATHL.TypeSystem {
                 return null;
             }
         }
-        public IScope M_EnclosingScope {
+        public Scope M_EnclosingScope {
             get { return m_parentScope; }
         }
 
@@ -56,7 +57,7 @@ namespace MATHL.TypeSystem {
 
         public override string ToString() {
             StringBuilder str = new StringBuilder();
-            str.Append("Name:");
+            str.Append("NAME:");
             if (M_ScopeName != null) {
                 str.Append(m_scopename);
                 str.AppendLine();
@@ -65,19 +66,22 @@ namespace MATHL.TypeSystem {
                 str.AppendLine();
             }
 
-            str.Append("Parent Scope:");
+            str.Append("PARENT SCOPE:  ");
             if (M_EnclosingScope != null) {
                 str.Append(m_parentScope.M_ScopeName);
                 str.AppendLine();
             }
             else {
-                str.Append("NONE. Its the root scope");
+                str.AppendLine("NONE. Its the root scope");
                 str.AppendLine();
             }
 
             foreach (KeyValuePair<SymbolCategory, Dictionary<string, LSymbol>> keyValuePair in m_symbolTable) {
-                str.Append("Namespace :" + keyValuePair.Key);
+                str.Append("NAMESPACE :" + keyValuePair.Key);
                 str.AppendLine();
+                if (m_symbolTable[keyValuePair.Key].Count == 0) {
+                    str.AppendLine("\t\t---- EMPTY ----\n");
+                }
                 foreach (var lSymbol in m_symbolTable[keyValuePair.Key]) {
                     str.Append("\t"+lSymbol.Value);
                     str.AppendLine();

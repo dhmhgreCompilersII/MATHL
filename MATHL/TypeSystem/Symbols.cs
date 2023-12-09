@@ -1,5 +1,6 @@
 
 using MATHL.Composite;
+using System.Runtime.InteropServices;
 
 namespace MATHL.TypeSystem {
     // The base class of symbols of various categories
@@ -7,10 +8,18 @@ namespace MATHL.TypeSystem {
         ST_NA, ST_VARIABLE, ST_FUNCTION, ST_TYPENAME
     }
 
+    [StructLayout(LayoutKind.Explicit)]
+    public struct LValue {
+        [FieldOffset(0)]
+        public int ivalue;
+        [FieldOffset(0)]
+        public float fvalue;
+    }
+
     public abstract class LSymbol {
         string m_name;
         private LType m_type;
-        private int value;
+        private LValue m_value;
         private SymbolCategory m_symbolCategory;
 
         public LSymbol(string mName, SymbolCategory mSymbolType,LType mType) {
@@ -23,10 +32,8 @@ namespace MATHL.TypeSystem {
 
         public LType MType => m_type;
 
-        public int MValue {
-            get => value;
-            set => this.value = value;
-        }
+        public LValue MValue  => m_value;
+        
 
         public SymbolCategory MSymbolCategory => m_symbolCategory;
 

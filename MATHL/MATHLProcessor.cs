@@ -83,6 +83,8 @@ namespace MATHL {
             stPrinter.Visit(tree);
             ASTGeneration astgen = new ASTGeneration();
             var asttree =astgen.Visit(tree);
+            DeclarationProcessor declarationProcessor = new DeclarationProcessor();
+            declarationProcessor.Visit(tree);
             ASTPrinter astprinter = new ASTPrinter("AST.dot");
             astprinter.Visit(asttree);
             Evaluator evaluator = new Evaluator();
@@ -172,7 +174,9 @@ namespace MATHL {
     // Singleton
     public class MATHLExecutionEnvironment {
         // SymbolTable
-        private Scope m_symbolTable;
+        private ScopeSystem m_scopeSystem;
+
+        public ScopeSystem M_ScopeSystem => m_scopeSystem;
 
         // History of given commands
         private Dictionary<string, StringBuilder> m_history = new Dictionary<string, StringBuilder>();
@@ -180,10 +184,7 @@ namespace MATHL {
         // Singleton instance
         private static MATHLExecutionEnvironment m_instance = null;
 
-        public Scope MSymbolTable {
-            get => m_symbolTable;
-        }
-
+        
         public static MATHLExecutionEnvironment GetInstance() {
             if (m_instance == null) {
                 m_instance = new MATHLExecutionEnvironment();
@@ -213,12 +214,7 @@ namespace MATHL {
         }
 
         void InitializeProcessor() {
-            m_symbolTable = new Scope(null, scope => {
-                scope.InitializeNamespace(SymbolCategory.ST_TYPENAME);
-                scope.InitializeNamespace(SymbolCategory.ST_VARIABLE);
-                scope.InitializeNamespace(SymbolCategory.ST_FUNCTION);
-            },
-                "global");
+            m_scopeSystem = new ScopeSystem();
         }
     }
 }
