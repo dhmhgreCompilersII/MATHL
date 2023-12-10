@@ -45,7 +45,7 @@ variable_declaration : type variable_declarator ( ',' variable_declarator )* ;
 
 variable_declarator : IDENTIFIER pds+=postfix_declarators* ( '=' expression )? 	;
 
-postfix_declarators : LBR RBR;
+postfix_declarators : LBR INTEGER RBR;
 
 function_declaration : type IDENTIFIER '(' (variable_declaration (COMMA variable_declaration )*)? ')' command_block ;
 

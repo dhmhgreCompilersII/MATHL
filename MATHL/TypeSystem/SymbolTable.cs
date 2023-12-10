@@ -68,7 +68,7 @@ namespace MATHL.TypeSystem {
 
             str.Append("PARENT SCOPE:  ");
             if (M_EnclosingScope != null) {
-                str.Append(m_parentScope.M_ScopeName);
+                str.AppendLine(m_parentScope.M_ScopeName);
                 str.AppendLine();
             }
             else {

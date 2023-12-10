@@ -9,8 +9,7 @@ NAMESPACE :ST_TYPENAME
 		---- EMPTY ----
 
 NAMESPACE :ST_VARIABLE
-		---- EMPTY ----
-
+	c:IntegerType ArrayType[10][20][30]
 NAMESPACE :ST_FUNCTION
 	a:IntegerType <f>(IntegerType)
 
@@ -19,6 +18,7 @@ NAMESPACE :ST_FUNCTION
 ---- SCOPE a ------
 NAME:a
 PARENT SCOPE:  global
+
 NAMESPACE :ST_VARIABLE
 	b:IntegerType
 

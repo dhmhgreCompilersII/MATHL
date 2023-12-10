@@ -14,6 +14,7 @@ namespace MATHL.Visitors {
         private LType m_declarationType;
         List<VariableSymbol> m_parameters = new List<VariableSymbol>();
         private List<LType> m_parameterTypes = new List<LType>();
+        private List<int> m_dimensions = new List<int>();
 
         public LType DecLType {
             get => m_declarationType;
@@ -21,6 +22,7 @@ namespace MATHL.Visitors {
         }
         public List<VariableSymbol> MParameters => m_parameters;
         public List<LType> MParameterTypes => m_parameterTypes;
+        public List<int> MDimensions => m_dimensions;
     }
 
     internal class DeclarationProcessor : MATHLParserBaseVisitor<LType> {
@@ -70,6 +72,15 @@ namespace MATHL.Visitors {
             return null;
         }
 
+        public override LType VisitPostfix_declarators(MATHLParser.Postfix_declaratorsContext context) {
+            DeclarationInfo parentInfo = m_DeclProcInfos.Peek();
+
+            int dimensionSize = Int32.Parse(context.INTEGER().GetText());
+            parentInfo.MDimensions.Add(dimensionSize);
+
+            return base.VisitPostfix_declarators(context);
+        }
+
         public override LType VisitVariable_declarator(MATHLParser.Variable_declaratorContext context) {
             DeclarationInfo parentInfo = m_DeclProcInfos.Peek();
             
@@ -78,8 +89,16 @@ namespace MATHL.Visitors {
             string variableName = identifier.Text;
 
             // Visit postfix declarators to complete the type
-            // TODO
-            LType resutLType = parentInfo.DecLType;
+            LType resutLType;
+            if (context.postfix_declarators().Length > 0) {
+                DeclarationInfo info = new DeclarationInfo() { DecLType = parentInfo.DecLType };
+                this.VisitElementsInContext(context.postfix_declarators(), m_DeclProcInfos, info);
+                resutLType = new ArrayType(parentInfo.DecLType, info.MDimensions.ToArray());
+            }
+            else {
+                resutLType = parentInfo.DecLType;
+            }
+
 
             // Store variable into the symbol table
             VariableSymbol newVariableSymbol = new VariableSymbol(variableName, resutLType);

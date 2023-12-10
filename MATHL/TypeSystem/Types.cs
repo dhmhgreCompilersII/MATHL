@@ -3,7 +3,7 @@ using System.Text;
 namespace MATHL.TypeSystem {
 
     public enum TypeID {
-        TID_INTEGER, TID_FLOAT, TID_RANGE, TID_FUNCTION
+        TID_INTEGER, TID_FLOAT, TID_RANGE, TID_FUNCTION, TID_ARRAY
     }
 
     public class LType {
@@ -20,11 +20,33 @@ namespace MATHL.TypeSystem {
         }
     }
 
+    
     public class IntegerType : LType {
         public IntegerType() : base(TypeID.TID_INTEGER ,"IntegerType") { }
 
         public override string ToString() {
             return m_typename;
+        }
+    }
+
+    public class ArrayType : LType {
+        private LType m_elementType;
+        private int[] m_dimensions;
+        public ArrayType(LType elementtype, int[] dimensions) :
+            base(TypeID.TID_ARRAY, "ArrayType") {
+            m_dimensions = new int[dimensions.Length];
+            dimensions.CopyTo(m_dimensions, 0);
+            m_elementType = elementtype;
+        }
+
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(m_elementType);
+            sb.Append($" {m_typename}");
+            foreach (var dimension in m_dimensions) {
+                sb.Append($"[{dimension}]");
+            }
+            return sb.ToString();
         }
     }
 
@@ -38,6 +60,9 @@ namespace MATHL.TypeSystem {
     public class FunctionType : LType {
         private List<LType> m_parameters = new List<LType>();
         private LType m_returnType;
+
+        public LType MReturnType => m_returnType;
+
         public FunctionType(LType returnType, List<LType> parameters) :
             base(TypeID.TID_FUNCTION, "Function") {
             m_returnType = returnType;
@@ -64,6 +89,15 @@ namespace MATHL.TypeSystem {
         private void AddParameter(LType param) {
             m_parameters.Add(param);
             m_typename += "," + param.MTypename;
+        }
+
+        public LType GetParameter(int index) {
+            if (m_parameters.Count > 0) {
+                return m_parameters[index];
+            }
+            else {
+                throw new IndexOutOfRangeException();
+            }
         }
     }
 
