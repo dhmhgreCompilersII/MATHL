@@ -48,7 +48,19 @@ namespace MATHL.Composite {
             return visitor.VisitCommand_Expression(this, info);
         }
     }
-    public class CExpression_FunctionCall : ASTComposite {
+
+    public class CExpression : ASTComposite {
+        private bool m_isConstantExpression;
+
+        public bool MIsConstantExpression {
+            get => m_isConstantExpression;
+            set => m_isConstantExpression = value;
+        }
+
+        public CExpression(int contexts, int mType) : base(contexts, mType) { }
+    }
+
+    public class CExpression_FunctionCall : CExpression {
         public const int NAME = 0, PARAMS= 1;
         public readonly string[] mc_contextNames = { "FUNCTIONNAME", "ARGUMENTS" };
 
@@ -62,7 +74,7 @@ namespace MATHL.Composite {
             return visitor.VisitExpression_FunctionCall(this, info);
         }
     }
-    public class CExpression_Equation : ASTComposite {
+    public class CExpression_Equation : CExpression {
         public const int LHS = 0, RHS=1;
         public readonly string[] mc_contextNames = { "LHS", "RHS" };
 
@@ -76,7 +88,7 @@ namespace MATHL.Composite {
             return visitor.VisitExpression_Equation(this, info);
         }
     }
-    public class CExpression_UnaryPlus : ASTComposite {
+    public class CExpression_UnaryPlus : CExpression {
         public const int EXPR = 0;
         public readonly string[] mc_contextNames = { "Expression" };
 
@@ -90,7 +102,7 @@ namespace MATHL.Composite {
             return visitor.VisitExpression_UnaryPlus(this, info);
         }
     }
-    public class CExpression_UnaryMinus : ASTComposite {
+    public class CExpression_UnaryMinus : CExpression {
         public const int EXPR = 0;
         public readonly string[] mc_contextNames = { "Expression" };
 
@@ -104,7 +116,7 @@ namespace MATHL.Composite {
             return visitor.VisitExpression_UnaryMinus(this, info);
         }
     }
-    public class CExpression_Addition : ASTComposite {
+    public class CExpression_Addition : CExpression {
         public const int LHS = 0, RHS = 1;
         public readonly string[] mc_contextNames = { "LHS", "RHS" };
 
@@ -118,7 +130,7 @@ namespace MATHL.Composite {
             return visitor.VisitExpression_Addition(this, info);
         }
     }
-    public class CExpression_Subtraction : ASTComposite {
+    public class CExpression_Subtraction : CExpression {
         public const int LHS = 0, RHS = 1;
         public readonly string[] mc_contextNames = { "LHS", "RHS" };
 
@@ -132,7 +144,7 @@ namespace MATHL.Composite {
             return visitor.VisitExpression_Subtraction(this, info);
         }
     }
-    public class CExpression_Multiplication : ASTComposite {
+    public class CExpression_Multiplication : CExpression {
         public const int LHS = 0, RHS = 1;
         public readonly string[] mc_contextNames = { "LHS", "RHS" };
 
@@ -146,7 +158,7 @@ namespace MATHL.Composite {
             return visitor.VisitExpression_Multiplication(this, info);
         }
     }
-    public class CExpression_FDivision : ASTComposite {
+    public class CExpression_FDivision : CExpression {
         public const int LHS = 0, RHS = 1;
         public readonly string[] mc_contextNames = { "LHS", "RHS" };
 
@@ -160,7 +172,7 @@ namespace MATHL.Composite {
             return visitor.VisitExpression_FDivision(this, info);
         }
     }
-    public class CExpression_IDivision : ASTComposite {
+    public class CExpression_IDivision : CExpression {
         public const int LHS = 0, RHS = 1;
         public readonly string[] mc_contextNames = { "LHS", "RHS" };
 
@@ -174,7 +186,7 @@ namespace MATHL.Composite {
             return visitor.VisitExpression_IDivision(this, info);
         }
     }
-    public class CExpression_Modulo : ASTComposite {
+    public class CExpression_Modulo : CExpression {
         public const int LHS = 0, RHS = 1;
         public readonly string[] mc_contextNames = { "LHS", "RHS" };
 
@@ -188,7 +200,7 @@ namespace MATHL.Composite {
             return visitor.VisitExpression_Modulo(this, info);
         }
     }
-    public class CExpression_Range : ASTComposite {
+    public class CExpression_Range : CExpression {
         public const int START = 0, END = 1 , STEP=2;
         public readonly string[] mc_contextNames = { "Start", "End", "Step" };
 
@@ -281,9 +293,9 @@ namespace MATHL.Composite {
 
         public LType MType1 => m_type;
 
-        public CNUMBER(string leafLiteral) :
+        public CNUMBER(string leafLiteral,LType numberType) :
             base(leafLiteral, (int)NodeType.T_NUMBER) {
-            m_type = new IntegerType();
+            m_type = numberType;
         }
 
         public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v, params Params[] info) {
@@ -313,7 +325,8 @@ namespace MATHL.Composite {
 
         public CIntType(string leafLiteral) :
             base(leafLiteral, (int)NodeType.T_INTTYPE) {
-            m_type = new IntegerType();
+            m_type = MATHLExecutionEnvironment.GetInstance().M_ScopeSystem.M_GlobalScope
+                .SearchSymbol(MStringLiteral, SymbolCategory.ST_TYPENAME).MType;
         }
 
         public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v, params Params[] info) {
@@ -330,7 +343,8 @@ namespace MATHL.Composite {
 
         public CFloatType(string leafLiteral) :
             base(leafLiteral, (int)NodeType.T_FLOATTYPE) {
-            m_type = new FloatingType();
+            m_type = MATHLExecutionEnvironment.GetInstance().M_ScopeSystem.M_GlobalScope
+                .SearchSymbol(MStringLiteral, SymbolCategory.ST_TYPENAME).MType;
         }
 
         public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v, params Params[] info) {

@@ -1,17 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MATHL.TypeSystem {
     public class ScopeSystem {
+        public static readonly string m_globalScopeName = "global";
         private Dictionary<string, Scope> m_scopes = new Dictionary<string, Scope>();
         Stack<Scope> m_scopesStack = new Stack<Scope>();
         private Scope m_currentScope = null;
-
+        private Scope m_globalScope=null;
         public Scope M_CurrentScope => m_currentScope;
+        public Scope M_GlobalScope => m_globalScope;
+        public static string M_GlobalScopeName => m_globalScopeName;
 
+        public ScopeSystem() {
+            InitializeTypes();
+        }
+
+        public void InitializeTypes() {
+            // Create global scope 
+            m_globalScope = new Scope(null,
+                scope => {
+                        scope.InitializeNamespace(SymbolCategory.ST_TYPENAME);
+                        scope.InitializeNamespace(SymbolCategory.ST_VARIABLE);
+                        scope.InitializeNamespace(SymbolCategory.ST_FUNCTION);
+                    
+                },
+                m_globalScopeName);
+            m_scopes[M_GlobalScopeName] = m_globalScope;
+
+            // Initialize global scope typanames namespace
+            M_GlobalScope.DefineSymbol(new TypenameSymbol("int", IntegerType.Instance),SymbolCategory.ST_TYPENAME);
+            M_GlobalScope.DefineSymbol(new TypenameSymbol("float",FloatingType.Instance), SymbolCategory.ST_TYPENAME);
+        }
+        
         /// <summary>
         /// Creates and enters a scope ( symboltable ). The first scope is considered
         /// global with 3 namespaces (typenames, variables and functions ).
@@ -19,20 +44,25 @@ namespace MATHL.TypeSystem {
         /// </summary>
         /// <param name="scopename">if global scopename must be null and non-null otherwise</param>
         /// <returns></returns>
-        public Scope EnterScope(string scopename = null) {
-            string scopeName = m_currentScope == null ? "global" : scopename;
-            m_currentScope = new Scope(m_currentScope,
-                scope => {
-                    if (scopename == null) {
-                        scope.InitializeNamespace(SymbolCategory.ST_TYPENAME);
+        public Scope EnterScope(string scopename) {
+            // Check if the scope already exists and if not create it
+            // Global scope is initialized upon construction and it is 
+            // the only existing scope
+            if (!m_scopes.ContainsKey(scopename)) {
+                m_currentScope = new Scope(m_currentScope,
+                    scope => {
                         scope.InitializeNamespace(SymbolCategory.ST_VARIABLE);
-                        scope.InitializeNamespace(SymbolCategory.ST_FUNCTION);
-                    } else {
-                        scope.InitializeNamespace(SymbolCategory.ST_VARIABLE);
-                    }
-                },
-                scopeName);
-            m_scopes[scopeName] = m_currentScope;
+                    },
+                    scopename);
+                // Store it to m_scopes
+                m_scopes[scopename] = m_currentScope;
+            }
+            else {
+                // If the scope already exists take it from m_scopes
+                m_currentScope = m_scopes[scopename];
+            }
+            
+            // Push scope
             m_scopesStack.Push(m_currentScope);
             return m_currentScope;
         }

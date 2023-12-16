@@ -6,12 +6,12 @@ NAME:global
 PARENT SCOPE:  NONE. Its the root scope
 
 NAMESPACE :ST_TYPENAME
-		---- EMPTY ----
-
+	int:IntegerType
+	float:FloatingType
 NAMESPACE :ST_VARIABLE
 	c:IntegerType ArrayType[10][20][30]
 NAMESPACE :ST_FUNCTION
-	a:IntegerType <f>(IntegerType)
+	a:IntegerType <f>(IntegerType, FloatingType)
 
 
 ------------------------------------
@@ -21,5 +21,6 @@ PARENT SCOPE:  global
 
 NAMESPACE :ST_VARIABLE
 	b:IntegerType
+	t:FloatingType
 
 

@@ -36,7 +36,7 @@ namespace MATHL.Visitors {
         
         public override LType VisitCompile_unit(MATHLParser.Compile_unitContext context) {
             // Create global scope and visit descentant nodes
-            m_scopeSystem.EnterScope();
+            m_scopeSystem.EnterScope(ScopeSystem.M_GlobalScopeName);
             base.VisitCompile_unit(context);
             m_scopeSystem.ExitScope();
             m_scopeSystem.Report("SymbolTable.txt");
@@ -111,8 +111,10 @@ namespace MATHL.Visitors {
         public override LType VisitType(MATHLParser.TypeContext context) {
             IToken typeSpecifier = (context.GetChild(0) as ITerminalNode).Symbol;
             LType declaredtype = typeSpecifier.Type switch {
-                MATHLLexer.INT => new IntegerType(),
-                MATHLLexer.FLOAT => new FloatingType(),
+                MATHLLexer.INT => MATHLExecutionEnvironment.GetInstance().M_ScopeSystem.M_GlobalScope.
+                    SearchSymbol(typeSpecifier.Text,SymbolCategory.ST_TYPENAME).MType,
+                MATHLLexer.FLOAT => MATHLExecutionEnvironment.GetInstance().M_ScopeSystem.M_GlobalScope.
+                    SearchSymbol(typeSpecifier.Text, SymbolCategory.ST_TYPENAME).MType,
                 MATHLLexer.RANGE => new RangeType()
             };
             return declaredtype;

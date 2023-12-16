@@ -22,8 +22,18 @@ namespace MATHL.TypeSystem {
 
     
     public class IntegerType : LType {
-        public IntegerType() : base(TypeID.TID_INTEGER ,"IntegerType") { }
+        private static IntegerType m_instance;
 
+        private IntegerType() : base(TypeID.TID_INTEGER ,"IntegerType") { }
+
+        public static IntegerType Instance {
+            get {
+                if (m_instance == null) {
+                    m_instance = new IntegerType();
+                }
+                return m_instance;
+            }
+        }
         public override string ToString() {
             return m_typename;
         }
@@ -51,7 +61,18 @@ namespace MATHL.TypeSystem {
     }
 
     public class FloatingType : LType {
-        public FloatingType() : base(TypeID.TID_FLOAT,"FloatingType") { }
+        private static FloatingType m_instance;
+
+        public static FloatingType Instance {
+            get {
+                if (m_instance == null) {
+                    m_instance = new FloatingType();
+                }
+                return m_instance;
+            }
+        }
+
+        private FloatingType() : base(TypeID.TID_FLOAT,"FloatingType") { }
 
         public override string ToString() {
             return "FloatingType";

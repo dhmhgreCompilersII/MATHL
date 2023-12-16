@@ -135,10 +135,6 @@ namespace MATHL.Visitors {
 
         }
         
-        
-
-        
-
         public override ASTElement VisitRange(MATHLParser.RangeContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
@@ -248,7 +244,20 @@ namespace MATHL.Visitors {
                 m_contextsStack, newNode, m_parentsStack);
             return newNode;
         }
-        
+
+        public override ASTElement VisitNumberINTEGER(MATHLParser.NumberINTEGERContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+
+            
+
+            return base.VisitNumberINTEGER(context);
+        }
+
+        public override ASTElement VisitNumberFLOAT(MATHLParser.NumberFLOATContext context) {
+            return base.VisitNumberFLOAT(context);
+        }
+
         public override ASTElement VisitTerminal(ITerminalNode node) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
@@ -268,10 +277,6 @@ namespace MATHL.Visitors {
                     newNode = new CRangeType(node.GetText());
                     parent.AddChild(parentContext, newNode);
                     break;
-                /*case MATHLLexer.NUMBER:
-                    newNode = new CNUMBER(node.GetText());
-                    parent.AddChild(parentContext, newNode);
-                    break;*/
                 case MATHLLexer.IDENTIFIER:
                     newNode = new CIDENTIFIER(node.GetText());
                     parent.AddChild(parentContext, newNode);

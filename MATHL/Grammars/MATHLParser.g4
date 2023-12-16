@@ -64,8 +64,8 @@ expression
 			| a=expression  b=expression									  #expression_context
 			;
 
-number :  INTEGER
-		| FLOATING
+number :  INTEGER		#numberINTEGER
+		| FLOATING		#numberFLOAT
 		;
 
 params : expression (COMMA expression)*
