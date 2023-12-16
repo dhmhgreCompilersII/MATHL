@@ -9,7 +9,7 @@ NAMESPACE :ST_TYPENAME
 	int:IntegerType
 	float:FloatingType
 NAMESPACE :ST_VARIABLE
-	c:IntegerType ArrayType[10][20][30]
+	c:IntegerType
 NAMESPACE :ST_FUNCTION
 	a:IntegerType <f>(IntegerType, FloatingType)
 

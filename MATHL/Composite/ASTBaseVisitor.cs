@@ -104,6 +104,9 @@ namespace MATHL.Composite {
         public virtual Result VisitExpression_Range(CExpression_Range node, params Params[] args) {
             return VisitChildren(node, args);
         }
+        public virtual Result VisitExpression_Number(CExpression_Number node, params Params[] args) {
+            return VisitChildren(node, args);
+        }
         public virtual Result VisitCommand_CommandBlock(CCommand_CommandBlock node, params Params[] args) {
             return VisitChildren(node, args);
         }
@@ -125,7 +128,10 @@ namespace MATHL.Composite {
         public virtual Result VisitT_RangeDataType(CRangeType node, params Params[] args) {
             return default(Result);
         }
-        public virtual Result VisitT_NUMBER(CNUMBER node, params Params[] args) {
+        public virtual Result VisitT_INTEGERNUMBER(CINTEGERNUMBER node, params Params[] args) {
+            return default(Result);
+        }
+        public virtual Result VisitT_FLOATNUMBER(CFLOATNUMBER node, params Params[] args) {
             return default(Result);
         }
         public virtual Result VisitT_IDENTIFIER(CIDENTIFIER node, params Params[] args) {

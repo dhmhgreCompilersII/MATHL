@@ -33,8 +33,8 @@ namespace MATHL.TypeSystem {
             m_scopes[M_GlobalScopeName] = m_globalScope;
 
             // Initialize global scope typanames namespace
-            M_GlobalScope.DefineSymbol(new TypenameSymbol("int", IntegerType.Instance),SymbolCategory.ST_TYPENAME);
-            M_GlobalScope.DefineSymbol(new TypenameSymbol("float",FloatingType.Instance), SymbolCategory.ST_TYPENAME);
+            M_GlobalScope.DefineSymbol(new TypenameSymbol(IntegerType.mc_typename, IntegerType.Instance),SymbolCategory.ST_TYPENAME);
+            M_GlobalScope.DefineSymbol(new TypenameSymbol(FloatingType.mc_typename,FloatingType.Instance), SymbolCategory.ST_TYPENAME);
         }
         
         /// <summary>

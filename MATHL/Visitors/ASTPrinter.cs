@@ -284,7 +284,21 @@ namespace MATHL.Visitors {
             return 0;
         }
 
-        public override int VisitT_NUMBER(CNUMBER node, params ASTElement[] args) {
+        public override int VisitExpression_Number(CExpression_Number node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CExpression_Number.NUMBER,
+                node.mc_contextNames[CExpression_Number.NUMBER]);
+         
+            return base.VisitExpression_Number(node, node);
+        }
+
+        public override int VisitT_INTEGERNUMBER(CINTEGERNUMBER node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+            return 0;
+        }
+
+        public override int VisitT_FLOATNUMBER(CFLOATNUMBER node, params ASTElement[] args) {
             m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
             return 0;
         }

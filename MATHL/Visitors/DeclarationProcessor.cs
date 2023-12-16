@@ -98,8 +98,7 @@ namespace MATHL.Visitors {
             else {
                 resutLType = parentInfo.DecLType;
             }
-
-
+            
             // Store variable into the symbol table
             VariableSymbol newVariableSymbol = new VariableSymbol(variableName, resutLType);
             M_CurrentScope.DefineSymbol(newVariableSymbol, SymbolCategory.ST_VARIABLE);

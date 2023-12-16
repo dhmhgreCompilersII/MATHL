@@ -13,9 +13,9 @@ namespace MATHL.Composite {
         NT_DECLARATION_FUNCTION, NT_COMMAND_COMMANDBLOCK, NT_COMMAND_RETURN,
         NT_EXPRESSION_EQUATION, NT_EXPRESSION_ADDITION, NT_EXPRESSION_SUBTRACTION, NT_EXPRESSION_MULTIPLICATION,
         NT_EXPRESSION_FDIVISION, NT_EXPRESSION_IDIVISION, NT_EXPRESSION_MODULO,NT_EXPRESSION_UNARYPLUS,
-        NT_EXPRESSION_UNARYMINUS, NT_EXPRESSION_RANGE,NT_EXPRESSION_FUNCTIONCALL,
+        NT_EXPRESSION_UNARYMINUS, NT_EXPRESSION_RANGE,NT_EXPRESSION_FUNCTIONCALL, NT_EXPRESSION_NUMBER,
 
-        T_INTTYPE, T_FLOATTYPE, T_RANGETYPE,T_NUMBER,T_IDENTIFIER
+        T_INTTYPE, T_FLOATTYPE, T_RANGETYPE,T_IDENTIFIER, T_FLOATNUMBER, T_INTEGERNUMBER
         
     }
 
@@ -50,11 +50,17 @@ namespace MATHL.Composite {
     }
 
     public class CExpression : ASTComposite {
+        private LType m_type;
         private bool m_isConstantExpression;
 
         public bool MIsConstantExpression {
             get => m_isConstantExpression;
             set => m_isConstantExpression = value;
+        }
+
+        public LType M_ExpressionType {
+            get => m_type;
+            set => m_type = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         public CExpression(int contexts, int mType) : base(contexts, mType) { }
@@ -200,6 +206,20 @@ namespace MATHL.Composite {
             return visitor.VisitExpression_Modulo(this, info);
         }
     }
+
+    public class CExpression_Number : CExpression {
+        public const int NUMBER = 0;
+        public readonly string[] mc_contextNames = { "NUMBER" };
+        public CExpression_Number() : 
+            base(1, (int)NodeType.NT_EXPRESSION_NUMBER) { }
+
+        public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v,
+            params Params[] info) {
+            MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
+            return visitor.VisitExpression_Number(this, info);
+        }
+    }
+
     public class CExpression_Range : CExpression {
         public const int START = 0, END = 1 , STEP=2;
         public readonly string[] mc_contextNames = { "Start", "End", "Step" };
@@ -286,21 +306,43 @@ namespace MATHL.Composite {
             return visitor.VisitDeclaration_Function(this, info);
         }
     }
-    public class CNUMBER : ASTLeaf {
+
+
+    public class CINTEGERNUMBER : ASTLeaf {
         private LType m_type;
 
         public override string MNodeName => m_nodeName + "_" + MStringLiteral;
 
         public LType MType1 => m_type;
 
-        public CNUMBER(string leafLiteral,LType numberType) :
-            base(leafLiteral, (int)NodeType.T_NUMBER) {
-            m_type = numberType;
+        public CINTEGERNUMBER(string leafLiteral) :
+            base(leafLiteral, (int)NodeType.T_INTEGERNUMBER) {
+            m_type = MATHLExecutionEnvironment.GetInstance().M_ScopeSystem.M_GlobalScope.
+                SearchSymbol(IntegerType.mc_typename,SymbolCategory.ST_TYPENAME).MType;
         }
 
         public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v, params Params[] info) {
             MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
-            return visitor.VisitT_NUMBER(this, info);
+            return visitor.VisitT_INTEGERNUMBER(this, info);
+        }
+    }
+
+    public class CFLOATNUMBER : ASTLeaf {
+        private LType m_type;
+
+        public override string MNodeName => m_nodeName + "_" + MStringLiteral;
+
+        public LType M_Type => m_type;
+
+        public CFLOATNUMBER(string leafLiteral) :
+            base(leafLiteral, (int)NodeType.T_FLOATNUMBER) {
+            m_type = m_type = MATHLExecutionEnvironment.GetInstance().M_ScopeSystem.M_GlobalScope.
+                SearchSymbol(FloatingType.mc_typename, SymbolCategory.ST_TYPENAME).MType; ;
+        }
+
+        public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v, params Params[] info) {
+            MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
+            return visitor.VisitT_FLOATNUMBER(this, info);
         }
     }
 

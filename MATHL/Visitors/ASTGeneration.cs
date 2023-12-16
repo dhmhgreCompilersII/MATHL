@@ -248,14 +248,34 @@ namespace MATHL.Visitors {
         public override ASTElement VisitNumberINTEGER(MATHLParser.NumberINTEGERContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
-
             
+            CINTEGERNUMBER newNode = new CINTEGERNUMBER(context.GetText());
+            parent.AddChild(parentContext, newNode);
 
-            return base.VisitNumberINTEGER(context);
+            return newNode;
         }
 
         public override ASTElement VisitNumberFLOAT(MATHLParser.NumberFLOATContext context) {
-            return base.VisitNumberFLOAT(context);
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+
+            CFLOATNUMBER newNode = new CFLOATNUMBER(context.GetText());
+            parent.AddChild(parentContext, newNode);
+
+            return newNode;
+        }
+
+        public override ASTElement VisitExpression_NUMBER(MATHLParser.Expression_NUMBERContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+
+            ASTComposite newNode = new CExpression_Number();
+            parent.AddChild(parentContext, newNode);
+
+            this.VisitElementInContext(context.number(),CExpression_Number.NUMBER,
+                m_contextsStack, newNode, m_parentsStack);
+
+            return newNode;
         }
 
         public override ASTElement VisitTerminal(ITerminalNode node) {

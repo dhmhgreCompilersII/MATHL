@@ -1,2 +1,2 @@
 int a(int b,float t) {}
-int c[10][20][30]
+int c=1;

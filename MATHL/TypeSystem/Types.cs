@@ -22,8 +22,9 @@ namespace MATHL.TypeSystem {
 
     
     public class IntegerType : LType {
+        public static readonly string mc_typename="int";
         private static IntegerType m_instance;
-
+        
         private IntegerType() : base(TypeID.TID_INTEGER ,"IntegerType") { }
 
         public static IntegerType Instance {
@@ -61,6 +62,7 @@ namespace MATHL.TypeSystem {
     }
 
     public class FloatingType : LType {
+        public static readonly string mc_typename = "float";
         private static FloatingType m_instance;
 
         public static FloatingType Instance {
