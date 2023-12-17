@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MATHL.Visitors {
+namespace MATHL.ASTVisitors {
     internal class ASTPrinter : MATHLBaseVisitor<int, ASTElement> {
         StreamWriter m_writer;
         private string m_outputFilename;

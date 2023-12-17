@@ -18,9 +18,27 @@ namespace MATHL.TypeSystem {
         private string m_scopename;
         private Scope m_parentScope;
 
-        public Scope(Scope parentScope,Action<Scope> init, string scopeName) {
-            m_scopename = scopeName;
+        // Scope nesting level into other scopes
+        private int m_scopelevel;
+        public int M_Scopelevel => m_scopelevel;
+
+        public Scope(Scope parentScope,Action<Scope> init, string scopeName=null) {
+            // 1. Set parent scope
             m_parentScope = parentScope;
+
+            // 2. Set scope level
+            if (parentScope == null) {
+                m_scopelevel = -1;
+            }
+            m_scopelevel++;
+
+            // 3. Set scope name
+            if (scopeName == null) {
+                m_scopename = parentScope.M_ScopeName + $".{m_scopelevel}";
+            } else {
+                m_scopename = scopeName;
+            }
+            // 4. Initialize scope using external code 
             // Passing this to be able to initialize the object externally
             init(this);
         }

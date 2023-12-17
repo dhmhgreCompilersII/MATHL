@@ -24,3 +24,12 @@ NAMESPACE :ST_VARIABLE
 	t:FloatingType
 
 
+------------------------------------
+---- SCOPE global.1 ------
+NAME:global.1
+PARENT SCOPE:  global
+
+NAMESPACE :ST_VARIABLE
+	c:IntegerType
+
+

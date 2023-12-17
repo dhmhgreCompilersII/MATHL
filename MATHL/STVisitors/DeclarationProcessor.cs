@@ -11,15 +11,16 @@ using MATHL.TypeSystem;
 namespace MATHL.Visitors {
 
     internal class DeclarationInfo {
-        private LType m_declarationType;
+        private LType m_declarationType=null;
         List<VariableSymbol> m_parameters = new List<VariableSymbol>();
         private List<LType> m_parameterTypes = new List<LType>();
         private List<int> m_dimensions = new List<int>();
-
+        
         public LType DecLType {
             get => m_declarationType;
             set => m_declarationType = value ?? throw new ArgumentNullException(nameof(value));
         }
+
         public List<VariableSymbol> MParameters => m_parameters;
         public List<LType> MParameterTypes => m_parameterTypes;
         public List<int> MDimensions => m_dimensions;
@@ -30,8 +31,8 @@ namespace MATHL.Visitors {
         private ScopeSystem m_scopeSystem;
         private Scope M_CurrentScope => m_scopeSystem.M_CurrentScope;
 
-        public DeclarationProcessor() {
-            m_scopeSystem = MATHLExecutionEnvironment.GetInstance().M_ScopeSystem;
+        public DeclarationProcessor(ScopeSystem scopesystem) {
+            m_scopeSystem = scopesystem;
         }
         
         public override LType VisitCompile_unit(MATHLParser.Compile_unitContext context) {
@@ -117,6 +118,22 @@ namespace MATHL.Visitors {
                 MATHLLexer.RANGE => new RangeType()
             };
             return declaredtype;
+        }
+
+        public override LType VisitCommand_block(MATHLParser.Command_blockContext context) {
+            // 1. Enter block scope
+            if (!(context.Parent is MATHLParser.Function_declarationContext)) {
+                m_scopeSystem.EnterScope(null);
+            }
+
+            DeclarationInfo empty = new DeclarationInfo();
+            this.VisitElementsInContext(context.command(), m_DeclProcInfos, empty);
+
+            // 1. Enter block scope
+            if (!(context.Parent is MATHLParser.Function_declarationContext)) {
+                m_scopeSystem.ExitScope();
+            }
+            return base.VisitCommand_block(context);
         }
 
         public override LType VisitFunction_declaration(MATHLParser.Function_declarationContext context) {

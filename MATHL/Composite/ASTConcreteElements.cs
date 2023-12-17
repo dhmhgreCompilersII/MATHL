@@ -50,10 +50,10 @@ namespace MATHL.Composite {
     }
 
     public class CExpression : ASTComposite {
-        private LType m_type;
-        private bool m_isConstantExpression;
+        private LType m_type=null;
+        private bool m_isConstantExpression=false;
 
-        public bool MIsConstantExpression {
+        public bool M_IsConstantExpression {
             get => m_isConstantExpression;
             set => m_isConstantExpression = value;
         }
@@ -313,7 +313,7 @@ namespace MATHL.Composite {
 
         public override string MNodeName => m_nodeName + "_" + MStringLiteral;
 
-        public LType MType1 => m_type;
+        public LType M_Type => m_type;
 
         public CINTEGERNUMBER(string leafLiteral) :
             base(leafLiteral, (int)NodeType.T_INTEGERNUMBER) {

@@ -48,14 +48,14 @@ namespace MATHL.TypeSystem {
             // Check if the scope already exists and if not create it
             // Global scope is initialized upon construction and it is 
             // the only existing scope
-            if (!m_scopes.ContainsKey(scopename)) {
+            if (scopename==null || !m_scopes.ContainsKey(scopename)) {
                 m_currentScope = new Scope(m_currentScope,
                     scope => {
                         scope.InitializeNamespace(SymbolCategory.ST_VARIABLE);
                     },
                     scopename);
                 // Store it to m_scopes
-                m_scopes[scopename] = m_currentScope;
+                m_scopes[m_currentScope.M_ScopeName] = m_currentScope;
             }
             else {
                 // If the scope already exists take it from m_scopes

@@ -1,2 +1,7 @@
 int a(int b,float t) {}
 int c=1;
+c=c+1;
+{
+int c=1;
+c=c+1;
+}

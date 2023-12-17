@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
+using MATHL.ASTVisitors;
+using MATHL.STVisitors;
 using MATHL.TypeSystem;
 using MATHL.Visitors;
 using static MATHL.MATHLInteractiveInterpreter;
 
-namespace MATHL {
+namespace MATHL
+{
 
     public class MATHLCommandLineProcessor {
         private MATHLExecutionEnvironment m_environment;
@@ -70,7 +73,7 @@ namespace MATHL {
         public abstract void Start();
 
         protected MATHLInterpreter() {
-            m_environment = MATHLExecutionEnvironment.GetInstance();
+            m_environment = MATHLExecutionEnvironment.Instance;
         }
 
         protected void StartMATHLParser(string input) {
@@ -81,14 +84,13 @@ namespace MATHL {
             IParseTree tree = parser.compile_unit();
             SyntaxTreePrinter stPrinter = new SyntaxTreePrinter("St");
             stPrinter.Visit(tree);
-            ASTGeneration astgen = new ASTGeneration();
-            var asttree =astgen.Visit(tree);
-            DeclarationProcessor declarationProcessor = new DeclarationProcessor();
+            DeclarationProcessor declarationProcessor = new DeclarationProcessor(m_environment.M_ScopeSystem);
             declarationProcessor.Visit(tree);
+            ASTGeneration astgen = new ASTGeneration(m_environment.M_ScopeSystem);
+            var asttree = astgen.Visit(tree);
             ASTPrinter astprinter = new ASTPrinter("AST.dot");
             astprinter.Visit(asttree);
-            Evaluator evaluator = new Evaluator();
-            evaluator.Visit(tree);
+            
         }
     }
 
@@ -184,7 +186,8 @@ namespace MATHL {
         // Singleton instance
         private static MATHLExecutionEnvironment m_instance = null;
 
-        
+        public static MATHLExecutionEnvironment Instance => m_instance;
+
         public static MATHLExecutionEnvironment GetInstance() {
             if (m_instance == null) {
                 m_instance = new MATHLExecutionEnvironment();

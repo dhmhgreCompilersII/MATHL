@@ -22,6 +22,7 @@ namespace MATHL.TypeSystem {
         private LValue m_value;
         private SymbolCategory m_symbolCategory;
 
+
         public LSymbol(string mName, SymbolCategory mSymbolType,LType mType) {
             m_name = mName;
             m_type = mType;
