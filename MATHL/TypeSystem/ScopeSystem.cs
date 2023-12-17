@@ -9,6 +9,7 @@ namespace MATHL.TypeSystem {
     public class ScopeSystem {
         public static readonly string m_globalScopeName = "global";
         private Dictionary<string, Scope> m_scopes = new Dictionary<string, Scope>();
+        private Dictionary<object, Scope> m_scopesAssociation = new Dictionary<object, Scope>();
         Stack<Scope> m_scopesStack = new Stack<Scope>();
         private Scope m_currentScope = null;
         private Scope m_globalScope=null;
@@ -18,6 +19,19 @@ namespace MATHL.TypeSystem {
 
         public ScopeSystem() {
             InitializeTypes();
+        }
+
+        public void AssociateSyntaxObjectWithScope(object syntaxObject, Scope scope) {
+            if (!m_scopesAssociation.ContainsKey(syntaxObject)) {
+                m_scopesAssociation[syntaxObject] = scope;
+            }
+            else {
+                throw new Exception();
+            }
+        }
+
+        public Scope GetScopeAssociatedWithSyntaxObject(object syntaxObject) {
+            return m_scopesAssociation[syntaxObject];
         }
 
         public void InitializeTypes() {

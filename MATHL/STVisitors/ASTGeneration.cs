@@ -8,8 +8,20 @@ using Antlr4.Runtime.Tree;
 using MATHL.TypeSystem;
 
 namespace MATHL.STVisitors {
+
+    public class ASTGenerationInfo {
+        private ASTComposite m_ContextParent;
+
+        public ASTComposite MContextParent {
+            get => m_ContextParent;
+            set => m_ContextParent = value ?? throw new ArgumentNullException(nameof(value));
+        }
+    }
+
+
     public class ASTGeneration : MATHLParserBaseVisitor<ASTElement> {
         private CCompileUnit m_root;
+        Stack<ASTGenerationInfo> m_infoStack = new Stack<ASTGenerationInfo>();
         private Stack<ASTComposite> m_parentsStack = new Stack<ASTComposite>();
         private Stack<int> m_contextsStack = new Stack<int>();
         private ScopeSystem m_scopesystem;
@@ -24,8 +36,11 @@ namespace MATHL.STVisitors {
             CCompileUnit newNode = new CCompileUnit();
             m_root = newNode;
 
+
+            ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementsInContext(context.command(),
-                CCompileUnit.COMMANDS, m_contextsStack, newNode, m_parentsStack);
+                CCompileUnit.COMMANDS, m_contextsStack, newNode, m_parentsStack,
+                info,m_infoStack);
 
             m_scopesystem.ExitScope();
             return m_root;
@@ -38,8 +53,10 @@ namespace MATHL.STVisitors {
             CCommand_Expression newNode = new CCommand_Expression();
             parent.AddChild(parentContext, newNode);
 
+            ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementInContext(context.expression(),
-                CCommand_Expression.COMMAND, m_contextsStack, newNode, m_parentsStack);
+                CCommand_Expression.COMMAND, m_contextsStack, newNode, m_parentsStack,
+                info,m_infoStack);
             return newNode;
         }
 
@@ -50,18 +67,21 @@ namespace MATHL.STVisitors {
             CCommand_Return newNode = new CCommand_Return();
             parent.AddChild(parentContext, newNode);
 
+            ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementInContext(context.expression(),
-                CCommand_Return.EXPRESSION, m_contextsStack, newNode, m_parentsStack);
+                CCommand_Return.EXPRESSION, m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
             return newNode;
         }
+
 
         public override ASTElement VisitCommand_block(MATHLParser.Command_blockContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
             
             // 1. Enter block scope
-            if (!(parent is MATHLParser.Function_declarationContext)) {
-                m_scopesystem.EnterScope(null);
+            if (!(context.Parent is MATHLParser.Function_declarationContext)) {
+                Scope scope = m_scopesystem.GetScopeAssociatedWithSyntaxObject(context);
+                m_scopesystem.EnterScope(scope.M_ScopeName);
             }
 
             // 2. Create command block code 
@@ -69,14 +89,14 @@ namespace MATHL.STVisitors {
             parent.AddChild(parentContext, newNode);
 
             // 3. Visit children
+            ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementsInContext(context.command(),
-                CCommand_Expression.COMMAND, m_contextsStack, newNode, m_parentsStack);
+                CCommand_Expression.COMMAND, m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
 
             // 4. Leave block scope
-            if (!(parent is MATHLParser.Function_declarationContext)) {
+            if (!(context.Parent is MATHLParser.Function_declarationContext)) {
                 m_scopesystem.ExitScope();
             }
-
             return newNode;
         }
 
@@ -87,11 +107,12 @@ namespace MATHL.STVisitors {
             CDeclarationVariable newNode = new CDeclarationVariable();
             parent.AddChild(parentContext, newNode);
 
+            ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementsInContext(context.variable_declarator(), CDeclarationVariable.DECLARATIONS,
-                m_contextsStack, newNode, m_parentsStack);
+                m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
 
             res = this.VisitElementInContext(context.type(), CDeclarationVariable.TYPE, m_contextsStack,
-                newNode, m_parentsStack);
+                newNode, m_parentsStack,info,m_infoStack);
 
             return newNode;
         }
@@ -100,18 +121,27 @@ namespace MATHL.STVisitors {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
 
+            // Create a variable declarator and link to the parent
             CDeclaratorVariable newNode = new CDeclaratorVariable();
             parent.AddChild(parentContext, newNode);
 
+            ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitTerminalInContext(context, context.IDENTIFIER().Symbol,
-                CDeclaratorVariable.VARIABLENAME, m_contextsStack, newNode, m_parentsStack);
+                CDeclaratorVariable.VARIABLENAME, m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
+
+            CIDENTIFIER variableIdentifier = res as CIDENTIFIER;
+            VariableSymbol variableSymbol= 
+                m_scopesystem.SearchSymbol(variableIdentifier.MStringLiteral, SymbolCategory.ST_VARIABLE)
+                as VariableSymbol;
+            variableSymbol.M_VariableIdentifier =variableIdentifier;
+            variableIdentifier[typeof(LSymbol)] = variableSymbol;
 
             res = this.VisitElementsInContext(context._pds, CDeclaratorVariable.TYPE,
-                m_contextsStack, newNode, m_parentsStack);
+                m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
 
             if (context.expression() != null) {
                 res = this.VisitElementInContext(context.expression(), CDeclaratorVariable.INITIALIZATION,
-                    m_contextsStack, newNode, m_parentsStack);
+                    m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
             }
             return newNode;
         }
@@ -122,6 +152,10 @@ namespace MATHL.STVisitors {
             // Get function name
             string functionName = context.IDENTIFIER().Symbol.Text;
 
+            // Get FunctionSymbol from the symbol table. ( Declaration Processor has precedes this pass)
+            FunctionSymbol functionSymbol = 
+                (FunctionSymbol)m_scopesystem.SearchSymbol(functionName, SymbolCategory.ST_FUNCTION);
+            
             // Enter function scope
             m_scopesystem.EnterScope(functionName);
 
@@ -129,15 +163,25 @@ namespace MATHL.STVisitors {
             CDeclarationFunction newNode = new CDeclarationFunction(functionName);
             parent.AddChild(parentContext, newNode);
 
+            // Update info for FunctionSymbol in the symbol table and CDeclarationFunction 
+            functionSymbol.M_FunctionDeclaration = newNode;
+            newNode[typeof(LSymbol)] = functionSymbol;
+
             // Visit Children
+            ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementInContext(context.type(), CDeclarationFunction.TYPE,
-                m_contextsStack, newNode, m_parentsStack);
+                m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
             res = this.VisitTerminalInContext(context, context.IDENTIFIER().Symbol, CDeclarationFunction.FUNCTION_NAME,
-                m_contextsStack, newNode, m_parentsStack);
+                m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
+
+            // Update the information for the CIDENTIFIER AST node representing the function name
+            CIDENTIFIER functionId = res as CIDENTIFIER;
+            functionId[functionName]= functionSymbol;
+
             res = this.VisitElementsInContext(context.variable_declaration(), CDeclarationFunction.PARAMETERS,
-                m_contextsStack, newNode, m_parentsStack);
+                m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
             res = this.VisitElementInContext(context.command_block(), CDeclarationFunction.BODY,
-                m_contextsStack, newNode, m_parentsStack);
+                m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
 
             // Exit function scope
             m_scopesystem.ExitScope();
@@ -151,11 +195,11 @@ namespace MATHL.STVisitors {
             CExpression_Equation newNode = new CExpression_Equation();
             parent.AddChild(parentContext, newNode);
 
-
+            ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementInContext(context.a,
-                CExpression_Equation.LHS, m_contextsStack, newNode, m_parentsStack);
+                CExpression_Equation.LHS, m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
             res = this.VisitElementInContext(context.b,
-                CExpression_Equation.RHS, m_contextsStack, newNode, m_parentsStack);
+                CExpression_Equation.RHS, m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
             return newNode;
 
         }
@@ -167,12 +211,13 @@ namespace MATHL.STVisitors {
             newNode = new CExpression_Range();
             parent.AddChild(parentContext, newNode);
 
+            ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementInContext(context.a, CExpression_Range.START,
-                m_contextsStack, newNode, m_parentsStack);
+                m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
             res = this.VisitElementInContext(context.b, CExpression_Range.END,
-                m_contextsStack, newNode, m_parentsStack);
+                m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
             res = this.VisitElementInContext(context.c, CExpression_Range.STEP,
-                m_contextsStack, newNode, m_parentsStack);
+                m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
 
             return newNode;
         }
@@ -193,8 +238,9 @@ namespace MATHL.STVisitors {
             }
             parent.AddChild(parentContext, newNode);
 
+            ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementInContext(context.expression(), context_,
-                m_contextsStack, newNode, m_parentsStack);
+                m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
 
             return newNode;
         }
@@ -215,11 +261,12 @@ namespace MATHL.STVisitors {
             }
             parent.AddChild(parentContext, newNode);
 
+            ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementInContext(context.a, context_L,
-                m_contextsStack, newNode, m_parentsStack);
+                m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
 
             res = this.VisitElementInContext(context.b, context_R,
-                m_contextsStack, newNode, m_parentsStack);
+                m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
 
             return newNode;
         }
@@ -246,30 +293,15 @@ namespace MATHL.STVisitors {
             }
             parent.AddChild(parentContext, newNode);
 
+            ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementInContext(context.a, context_L,
-                m_contextsStack, newNode, m_parentsStack);
+                m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
 
             res = this.VisitElementInContext(context.b, context_R,
-                m_contextsStack, newNode, m_parentsStack);
+                m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
             return newNode;
         }
-
-        public override ASTElement VisitExpression_context(MATHLParser.Expression_contextContext context) {
-            ASTComposite parent = m_parentsStack.Peek();
-            int parentContext = m_contextsStack.Peek();
-            int context_L = 0, context_R = 1;
-
-            ASTComposite newNode = new CExpression_Multiplication();
-            parent.AddChild(parentContext, newNode);
-
-            var res = this.VisitElementInContext(context.a, context_L,
-                m_contextsStack, newNode, m_parentsStack);
-
-            res = this.VisitElementInContext(context.b, context_R,
-                m_contextsStack, newNode, m_parentsStack);
-            return newNode;
-        }
-
+        
         public override ASTElement VisitNumberINTEGER(MATHLParser.NumberINTEGERContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
@@ -297,15 +329,16 @@ namespace MATHL.STVisitors {
             return newNode;
         }
 
-        public override ASTElement VisitExpression_NUMBER(MATHLParser.Expression_NUMBERContext context) {
+        public override ASTElement VisitExpression5_NUMBER(MATHLParser.Expression5_NUMBERContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
 
             CExpression newNode = new CExpression_Number();
             parent.AddChild(parentContext, newNode);
 
+            ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             this.VisitElementInContext(context.number(), CExpression_Number.NUMBER,
-                m_contextsStack, newNode, m_parentsStack);
+                m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
 
             return newNode;
         }
@@ -313,7 +346,7 @@ namespace MATHL.STVisitors {
         public override ASTElement VisitTerminal(ITerminalNode node) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
-
+            ASTGenerationInfo info = m_infoStack.Peek();
             ASTElement newNode = null;
 
             switch (node.Symbol.Type) {
@@ -330,7 +363,30 @@ namespace MATHL.STVisitors {
                     parent.AddChild(parentContext, newNode);
                     break;
                 case MATHLLexer.IDENTIFIER:
-                    newNode = new CIDENTIFIER(node.GetText());
+                    switch (info.MContextParent.MType) {
+                        case (int)NodeType.NT_EXPRESSION_FUNCTIONCALL:
+                            FunctionSymbol functionSymbol;
+                            functionSymbol = m_scopesystem.SearchSymbol(node.GetText(), SymbolCategory.ST_FUNCTION) as FunctionSymbol;
+                            newNode = functionSymbol.M_FunctionIdentifier;
+                            break;
+                        case (int)NodeType.NT_EXPRESSION_EQUATION:
+                        case (int)NodeType.NT_EXPRESSION_ADDITION:
+                        case (int)NodeType.NT_EXPRESSION_SUBTRACTION:
+                        case (int)NodeType.NT_EXPRESSION_MULTIPLICATION:
+                        case (int)NodeType.NT_EXPRESSION_FDIVISION:
+                        case (int)NodeType.NT_EXPRESSION_IDIVISION:
+                        case (int)NodeType.NT_EXPRESSION_MODULO:
+                        case (int)NodeType.NT_EXPRESSION_UNARYPLUS:
+                        case (int)NodeType.NT_EXPRESSION_UNARYMINUS:
+                        case (int)NodeType.NT_EXPRESSION_RANGE:
+                            VariableSymbol variableSymbol;
+                            variableSymbol = m_scopesystem.SearchSymbol(node.GetText(), SymbolCategory.ST_VARIABLE) as VariableSymbol;
+                            newNode = variableSymbol.M_VariableIdentifier;
+                            break;
+                        default:
+                            newNode = new CIDENTIFIER(node.GetText());
+                            break;
+                    }
                     parent.AddChild(parentContext, newNode);
                     break;
             }

@@ -190,8 +190,9 @@ namespace MATHL.Composite {
         // link hierarchy node. Trees have many applications 
         // most of the times they extend to an application domain
         // So this link is necessary.
-        private Dictionary<object, object> m_nodeInfo;
+        private Dictionary<object, object> m_nodeInfo=new Dictionary<object, object>();
 
+        // Access node information by key
         public object this[object key] {
             get {
                 return m_nodeInfo[key];

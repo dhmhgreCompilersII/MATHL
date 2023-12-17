@@ -37,7 +37,9 @@ namespace MATHL.Visitors {
         
         public override LType VisitCompile_unit(MATHLParser.Compile_unitContext context) {
             // Create global scope and visit descentant nodes
-            m_scopeSystem.EnterScope(ScopeSystem.M_GlobalScopeName);
+            Scope scope= m_scopeSystem.EnterScope(ScopeSystem.M_GlobalScopeName);
+            m_scopeSystem.AssociateSyntaxObjectWithScope(context,scope);
+
             base.VisitCompile_unit(context);
             m_scopeSystem.ExitScope();
             m_scopeSystem.Report("SymbolTable.txt");
@@ -121,11 +123,13 @@ namespace MATHL.Visitors {
         }
 
         public override LType VisitCommand_block(MATHLParser.Command_blockContext context) {
+            Scope currentScope=M_CurrentScope;
             // 1. Enter block scope
             if (!(context.Parent is MATHLParser.Function_declarationContext)) {
-                m_scopeSystem.EnterScope(null);
+                currentScope = m_scopeSystem.EnterScope(null);
+                m_scopeSystem.AssociateSyntaxObjectWithScope(context,currentScope);
             }
-
+            
             DeclarationInfo empty = new DeclarationInfo();
             this.VisitElementsInContext(context.command(), m_DeclProcInfos, empty);
 
@@ -133,7 +137,7 @@ namespace MATHL.Visitors {
             if (!(context.Parent is MATHLParser.Function_declarationContext)) {
                 m_scopeSystem.ExitScope();
             }
-            return base.VisitCommand_block(context);
+            return null;
         }
 
         public override LType VisitFunction_declaration(MATHLParser.Function_declarationContext context) {
@@ -146,7 +150,8 @@ namespace MATHL.Visitors {
             string functionName = identifier.Text;
 
             // Enter the Function Scope before visiting the parameters and the command block
-            m_scopeSystem.EnterScope(functionName);
+            Scope scope =m_scopeSystem.EnterScope(functionName);
+            m_scopeSystem.AssociateSyntaxObjectWithScope(context,scope);
 
             // Visit Function parameters section and complete the function type
             DeclarationInfo info = new DeclarationInfo() { DecLType = decLType };

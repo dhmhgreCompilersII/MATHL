@@ -236,6 +236,12 @@ namespace MATHL.Composite {
     public class CCommand_CommandBlock : ASTComposite {
         public const int COMMAND = 0;
         public readonly string[] mc_contextNames = { "Command_CommandBlock" };
+        private string m_scopeName;
+
+        public string MScopeName {
+            get => m_scopeName;
+            set => m_scopeName = value ?? throw new ArgumentNullException(nameof(value));
+        }
 
         public CCommand_CommandBlock() :
             base(1, (int)NodeType.NT_COMMAND_COMMANDBLOCK) {

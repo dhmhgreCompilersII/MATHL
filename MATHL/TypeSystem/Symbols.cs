@@ -21,8 +21,7 @@ namespace MATHL.TypeSystem {
         private LType m_type;
         private LValue m_value;
         private SymbolCategory m_symbolCategory;
-        ASTElement m_element;
-
+        
         public LSymbol(string mName, SymbolCategory mSymbolType,LType mType) {
             m_name = mName;
             m_type = mType;
@@ -44,13 +43,30 @@ namespace MATHL.TypeSystem {
     }
 
     public class VariableSymbol : LSymbol {
+        CIDENTIFIER m_element;
+
+        // Linked AST Element ( Set during ASTGeneration phase )
+        public CIDENTIFIER M_VariableIdentifier {
+            get => m_element;
+            set => m_element = value ?? throw new ArgumentNullException(nameof(value));
+        }
         public VariableSymbol(string mName, LType mType) :
             base(mName, SymbolCategory.ST_VARIABLE, mType) { }
     }
 
     public class FunctionSymbol : LSymbol {
         private List<VariableSymbol> m_ParameterSymbols;
-        ASTElement m_FunctionBody;
+        CDeclarationFunction m_FunctionDeclaration;
+
+        // Linked AST Element ( Set during ASTGeneration phase )
+        public CDeclarationFunction M_FunctionDeclaration {
+            get => m_FunctionDeclaration;
+            set => m_FunctionDeclaration = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
+        public CIDENTIFIER M_FunctionIdentifier {
+            get => M_FunctionDeclaration.GetChild(CDeclarationFunction.FUNCTION_NAME, 0) as CIDENTIFIER;
+        }
 
         public FunctionSymbol(string mName, LType mType,
             List<VariableSymbol> parameters) :
@@ -63,9 +79,7 @@ namespace MATHL.TypeSystem {
         private void AddParameter(VariableSymbol p) {
             m_ParameterSymbols.Add(p);
         }
-        public void AddFunctionRoot(ASTElement r) {
-            m_FunctionBody = r;
-        }
+        
     }
 
     public class TypenameSymbol : LSymbol {

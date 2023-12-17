@@ -49,19 +49,33 @@ postfix_declarators : LBR INTEGER RBR;
 
 function_declaration : type IDENTIFIER '(' (variable_declaration (COMMA variable_declaration )*)? ')' command_block ;
 
-expression 
-			: number														  #expression_NUMBER
-			| IDENTIFIER 												 	  #expression_IDENTIFIER
-			| range	 														  #expression_range												  
-			| LP expression RP												  #expression_parenthesizedexpression
-			| op=('+'|'-') expression										  #expression_unaryprefixexpression
-			| a=expression op=(<assoc=left>'*'|
+expression :  a=expression  b=expression1			  #expression_context 
+             | expression1							  #expression_expression1
+			 ;
+
+expression1: a=expression1 '=' b=expression2		 #expression_equationassignment
+		     | expression2						     #expression1_expression2
+			 ;
+
+expression2 : a=expression2 op=('+'|'-') b=expression3  #expression_additionsubtraction
+			| expression3								#expression2_expression3
+			;
+
+expression3: a=expression3 op=(<assoc=left>'*'|
 							 <assoc=left>'/'|
 							 <assoc=left>IDIV|
-							 <assoc=left>'%') b=expression					  #expression_multiplicationdivision
-			| a=expression op=(<assoc=left>'+'|<assoc=left>'-') b=expression  #expression_additionsubtraction			
-			| a=expression '=' b=expression									  #expression_equationassignment
-			| a=expression  b=expression									  #expression_context
+							 <assoc=left>'%') b=expression4	  #expression_multiplicationdivision
+			| expression4									#expression3_expression4
+			;
+
+expression4: op=('+'|'-') expression	 #expression_unaryprefixexpression 
+			| expression5				#expression4_expression5
+			;
+
+expression5: number														  #expression5_NUMBER
+			| IDENTIFIER 												 	  #expression5_IDENTIFIER
+			| range	 														  #expression5_range												  
+			| LP expression RP												  #expression5_parenthesizedexpression
 			;
 
 number :  INTEGER		#numberINTEGER
