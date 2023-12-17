@@ -166,7 +166,7 @@ namespace MATHL.Visitors {
 
             // Store function into the symbol table
             M_CurrentScope.DefineSymbol(fs, SymbolCategory.ST_FUNCTION);
-
+            
             return functiontype;
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -189,12 +190,15 @@ namespace MATHL.Composite {
         // link hierarchy node. Trees have many applications 
         // most of the times they extend to an application domain
         // So this link is necessary.
-        private object m_hierarchyBridgeLink;
+        private Dictionary<object, object> m_nodeInfo;
 
-        public object HierarchyBridgeLink {
-            get => m_hierarchyBridgeLink;
-            set => m_hierarchyBridgeLink = value ??
-                throw new ArgumentNullException(nameof(value));
+        public object this[object key] {
+            get {
+                return m_nodeInfo[key];
+            }
+            set {
+                m_nodeInfo[key] = value;
+            }
         }
 
         public int MType => m_type;

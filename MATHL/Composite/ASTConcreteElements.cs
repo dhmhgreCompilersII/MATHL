@@ -49,7 +49,7 @@ namespace MATHL.Composite {
         }
     }
 
-    public class CExpression : ASTComposite {
+    public abstract class CExpression : ASTComposite {
         private LType m_type=null;
         private bool m_isConstantExpression=false;
 
