@@ -22,6 +22,8 @@ PARENT SCOPE:  global
 NAMESPACE :ST_VARIABLE
 	b:IntegerType
 	t:FloatingType
+	c:IntegerType
+	d:IntegerType
 
 
 ------------------------------------

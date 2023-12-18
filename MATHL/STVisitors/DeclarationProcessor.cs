@@ -41,6 +41,7 @@ namespace MATHL.Visitors {
             m_scopeSystem.AssociateSyntaxObjectWithScope(context,scope);
 
             base.VisitCompile_unit(context);
+
             m_scopeSystem.ExitScope();
             m_scopeSystem.Report("SymbolTable.txt");
             return null;
@@ -66,7 +67,10 @@ namespace MATHL.Visitors {
             DeclarationInfo info = new DeclarationInfo() { DecLType = decLType };
             this.VisitElementsInContext(context.variable_declarator(),m_DeclProcInfos,info);
 
+            
             if (context.Parent is MATHLParser.Function_declarationContext) {
+                // info has been updated with the declared variables
+                // by the visit to the declarator
                 foreach (VariableSymbol variableSymbol in info.MParameters) {
                     parentInfo.MParameters.Add(variableSymbol);
                     parentInfo.MParameterTypes.Add(decLType);
@@ -79,9 +83,11 @@ namespace MATHL.Visitors {
             DeclarationInfo parentInfo = m_DeclProcInfos.Peek();
 
             int dimensionSize = Int32.Parse(context.INTEGER().GetText());
+
+            // Complete the declarator type from the postfix declarators
             parentInfo.MDimensions.Add(dimensionSize);
 
-            return base.VisitPostfix_declarators(context);
+            return null;
         }
 
         public override LType VisitVariable_declarator(MATHLParser.Variable_declaratorContext context) {
@@ -99,9 +105,11 @@ namespace MATHL.Visitors {
                 resutLType = new ArrayType(parentInfo.DecLType, info.MDimensions.ToArray());
             }
             else {
+                // If there are no postfix declarators return the type specifier
                 resutLType = parentInfo.DecLType;
             }
             
+            // Create the Variable Symbol with the appropriate type
             // Store variable into the symbol table
             VariableSymbol newVariableSymbol = new VariableSymbol(variableName, resutLType);
             M_CurrentScope.DefineSymbol(newVariableSymbol, SymbolCategory.ST_VARIABLE);
@@ -113,9 +121,9 @@ namespace MATHL.Visitors {
         public override LType VisitType(MATHLParser.TypeContext context) {
             IToken typeSpecifier = (context.GetChild(0) as ITerminalNode).Symbol;
             LType declaredtype = typeSpecifier.Type switch {
-                MATHLLexer.INT => MATHLExecutionEnvironment.GetInstance().M_ScopeSystem.M_GlobalScope.
+                MATHLLexer.INT => m_scopeSystem.M_GlobalScope.
                     SearchSymbol(typeSpecifier.Text,SymbolCategory.ST_TYPENAME).MType,
-                MATHLLexer.FLOAT => MATHLExecutionEnvironment.GetInstance().M_ScopeSystem.M_GlobalScope.
+                MATHLLexer.FLOAT => m_scopeSystem.M_GlobalScope.
                     SearchSymbol(typeSpecifier.Text, SymbolCategory.ST_TYPENAME).MType,
                 MATHLLexer.RANGE => new RangeType()
             };
@@ -124,16 +132,18 @@ namespace MATHL.Visitors {
 
         public override LType VisitCommand_block(MATHLParser.Command_blockContext context) {
             Scope currentScope=M_CurrentScope;
-            // 1. Enter block scope
+            // 1. Enter block scope if it doesn't refer to FunctionDeclaration
+            // Function Declaration has already its own scope
             if (!(context.Parent is MATHLParser.Function_declarationContext)) {
                 currentScope = m_scopeSystem.EnterScope(null);
                 m_scopeSystem.AssociateSyntaxObjectWithScope(context,currentScope);
             }
             
-            DeclarationInfo empty = new DeclarationInfo();
-            this.VisitElementsInContext(context.command(), m_DeclProcInfos, empty);
+            DeclarationInfo dummy = new DeclarationInfo();
+            this.VisitElementsInContext(context.command(), m_DeclProcInfos, dummy);
 
-            // 1. Enter block scope
+            // 2. Exit block scope if it doesn't refer to FunctionDeclaration
+            // Function Declaration has already its own scope
             if (!(context.Parent is MATHLParser.Function_declarationContext)) {
                 m_scopeSystem.ExitScope();
             }
@@ -142,18 +152,18 @@ namespace MATHL.Visitors {
 
         public override LType VisitFunction_declaration(MATHLParser.Function_declarationContext context) {
 
-            // Visit type to acquire type specifier
+            // Visit type to acquire TYPE SPECIFIER
             LType decLType = Visit(context.type());
             
-            // Get function name
+            // Get FUNCTION NAME
             IToken identifier = (context.IDENTIFIER() as ITerminalNode).Symbol;
             string functionName = identifier.Text;
 
-            // Enter the Function Scope before visiting the parameters and the command block
+            // Enter the FUNCTION SCOPE before visiting the parameters and the command block
             Scope scope =m_scopeSystem.EnterScope(functionName);
             m_scopeSystem.AssociateSyntaxObjectWithScope(context,scope);
 
-            // Visit Function parameters section and complete the function type
+            // Visit FUNCTION PARAMETERS section and complete the function type
             DeclarationInfo info = new DeclarationInfo() { DecLType = decLType };
             this.VisitElementsInContext(context.variable_declaration(), m_DeclProcInfos, info);
             
@@ -163,8 +173,8 @@ namespace MATHL.Visitors {
             // Create Function Symbol
             FunctionSymbol fs = new FunctionSymbol(functionName, functiontype, info.MParameters);
             
-            // Visit Command Block
-            // TODO
+            // Visit COMMAND BLOCK
+            this.VisitElementInContext(context.command_block(), m_DeclProcInfos, info);
 
             // Leave Function Scope
             m_scopeSystem.ExitScope();
