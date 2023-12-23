@@ -9,7 +9,7 @@ NAMESPACE :ST_TYPENAME
 	int:IntegerType
 	float:FloatingType
 NAMESPACE :ST_VARIABLE
-	c:IntegerType
+	c:IntegerType= 1
 NAMESPACE :ST_FUNCTION
 	a:IntegerType <f>(IntegerType, FloatingType)
 
@@ -20,10 +20,10 @@ NAME:a
 PARENT SCOPE:  global
 
 NAMESPACE :ST_VARIABLE
-	b:IntegerType
-	t:FloatingType
-	c:IntegerType
-	d:IntegerType
+	b:IntegerType= 0
+	t:FloatingType= 0
+	c:IntegerType= 0
+	d:IntegerType= 1
 
 
 ------------------------------------
@@ -32,6 +32,6 @@ NAME:global.1
 PARENT SCOPE:  global
 
 NAMESPACE :ST_VARIABLE
-	c:IntegerType
+	c:IntegerType= 1
 
 

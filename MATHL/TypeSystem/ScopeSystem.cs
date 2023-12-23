@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using MATHL.Composite;
 
 namespace MATHL.TypeSystem {
     public class ScopeSystem {
@@ -15,10 +16,12 @@ namespace MATHL.TypeSystem {
         private Scope m_globalScope=null;
         public Scope M_CurrentScope => m_currentScope;
         public Scope M_GlobalScope => m_globalScope;
-        public static string M_GlobalScopeName => m_globalScopeName;
+        public string M_GlobalScopeName => m_globalScopeName;
+        public string M_CurrentScopeName => m_currentScope.M_ScopeName;
+
 
         public ScopeSystem() {
-            InitializeTypes();
+            
         }
 
         public void AssociateSyntaxObjectWithScope(object syntaxObject, Scope scope) {
@@ -35,20 +38,7 @@ namespace MATHL.TypeSystem {
         }
 
         public void InitializeTypes() {
-            // Create global scope 
-            m_globalScope = new Scope(null,
-                scope => {
-                        scope.InitializeNamespace(SymbolCategory.ST_TYPENAME);
-                        scope.InitializeNamespace(SymbolCategory.ST_VARIABLE);
-                        scope.InitializeNamespace(SymbolCategory.ST_FUNCTION);
-                    
-                },
-                m_globalScopeName);
-            m_scopes[M_GlobalScopeName] = m_globalScope;
-
-            // Initialize global scope typanames namespace
-            M_GlobalScope.DefineSymbol(new TypenameSymbol(IntegerType.mc_typename, IntegerType.Instance),SymbolCategory.ST_TYPENAME);
-            M_GlobalScope.DefineSymbol(new TypenameSymbol(FloatingType.mc_typename,FloatingType.Instance), SymbolCategory.ST_TYPENAME);
+           
         }
         
         /// <summary>
@@ -63,19 +53,46 @@ namespace MATHL.TypeSystem {
             // Global scope is initialized upon construction and it is 
             // the only existing scope
             if (scopename==null || !m_scopes.ContainsKey(scopename)) {
-                m_currentScope = new Scope(m_currentScope,
-                    scope => {
-                        scope.InitializeNamespace(SymbolCategory.ST_VARIABLE);
-                    },
-                    scopename);
-                // Store it to m_scopes
-                m_scopes[m_currentScope.M_ScopeName] = m_currentScope;
+                throw new Exception("Non-existent scope");
             }
             else {
                 // If the scope already exists take it from m_scopes
                 m_currentScope = m_scopes[scopename];
             }
             
+            // Push scope
+            m_scopesStack.Push(m_currentScope);
+            return m_currentScope;
+        }
+        
+        public Scope CreateScope(string scopename) {
+
+            if (scopename == M_GlobalScopeName) {
+                // Create global scope 
+                m_currentScope=m_globalScope = new Scope(null,
+                    scope => {
+                        scope.InitializeNamespace(SymbolCategory.ST_TYPENAME);
+                        scope.InitializeNamespace(SymbolCategory.ST_VARIABLE);
+                        scope.InitializeNamespace(SymbolCategory.ST_FUNCTION);
+
+                    },
+                    m_globalScopeName);
+
+                // Initialize global scope typanames namespace
+                M_GlobalScope.DefineSymbol(new TypenameSymbol(IntegerType.mc_typename, IntegerType.Instance), SymbolCategory.ST_TYPENAME);
+                M_GlobalScope.DefineSymbol(new TypenameSymbol(FloatingType.mc_typename, FloatingType.Instance), SymbolCategory.ST_TYPENAME);
+            }
+            else {
+                m_currentScope = new Scope(m_currentScope,
+                    scope => {
+                        scope.InitializeNamespace(SymbolCategory.ST_VARIABLE);
+                    },
+                    scopename);
+            }
+
+            // Store it to m_scopes
+            m_scopes[M_CurrentScopeName] = m_currentScope;
+
             // Push scope
             m_scopesStack.Push(m_currentScope);
             return m_currentScope;

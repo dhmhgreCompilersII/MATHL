@@ -20,21 +20,28 @@ namespace MATHL.STVisitors {
 
 
     public class ASTGeneration : MATHLParserBaseVisitor<ASTElement> {
+        
+        // External Dependency with composition
+        private ScopeSystem m_scopesystem;
+
+        // State
         private CCompileUnit m_root;
         Stack<ASTGenerationInfo> m_infoStack = new Stack<ASTGenerationInfo>();
         private Stack<ASTComposite> m_parentsStack = new Stack<ASTComposite>();
         private Stack<int> m_contextsStack = new Stack<int>();
-        private ScopeSystem m_scopesystem;
+        private Scope m_currentScope;
+
         public ASTGeneration(ScopeSystem scopesystem) {
             m_scopesystem = scopesystem;
         }
 
         public override ASTElement VisitCompile_unit(MATHLParser.Compile_unitContext context) {
 
-            m_scopesystem.EnterScope(ScopeSystem.M_GlobalScopeName);
+            m_currentScope =  m_scopesystem.EnterScope(m_scopesystem.M_GlobalScopeName);
 
             CCompileUnit newNode = new CCompileUnit();
             m_root = newNode;
+            newNode[typeof(Scope)]= m_currentScope;
 
 
             ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
@@ -52,6 +59,7 @@ namespace MATHL.STVisitors {
 
             CCommand_Expression newNode = new CCommand_Expression();
             parent.AddChild(parentContext, newNode);
+            newNode[typeof(Scope)] = m_currentScope;
 
             ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementInContext(context.expression(),
@@ -66,6 +74,7 @@ namespace MATHL.STVisitors {
 
             CCommand_Return newNode = new CCommand_Return();
             parent.AddChild(parentContext, newNode);
+            newNode[typeof(Scope)] = m_currentScope;
 
             ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementInContext(context.expression(),
@@ -87,6 +96,7 @@ namespace MATHL.STVisitors {
             // 2. Create command block code 
             CCommand_CommandBlock newNode = new CCommand_CommandBlock();
             parent.AddChild(parentContext, newNode);
+            newNode[typeof(Scope)] = m_currentScope;
 
             // 3. Visit children
             ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
@@ -106,6 +116,7 @@ namespace MATHL.STVisitors {
 
             CDeclarationVariable newNode = new CDeclarationVariable();
             parent.AddChild(parentContext, newNode);
+            newNode[typeof(Scope)] = m_currentScope;
 
             ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementsInContext(context.variable_declarator(), CDeclarationVariable.DECLARATIONS,
@@ -124,6 +135,7 @@ namespace MATHL.STVisitors {
             // Create a variable declarator and link to the parent
             CDeclaratorVariable newNode = new CDeclaratorVariable();
             parent.AddChild(parentContext, newNode);
+            newNode[typeof(Scope)] = m_currentScope;
 
             ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitTerminalInContext(context, context.IDENTIFIER().Symbol,
@@ -157,11 +169,12 @@ namespace MATHL.STVisitors {
                 (FunctionSymbol)m_scopesystem.SearchSymbol(functionName, SymbolCategory.ST_FUNCTION);
             
             // Enter function scope
-            m_scopesystem.EnterScope(functionName);
+            m_currentScope= m_scopesystem.EnterScope(functionName);
 
             // Create function definition node
             CDeclarationFunction newNode = new CDeclarationFunction(functionName);
             parent.AddChild(parentContext, newNode);
+            newNode[typeof(Scope)] = m_currentScope;
 
             // Update info for FunctionSymbol in the symbol table and CDeclarationFunction 
             functionSymbol.M_FunctionDeclaration = newNode;
@@ -194,6 +207,7 @@ namespace MATHL.STVisitors {
 
             CExpression_Equation newNode = new CExpression_Equation();
             parent.AddChild(parentContext, newNode);
+            newNode[typeof(Scope)] = m_currentScope;
 
             ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementInContext(context.a,
@@ -210,6 +224,7 @@ namespace MATHL.STVisitors {
             ASTComposite newNode = null;
             newNode = new CExpression_Range();
             parent.AddChild(parentContext, newNode);
+            newNode[typeof(Scope)] = m_currentScope;
 
             ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementInContext(context.a, CExpression_Range.START,
@@ -237,6 +252,7 @@ namespace MATHL.STVisitors {
                     break;
             }
             parent.AddChild(parentContext, newNode);
+            newNode[typeof(Scope)] = m_currentScope;
 
             ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementInContext(context.expression(), context_,
@@ -260,6 +276,7 @@ namespace MATHL.STVisitors {
                     break;
             }
             parent.AddChild(parentContext, newNode);
+            newNode[typeof(Scope)] = m_currentScope;
 
             ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementInContext(context.a, context_L,
@@ -292,6 +309,7 @@ namespace MATHL.STVisitors {
                     break;
             }
             parent.AddChild(parentContext, newNode);
+            newNode[typeof(Scope)] = m_currentScope;
 
             ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             var res = this.VisitElementInContext(context.a, context_L,
@@ -308,6 +326,7 @@ namespace MATHL.STVisitors {
 
             CINTEGERNUMBER newNode = new CINTEGERNUMBER(context.GetText());
             parent.AddChild(parentContext, newNode);
+            newNode[typeof(Scope)] = m_currentScope;
             if (parent is CExpression p) {
                 p.M_IsConstantExpression = true;
                 p.M_ExpressionType = newNode.M_Type;
@@ -321,6 +340,7 @@ namespace MATHL.STVisitors {
 
             CFLOATNUMBER newNode = new CFLOATNUMBER(context.GetText());
             parent.AddChild(parentContext, newNode);
+            newNode[typeof(Scope)] = m_currentScope;
             if (parent is CExpression p) {
                 p.M_IsConstantExpression = true;
                 p.M_ExpressionType = newNode.M_Type;
@@ -335,6 +355,7 @@ namespace MATHL.STVisitors {
 
             CExpression newNode = new CExpression_Number();
             parent.AddChild(parentContext, newNode);
+            newNode[typeof(Scope)] = m_currentScope;
 
             ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             this.VisitElementInContext(context.number(), CExpression_Number.NUMBER,
@@ -368,6 +389,7 @@ namespace MATHL.STVisitors {
                             FunctionSymbol functionSymbol;
                             functionSymbol = m_scopesystem.SearchSymbol(node.GetText(), SymbolCategory.ST_FUNCTION) as FunctionSymbol;
                             newNode = functionSymbol.M_FunctionIdentifier;
+                            newNode[typeof(LSymbol)] = functionSymbol;
                             break;
                         case (int)NodeType.NT_EXPRESSION_EQUATION:
                         case (int)NodeType.NT_EXPRESSION_ADDITION:
@@ -382,12 +404,14 @@ namespace MATHL.STVisitors {
                             VariableSymbol variableSymbol;
                             variableSymbol = m_scopesystem.SearchSymbol(node.GetText(), SymbolCategory.ST_VARIABLE) as VariableSymbol;
                             newNode = variableSymbol.M_VariableIdentifier;
+                            newNode[typeof(LSymbol)] = variableSymbol;
                             break;
                         default:
                             newNode = new CIDENTIFIER(node.GetText());
                             break;
                     }
                     parent.AddChild(parentContext, newNode);
+                    newNode[typeof(Scope)] = m_currentScope;
                     break;
             }
             return newNode;

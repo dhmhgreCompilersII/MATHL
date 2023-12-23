@@ -90,7 +90,11 @@ namespace MATHL
             var asttree = astgen.Visit(tree);
             ASTPrinter astprinter = new ASTPrinter("AST.dot");
             astprinter.Visit(asttree);
-            
+            InitializationsProcessor initializationsProcessor =
+                new InitializationsProcessor(m_environment.M_ScopeSystem);
+            initializationsProcessor.Visit(asttree);
+            m_environment.M_ScopeSystem.Report("SymbolTable.txt");
+
         }
     }
 

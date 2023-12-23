@@ -237,12 +237,7 @@ namespace MATHL.Composite {
         public const int COMMAND = 0;
         public readonly string[] mc_contextNames = { "Command_CommandBlock" };
         private string m_scopeName;
-
-        public string MScopeName {
-            get => m_scopeName;
-            set => m_scopeName = value ?? throw new ArgumentNullException(nameof(value));
-        }
-
+        
         public CCommand_CommandBlock() :
             base(1, (int)NodeType.NT_COMMAND_COMMANDBLOCK) {
         }
@@ -355,6 +350,10 @@ namespace MATHL.Composite {
     public class CIDENTIFIER : ASTLeaf {
         
         public override string MNodeName => m_nodeName + "_" + MStringLiteral;
+        public Scope M_CurrentScope => this[typeof(Scope)] as Scope;
+        
+
+        public LSymbol MSymbol => this[typeof(LSymbol)] as LSymbol;
 
         public CIDENTIFIER(string leafLiteral) :
             base(leafLiteral, (int)NodeType.T_IDENTIFIER) {

@@ -14,6 +14,23 @@ namespace MATHL.TypeSystem {
         public int ivalue;
         [FieldOffset(0)]
         public float fvalue;
+        [FieldOffset(4)]
+        TypeID m_type;
+
+        public int Ivalue {
+            get => ivalue;
+            set => ivalue = value;
+        }
+
+        public float Fvalue {
+            get => fvalue;
+            set => fvalue = value;
+        }
+
+        public TypeID MType {
+            get => m_type;
+            set => m_type = value;
+        }
     }
 
     public abstract class LSymbol {
@@ -21,8 +38,8 @@ namespace MATHL.TypeSystem {
         private LType m_type;
         private LValue m_value;
         private SymbolCategory m_symbolCategory;
-        
-        public LSymbol(string mName, SymbolCategory mSymbolType,LType mType) {
+
+        public LSymbol(string mName, SymbolCategory mSymbolType, LType mType) {
             m_name = mName;
             m_type = mType;
             m_symbolCategory = mSymbolType;
@@ -32,12 +49,28 @@ namespace MATHL.TypeSystem {
 
         public LType MType => m_type;
 
-        public LValue MValue  => m_value;
-        
+        public LValue MValue {
+            get => m_value;
+            set => m_value = value;
+        }
+
 
         public SymbolCategory MSymbolCategory => m_symbolCategory;
 
         public override string ToString() {
+            string symbol;
+            if (MSymbolCategory == SymbolCategory.ST_VARIABLE) {
+                switch (m_value.MType) {
+                    case TypeID.TID_INTEGER:
+                        return MName + ":" + m_type +$"= {m_value.Ivalue}";
+                        break;
+                    case TypeID.TID_FLOAT:
+                        return MName + ":" + m_type + $"= {m_value.Fvalue}";
+                        break;
+                    default:
+                        return MName + ":" + m_type;
+                }
+            }
             return MName + ":" + m_type;
         }
     }
@@ -79,7 +112,7 @@ namespace MATHL.TypeSystem {
         private void AddParameter(VariableSymbol p) {
             m_ParameterSymbols.Add(p);
         }
-        
+
     }
 
     public class TypenameSymbol : LSymbol {

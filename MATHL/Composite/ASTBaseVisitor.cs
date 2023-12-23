@@ -13,7 +13,7 @@ namespace MATHL.Composite {
         public virtual Return Visit(IASTVisitableNode node, params Params[] info) {
             return node.Accept<Return, Params>(this, info);
         }
-
+        
         // Visit the children of a specific node and summarize the 
         // results by the visiting each child 
         public virtual Return VisitChildren(IASTComposite node, params Params[] info) {
@@ -31,7 +31,16 @@ namespace MATHL.Composite {
         }
     }
 
+    // This version of visitor class is preferable when we do not desire a default 
+    // visit action for each node so the traversal would stop when reaching a 
+    // node with this class's implementation
     public class MATHLBaseVisitor<Result, Params> : ASTBaseVisitor<Result, Params> {
+
+        public virtual Result VisitContextChild(ASTComposite node, int context,
+            int index, params Params[] info) {
+            ASTElement child = node.GetChild(context, index);
+            return child.Accept(this, info);
+        }
 
         public virtual Result VisitContextChildren(ASTComposite node, int context,
             params Params[] info) {
@@ -64,7 +73,6 @@ namespace MATHL.Composite {
         public virtual Result VisitCompileUnit(CCompileUnit node, params Params[] args) {
             return VisitChildren(node, args);
         }
-
         public virtual Result VisitDeclaration_Function(CDeclarationFunction node, params Params[] args) {
             return VisitChildren(node, args);
         }
@@ -137,5 +145,10 @@ namespace MATHL.Composite {
         public virtual Result VisitT_IDENTIFIER(CIDENTIFIER node, params Params[] args) {
             return default(Result);
         }
+    }
+
+    public class MATHLBaseVisitorDefaultVisitChildren<Result, Params> : MATHLBaseVisitor<Result, Params> {
+
+        
     }
 }

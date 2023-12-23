@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MATHL.ASTVisitors {
-    internal class ASTPrinter : MATHLBaseVisitor<int, ASTElement> {
+    internal class ASTPrinter : MATHLBaseVisitorDefaultVisitChildren<int, ASTElement> {
         StreamWriter m_writer;
         private string m_outputFilename;
         private int m_clusterSerial;

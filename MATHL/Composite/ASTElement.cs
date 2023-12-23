@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MATHL.TypeSystem;
 
 
 namespace MATHL.Composite {
@@ -185,12 +186,14 @@ namespace MATHL.Composite {
         protected string m_nodeName;
         private ASTComposite m_parent;
         private static int ms_serialCounter;
+        
         // Either will use this member or there has to be
         // a static dictionary to map ASTNode to the corresponding
         // link hierarchy node. Trees have many applications 
         // most of the times they extend to an application domain
         // So this link is necessary.
         private Dictionary<object, object> m_nodeInfo=new Dictionary<object, object>();
+
 
         // Access node information by key
         public object this[object key] {
