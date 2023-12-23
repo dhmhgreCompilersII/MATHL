@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -112,7 +113,12 @@ namespace MATHL.TypeSystem {
         }
 
         public void Report(string filename) {
+            string filenameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
+            string dotFilename = $"{filenameWithoutExtension}.dot";
+
+            StreamWriter dotReportFile = new StreamWriter(dotFilename);
             StreamWriter reportFile = new StreamWriter(filename);
+
             reportFile.WriteLine("---- REPORTING SCOPESYSTEM CONTENTS -----\n");
 
             foreach (KeyValuePair<string, Scope> keyValuePair in m_scopes) {
@@ -122,6 +128,40 @@ namespace MATHL.TypeSystem {
                 reportFile.WriteLine();
             }
             reportFile.Close();
+
+            dotReportFile.WriteLine("digraph G{");
+
+            foreach (Scope scope in m_scopes.Values) {
+                if (scope.M_EnclosingScope != null) {
+                    dotReportFile.WriteLine($"\"{scope.M_EnclosingScope.M_ScopeName}\"->\"{scope.M_ScopeName}\";");
+                }
+            }
+
+            dotReportFile.WriteLine("}");
+            dotReportFile.Close();
+
+            // Prepare the process dot to run
+            ProcessStartInfo start = new ProcessStartInfo();
+            // Enter in the command line arguments, everything you would enter after the executable name itself
+            start.Arguments = "-Tgif " +
+                              filenameWithoutExtension + ".dot" + " -o " +
+                              filenameWithoutExtension + ".gif";
+            // Enter the executable to run, including the complete path
+            start.FileName = "dot";
+            // Do you want to show a console window?
+            start.WindowStyle = ProcessWindowStyle.Hidden;
+            start.CreateNoWindow = true;
+            int exitCode;
+
+            // Run the external process & wait for it to finish
+            using (Process proc = Process.Start(start)) {
+                proc.WaitForExit();
+
+                // Retrieve the app's exit code
+                exitCode = proc.ExitCode;
+            }
+
+            
         }
     }
 }

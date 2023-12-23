@@ -16,7 +16,6 @@ namespace MATHL.Composite {
         NT_EXPRESSION_UNARYMINUS, NT_EXPRESSION_RANGE,NT_EXPRESSION_FUNCTIONCALL, NT_EXPRESSION_NUMBER,
 
         T_INTTYPE, T_FLOATTYPE, T_RANGETYPE,T_IDENTIFIER, T_FLOATNUMBER, T_INTEGERNUMBER
-        
     }
 
     public class CCompileUnit : ASTComposite {
@@ -307,8 +306,7 @@ namespace MATHL.Composite {
             return visitor.VisitDeclaration_Function(this, info);
         }
     }
-
-
+    
     public class CINTEGERNUMBER : ASTLeaf {
         private LType m_type;
 
@@ -352,7 +350,6 @@ namespace MATHL.Composite {
         public override string MNodeName => m_nodeName + "_" + MStringLiteral;
         public Scope M_CurrentScope => this[typeof(Scope)] as Scope;
         
-
         public LSymbol MSymbol => this[typeof(LSymbol)] as LSymbol;
 
         public CIDENTIFIER(string leafLiteral) :

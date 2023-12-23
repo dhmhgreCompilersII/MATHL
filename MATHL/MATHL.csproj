@@ -29,6 +29,7 @@
   <ItemGroup>
     <Content Include="..\Testbench\AST.gif" Link="AST.gif" />
     <Content Include="..\Testbench\St.gif" Link="St.gif" />
+    <Content Include="..\Testbench\SymbolTable.gif" Link="SymbolTable.gif" />
     <Content Include="..\Testbench\SymbolTable.txt" Link="SymbolTable.txt" />
     <Content Include="..\Testbench\test.txt" Link="test.txt" />
     <Content Include="..\Testbench\test1.txt" Link="test1.txt" />
@@ -40,6 +41,7 @@
     <None Include="..\README.md" Link="README.md" />
     <None Include="..\Testbench\AST.dot" Link="AST.dot" />
     <None Include="..\Testbench\St.dot" Link="St.dot" />
+    <None Include="..\Testbench\SymbolTable.dot" Link="SymbolTable.dot" />
   </ItemGroup>
 
   <ItemGroup>
