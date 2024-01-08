@@ -146,9 +146,4 @@ namespace MATHL.Composite {
             return default(Result);
         }
     }
-
-    public class MATHLBaseVisitorDefaultVisitChildren<Result, Params> : MATHLBaseVisitor<Result, Params> {
-
-        
-    }
 }

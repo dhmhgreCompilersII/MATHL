@@ -82,17 +82,32 @@ namespace MATHL
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             MATHLParser parser = new MATHLParser(tokens);
             IParseTree tree = parser.compile_unit();
+            
+            // ST Generated
+            
             SyntaxTreePrinter stPrinter = new SyntaxTreePrinter("St");
             stPrinter.Visit(tree);
+            
             DeclarationProcessor declarationProcessor = new DeclarationProcessor(m_environment.M_ScopeSystem);
             declarationProcessor.Visit(tree);
+            
             ASTGeneration astgen = new ASTGeneration(m_environment.M_ScopeSystem);
             var asttree = astgen.Visit(tree);
+            
+            // AST Generated
+
             ASTPrinter astprinter = new ASTPrinter("AST.dot");
             astprinter.Visit(asttree);
+
             InitializationsProcessor initializationsProcessor =
                 new InitializationsProcessor(m_environment.M_ScopeSystem);
             initializationsProcessor.Visit(asttree);
+
+            EvaluationProcessor evaluator = new EvaluationProcessor();
+            evaluator.Visit(asttree);
+
+
+            // Reports
             m_environment.M_ScopeSystem.Report("SymbolTable.txt");
 
         }

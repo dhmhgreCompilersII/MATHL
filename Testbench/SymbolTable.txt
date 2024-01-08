@@ -9,29 +9,9 @@ NAMESPACE :ST_TYPENAME
 	int:IntegerType
 	float:FloatingType
 NAMESPACE :ST_VARIABLE
-	c:IntegerType= 1
+	a:IntegerType= 0
 NAMESPACE :ST_FUNCTION
-	a:IntegerType <f>(IntegerType, FloatingType)
+		---- EMPTY ----
 
-
-------------------------------------
----- SCOPE a ------
-NAME:a
-PARENT SCOPE:  global
-
-NAMESPACE :ST_VARIABLE
-	b:IntegerType= 0
-	t:FloatingType= 0
-	c:IntegerType= 0
-	d:IntegerType= 1
-
-
-------------------------------------
----- SCOPE global.1 ------
-NAME:global.1
-PARENT SCOPE:  global
-
-NAMESPACE :ST_VARIABLE
-	c:IntegerType= 1
 
 
