@@ -11,9 +11,9 @@ namespace MATHL.TypeSystem {
     [StructLayout(LayoutKind.Explicit)]
     public struct LValue {
         [FieldOffset(0)]
-        public int ivalue;
+        private int ivalue;
         [FieldOffset(0)]
-        public float fvalue;
+        private float fvalue;
         [FieldOffset(4)]
         TypeID m_type;
 
@@ -30,6 +30,17 @@ namespace MATHL.TypeSystem {
         public TypeID MType {
             get => m_type;
             set => m_type = value;
+        }
+
+        public override string ToString() {
+            switch (MType) {
+                case TypeID.TID_INTEGER:
+                    return Ivalue.ToString();
+                case TypeID.TID_FLOAT:
+                    return Fvalue.ToString();
+                default:
+                    return "";
+            }
         }
     }
 

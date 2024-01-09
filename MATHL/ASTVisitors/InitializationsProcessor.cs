@@ -69,13 +69,13 @@ namespace MATHL.ASTVisitors {
 
 
         public override InitializationsInfo VisitT_INTEGERNUMBER(CINTEGERNUMBER node, params InitializationsInfo[] args) {
-            int value = Int32.Parse(node.MStringLiteral);
+            int value = Int32.Parse(node.M_StringLiteral);
             args[0].M_Value = new LValue() { MType = TypeID.TID_INTEGER, Ivalue = value };
             return args[0];
         }
 
         public override InitializationsInfo VisitT_FLOATNUMBER(CFLOATNUMBER node, params InitializationsInfo[] args) {
-            float value = float.Parse(node.MStringLiteral);
+            float value = float.Parse(node.M_StringLiteral);
             args[0].M_Value = new LValue() { MType = TypeID.TID_FLOAT, Fvalue = value };
             return args[0];
         }

@@ -143,7 +143,7 @@ namespace MATHL.STVisitors {
 
             CIDENTIFIER variableIdentifier = res as CIDENTIFIER;
             VariableSymbol variableSymbol= 
-                m_scopesystem.SearchSymbol(variableIdentifier.MStringLiteral, SymbolCategory.ST_VARIABLE)
+                m_scopesystem.SearchSymbol(variableIdentifier.M_StringLiteral, SymbolCategory.ST_VARIABLE)
                 as VariableSymbol;
             variableSymbol.M_VariableIdentifier =variableIdentifier;
             variableIdentifier[typeof(LSymbol)] = variableSymbol;
@@ -403,8 +403,14 @@ namespace MATHL.STVisitors {
                         case (int)NodeType.NT_EXPRESSION_RANGE:
                             VariableSymbol variableSymbol;
                             variableSymbol = m_scopesystem.SearchSymbol(node.GetText(), SymbolCategory.ST_VARIABLE) as VariableSymbol;
-                            newNode = variableSymbol.M_VariableIdentifier;
-                            newNode[typeof(LSymbol)] = variableSymbol;
+                            if (variableSymbol == null) {
+                                throw new Exception("Undeclared Identifier");
+                            }
+                            else {
+                                newNode = variableSymbol.M_VariableIdentifier;
+                                newNode[typeof(LSymbol)] = variableSymbol;
+                            }
+
                             break;
                         default:
                             newNode = new CIDENTIFIER(node.GetText());

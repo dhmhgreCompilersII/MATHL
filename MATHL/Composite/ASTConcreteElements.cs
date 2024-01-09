@@ -310,14 +310,21 @@ namespace MATHL.Composite {
     public class CINTEGERNUMBER : ASTLeaf {
         private LType m_type;
 
-        public override string MNodeName => m_nodeName + "_" + MStringLiteral;
+        private LValue m_value;
+
+        public override string MNodeName => m_nodeName + "_" + M_StringLiteral;
 
         public LType M_Type => m_type;
+
+        public LValue M_Value => m_value;
+        
 
         public CINTEGERNUMBER(string leafLiteral) :
             base(leafLiteral, (int)NodeType.T_INTEGERNUMBER) {
             m_type = MATHLExecutionEnvironment.GetInstance().M_ScopeSystem.M_GlobalScope.
                 SearchSymbol(IntegerType.mc_typename,SymbolCategory.ST_TYPENAME).MType;
+            m_value.MType = TypeID.TID_INTEGER;
+            m_value.Ivalue = Int32.Parse(leafLiteral);
         }
 
         public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v, params Params[] info) {
@@ -329,7 +336,7 @@ namespace MATHL.Composite {
     public class CFLOATNUMBER : ASTLeaf {
         private LType m_type;
 
-        public override string MNodeName => m_nodeName + "_" + MStringLiteral;
+        public override string MNodeName => m_nodeName + "_" + M_StringLiteral;
 
         public LType M_Type => m_type;
 
@@ -347,7 +354,7 @@ namespace MATHL.Composite {
 
     public class CIDENTIFIER : ASTLeaf {
         
-        public override string MNodeName => m_nodeName + "_" + MStringLiteral;
+        public override string MNodeName => m_nodeName + "_" + M_StringLiteral;
         public Scope M_CurrentScope => this[typeof(Scope)] as Scope;
         
         public LSymbol MSymbol => this[typeof(LSymbol)] as LSymbol;
@@ -363,14 +370,14 @@ namespace MATHL.Composite {
     public class CIntType : ASTLeaf {
         private LType m_type;
 
-        public override string MNodeName => m_nodeName + "_" + MStringLiteral;
+        public override string MNodeName => m_nodeName + "_" + M_StringLiteral;
 
         public LType MType1 => m_type;
 
         public CIntType(string leafLiteral) :
             base(leafLiteral, (int)NodeType.T_INTTYPE) {
             m_type = MATHLExecutionEnvironment.GetInstance().M_ScopeSystem.M_GlobalScope
-                .SearchSymbol(MStringLiteral, SymbolCategory.ST_TYPENAME).MType;
+                .SearchSymbol(M_StringLiteral, SymbolCategory.ST_TYPENAME).MType;
         }
 
         public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v, params Params[] info) {
@@ -381,14 +388,14 @@ namespace MATHL.Composite {
     public class CFloatType : ASTLeaf {
         private LType m_type;
 
-        public override string MNodeName => m_nodeName + "_" + MStringLiteral;
+        public override string MNodeName => m_nodeName + "_" + M_StringLiteral;
 
         public LType MType1 => m_type;
 
         public CFloatType(string leafLiteral) :
             base(leafLiteral, (int)NodeType.T_FLOATTYPE) {
             m_type = MATHLExecutionEnvironment.GetInstance().M_ScopeSystem.M_GlobalScope
-                .SearchSymbol(MStringLiteral, SymbolCategory.ST_TYPENAME).MType;
+                .SearchSymbol(M_StringLiteral, SymbolCategory.ST_TYPENAME).MType;
         }
 
         public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v, params Params[] info) {
@@ -399,7 +406,7 @@ namespace MATHL.Composite {
     public class CRangeType : ASTLeaf {
         private LType m_type;
 
-        public override string MNodeName => m_nodeName + "_" + MStringLiteral;
+        public override string MNodeName => m_nodeName + "_" + M_StringLiteral;
 
         public LType MType => m_type;
 

@@ -317,7 +317,7 @@ namespace MATHL.Composite {
     public class ASTLeaf : ASTElement {
         private string m_stringLiteral;
 
-        public string MStringLiteral => m_stringLiteral;
+        public string M_StringLiteral => m_stringLiteral;
 
         public ASTLeaf(string leafLiteral, int mType) :
             base(mType) {

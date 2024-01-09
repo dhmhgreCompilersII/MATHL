@@ -103,7 +103,7 @@ namespace MATHL
                 new InitializationsProcessor(m_environment.M_ScopeSystem);
             initializationsProcessor.Visit(asttree);
 
-            EvaluationProcessor evaluator = new EvaluationProcessor();
+            EvaluationProcessor evaluator = new EvaluationProcessor(m_environment.M_ScopeSystem,m_environment.M_Logger);
             evaluator.Visit(asttree);
 
 
@@ -197,6 +197,10 @@ namespace MATHL
         // SymbolTable
         private ScopeSystem m_scopeSystem;
 
+        private Logging m_logger;
+
+        public Logging M_Logger => m_logger;
+
         public ScopeSystem M_ScopeSystem => m_scopeSystem;
 
         // History of given commands
@@ -237,6 +241,7 @@ namespace MATHL
 
         void InitializeProcessor() {
             m_scopeSystem = new ScopeSystem();
+            m_logger= new Logging();
         }
     }
 }

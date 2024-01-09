@@ -35,7 +35,7 @@ namespace MATHL.Composite {
     // visit action for each node so the traversal would stop when reaching a 
     // node with this class's implementation
     public class MATHLBaseVisitor<Result, Params> : ASTBaseVisitor<Result, Params> {
-
+        
         public virtual Result VisitContextChild(ASTComposite node, int context,
             int index, params Params[] info) {
             ASTElement child = node.GetChild(context, index);

@@ -1,2 +1,12 @@
-//int a;
+int a,b,c;
 a=1;
+b=10;
+c = 2*a+b*5;
+
+/*
+int foo(int b){
+	int a;
+	a = b+1;
+	return a;
+}
+*/
