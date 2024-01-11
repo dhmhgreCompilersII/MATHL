@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using MATHL;
@@ -137,20 +138,25 @@ namespace MATHL.ASTVisitors {
             return result;
         }
 
+
+
+
         public override LValue VisitExpression_Number(CExpression_Number node, params EvalParams[] args) {
-            // 1. Evaluate Number 
-            LValue result = Visit(node.GetChild(CExpression_Number.NUMBER));
+            // 1. Evaluate Number
+            ASTElement number = node.GetChild(CExpression_Number.NUMBER);
+            LValue result = Visit(number);
 
             // 2. Return result
             return result;
         }
 
         public override LValue VisitT_INTEGERNUMBER(CINTEGERNUMBER node, params EvalParams[] args) {
+            Expression<Func<LValue>> number = () => node.M_Value;
             return node.M_Value;
         }
 
         public override LValue VisitT_FLOATNUMBER(CFLOATNUMBER node, params EvalParams[] args) {
-            return base.VisitT_FLOATNUMBER(node, args);
+            return node.MValue;
         }
     }
 }

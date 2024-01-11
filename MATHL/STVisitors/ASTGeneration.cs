@@ -345,11 +345,10 @@ namespace MATHL.STVisitors {
                 p.M_IsConstantExpression = true;
                 p.M_ExpressionType = newNode.M_Type;
             }
-
             return newNode;
         }
 
-        public override ASTElement VisitExpression5_NUMBER(MATHLParser.Expression5_NUMBERContext context) {
+        public override ASTElement VisitExpression_NUMBER(MATHLParser.Expression_NUMBERContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
 
@@ -360,7 +359,6 @@ namespace MATHL.STVisitors {
             ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
             this.VisitElementInContext(context.number(), CExpression_Number.NUMBER,
                 m_contextsStack, newNode, m_parentsStack,info,m_infoStack);
-
             return newNode;
         }
 

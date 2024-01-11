@@ -197,19 +197,19 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
         return m_NodeCounter;
     }
 
-    public override int VisitExpression5_IDENTIFIER(MATHLParser.Expression5_IDENTIFIERContext context) {
+    public override int VisitExpression_IDENTIFIER(MATHLParser.Expression_IDENTIFIERContext context) {
         Visit_Prologue(() => "Expression_IDENTIFIER");
 
-        base.VisitExpression5_IDENTIFIER(context);
+        base.VisitExpression_IDENTIFIER(context);
 
         Visit_Epilogue();
         return m_NodeCounter;
     }
 
-    public override int VisitExpression5_parenthesizedexpression(MATHLParser.Expression5_parenthesizedexpressionContext context) {
+    public override int VisitExpression_parenthesizedexpression(MATHLParser.Expression_parenthesizedexpressionContext context) {
         Visit_Prologue(() => "ParenthesizedExpression");
 
-        base.VisitExpression5_parenthesizedexpression(context);
+        base.VisitExpression_parenthesizedexpression(context);
 
         Visit_Epilogue();
         return m_NodeCounter;
@@ -250,7 +250,7 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
 
     public override int VisitExpression_equationassignment(MATHLParser.Expression_equationassignmentContext context) {
         Visit_Prologue(() => {
-            if (context.a.GetChild(0) is MATHLParser.Expression5_IDENTIFIERContext) {
+            if (context.a.GetChild(0) is MATHLParser.Expression_IDENTIFIERContext) {
                 return "assignment";
             } else {
                 return "equation";
@@ -263,10 +263,10 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
         return m_NodeCounter;
     }
 
-    public override int VisitExpression5_NUMBER(MATHLParser.Expression5_NUMBERContext context) {
+    public override int VisitExpression_NUMBER(MATHLParser.Expression_NUMBERContext context) {
         Visit_Prologue(() => "Expression_NUMBER");
 
-        base.VisitExpression5_NUMBER(context);
+        base.VisitExpression_NUMBER(context);
 
         Visit_Epilogue();
         return m_NodeCounter;
@@ -308,10 +308,10 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
         return m_NodeCounter;
     }
 
-    public override int VisitExpression5_range(MATHLParser.Expression5_rangeContext context) {
+    public override int VisitExpression_range(MATHLParser.Expression_rangeContext context) {
         Visit_Prologue(() => "Expression_range");
 
-        base.VisitExpression5_range(context);
+        base.VisitExpression_range(context);
 
         Visit_Epilogue();
         return m_NodeCounter;

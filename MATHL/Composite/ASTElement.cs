@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using MATHL.TypeSystem;
@@ -178,8 +179,14 @@ namespace MATHL.Composite {
         Return VisitChildren(IASTComposite node, params Params[] info);
     }
 
+    public interface IExpressionTree {
+        public Expression M_ExpressionTree {
+            get;
+        }
+    }
 
-    public class ASTElement : IASTVisitableNode, ILabelled {
+
+    public abstract class ASTElement : IASTVisitableNode, ILabelled, IExpressionTree {
         private int m_type;
         private int m_serialNumber;
         // open for modification by subclasses
@@ -194,6 +201,12 @@ namespace MATHL.Composite {
         // So this link is necessary.
         private Dictionary<object, object> m_nodeInfo=new Dictionary<object, object>();
 
+        private Expression m_expressionTree;
+        
+        public Expression M_ExpressionTree {
+            get => m_expressionTree;
+            protected set => m_expressionTree = value ?? throw new ArgumentNullException(nameof(value));
+        }
 
         // Access node information by key
         public object this[object key] {
@@ -233,7 +246,7 @@ namespace MATHL.Composite {
         }
     }
 
-    public class ASTComposite : ASTElement, IASTComposite {
+    public abstract class ASTComposite : ASTElement, IASTComposite {
 
         List<ASTElement>[] m_children;
 
@@ -314,7 +327,7 @@ namespace MATHL.Composite {
         }
     }
 
-    public class ASTLeaf : ASTElement {
+    public abstract class ASTLeaf : ASTElement {
         private string m_stringLiteral;
 
         public string M_StringLiteral => m_stringLiteral;

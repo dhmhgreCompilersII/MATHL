@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using MATHL.TypeSystem;
@@ -51,7 +53,7 @@ namespace MATHL.Composite {
     public abstract class CExpression : ASTComposite {
         private LType m_type=null;
         private bool m_isConstantExpression=false;
-
+        
         public bool M_IsConstantExpression {
             get => m_isConstantExpression;
             set => m_isConstantExpression = value;
@@ -209,8 +211,10 @@ namespace MATHL.Composite {
     public class CExpression_Number : CExpression {
         public const int NUMBER = 0;
         public readonly string[] mc_contextNames = { "NUMBER" };
-        public CExpression_Number() : 
-            base(1, (int)NodeType.NT_EXPRESSION_NUMBER) { }
+
+        public CExpression_Number() :
+            base(1, (int)NodeType.NT_EXPRESSION_NUMBER) {
+        }
 
         public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v,
             params Params[] info) {
@@ -318,7 +322,6 @@ namespace MATHL.Composite {
 
         public LValue M_Value => m_value;
         
-
         public CINTEGERNUMBER(string leafLiteral) :
             base(leafLiteral, (int)NodeType.T_INTEGERNUMBER) {
             m_type = MATHLExecutionEnvironment.GetInstance().M_ScopeSystem.M_GlobalScope.
@@ -336,14 +339,21 @@ namespace MATHL.Composite {
     public class CFLOATNUMBER : ASTLeaf {
         private LType m_type;
 
+        private LValue m_value;
+
         public override string MNodeName => m_nodeName + "_" + M_StringLiteral;
 
         public LType M_Type => m_type;
+
+        public LValue MValue  => m_value;
+        
 
         public CFLOATNUMBER(string leafLiteral) :
             base(leafLiteral, (int)NodeType.T_FLOATNUMBER) {
             m_type = m_type = MATHLExecutionEnvironment.GetInstance().M_ScopeSystem.M_GlobalScope.
                 SearchSymbol(FloatingType.mc_typename, SymbolCategory.ST_TYPENAME).MType; ;
+            m_value.MType = TypeID.TID_FLOAT;
+            m_value.Fvalue = float.Parse(leafLiteral,CultureInfo.InvariantCulture);
         }
 
         public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v, params Params[] info) {
