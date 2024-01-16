@@ -1,12 +1,9 @@
-int a,b,c;
-a=1;
-b=10;
-c = 2*a+b*5;
-
-/*
-int foo(int b){
-	int a;
-	a = b+1;
-	return a;
+int a,b,c,d;
+int foo(int a){
+	
 }
-*/
+foo(1);
+a(1);
+d=1;
+d(1);
+

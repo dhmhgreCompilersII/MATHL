@@ -27,8 +27,13 @@ public partial class MATHLParser : Parser {
         // and set the isFunction predicate
         IToken x = TokenStream.LT(1);
         if (x.Type == MATHLParser.IDENTIFIER) {
-            LSymbol identifierSymbol_ = symtab.SearchSymbol(x.Text, SymbolCategory.ST_FUNCTION);
-            isFunction = (identifierSymbol_ == null) ? false : true;
+            if (symtab.ContainsKey(x.Text)) {
+                if (symtab[x.Text] == SymbolCategory.ST_FUNCTION) {
+                    isFunction = true;
+                    return;
+                }
+            }
+            isFunction = false;
         } else {
             // Need to invalidate the isFunction flag after passing a function IDENTIFIER symbol
             // to a next symbol that isn't an IDENTIFIER. 

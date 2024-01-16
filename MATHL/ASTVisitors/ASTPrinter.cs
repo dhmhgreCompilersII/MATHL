@@ -165,9 +165,7 @@ namespace MATHL.ASTVisitors {
 
             return base.VisitExpression_Range(node, node);
         }
-
-
-
+        
         public override int VisitExpression_FunctionCall(CExpression_FunctionCall node, params ASTElement[] args) {
             m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
 

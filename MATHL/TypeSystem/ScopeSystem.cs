@@ -66,6 +66,7 @@ namespace MATHL.TypeSystem {
             return m_currentScope;
         }
         
+        // Create scope and enter it
         public Scope CreateScope(string scopename) {
 
             if (scopename == M_GlobalScopeName) {
@@ -109,7 +110,8 @@ namespace MATHL.TypeSystem {
         }
 
         public LSymbol SearchSymbol(string name, SymbolCategory symbolType) {
-            return m_currentScope.SearchSymbol(name, symbolType);
+            LSymbol s =m_currentScope.SearchSymbol(name, symbolType);
+            return s;
         }
 
         public void Report(string filename) {

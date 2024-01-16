@@ -9,11 +9,20 @@ NAMESPACE :ST_TYPENAME
 	int:IntegerType
 	float:FloatingType
 NAMESPACE :ST_VARIABLE
-	a:IntegerType= 1
-	b:IntegerType= 10
-	c:IntegerType= 5
+	a:IntegerType= 0
+	b:IntegerType= 0
+	c:IntegerType= 0
+	d:IntegerType= 0
 NAMESPACE :ST_FUNCTION
-		---- EMPTY ----
+	foo:IntegerType <f>(IntegerType)
 
+
+------------------------------------
+---- SCOPE foo ------
+NAME:foo
+PARENT SCOPE:  global
+
+NAMESPACE :ST_VARIABLE
+	a:IntegerType= 0
 
 

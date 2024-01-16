@@ -308,6 +308,15 @@ public class SyntaxTreePrinter : MATHLParserBaseVisitor<int> {
         return m_NodeCounter;
     }
 
+    public override int VisitExpression_FunctionCall(MATHLParser.Expression_FunctionCallContext context) {
+        Visit_Prologue(() => "Expression_FunctionCall");
+
+        base.VisitExpression_FunctionCall(context);
+
+        Visit_Epilogue();
+        return m_NodeCounter;
+    }
+
     public override int VisitExpression_range(MATHLParser.Expression_rangeContext context) {
         Visit_Prologue(() => "Expression_range");
 

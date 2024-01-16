@@ -10,9 +10,10 @@ using SharpCompress.Common;
 
 namespace MATHL.ASTVisitors {
 
-    internal struct InitializationsInfo {
+    internal class InitializationsInfo {
         private LValue m_value;
         private VariableSymbol m_Variable;
+        private string m_EnclosingFunctionForBlock=null;
 
         public LValue M_Value {
             get => m_value;
@@ -22,6 +23,10 @@ namespace MATHL.ASTVisitors {
         public VariableSymbol M_VariableSymbol {
             get => m_Variable;
             set => m_Variable = value ?? throw new ArgumentNullException(nameof(value));
+        }
+        public string MEnclosingFunctionForBlock {
+            get => m_EnclosingFunctionForBlock;
+            set => m_EnclosingFunctionForBlock = value ?? throw new ArgumentNullException(nameof(value));
         }
     }
 
@@ -41,9 +46,17 @@ namespace MATHL.ASTVisitors {
 
         public override InitializationsInfo VisitCommand_CommandBlock(CCommand_CommandBlock node, params InitializationsInfo[] args) {
             Scope commandBlockScope = node[typeof(Scope)] as Scope;
-            m_scopeSystem.EnterScope(commandBlockScope.M_ScopeName);
-            base.VisitCommand_CommandBlock(node, args);
-            m_scopeSystem.ExitScope();
+            InitializationsInfo arg1=null;
+            // Bug!!! : Fix by entering scope only when the commandBlock
+            // Bug!!! : does not refer to the body of the function
+            if (args[0].MEnclosingFunctionForBlock == null) {
+                m_scopeSystem.EnterScope(commandBlockScope.M_ScopeName);
+            }
+            
+            base.VisitCommand_CommandBlock(node, arg1);
+            if (args[0].MEnclosingFunctionForBlock == null) {
+                m_scopeSystem.ExitScope();
+            }
             return default(InitializationsInfo);
         }
 
@@ -53,7 +66,8 @@ namespace MATHL.ASTVisitors {
 
         public override InitializationsInfo VisitDeclaration_Function(CDeclarationFunction node, params InitializationsInfo[] args) {
             m_scopeSystem.EnterScope(node.MFunctionName);
-            base.VisitContextChildren(node, CDeclarationFunction.BODY, args);
+            InitializationsInfo arg1 = new InitializationsInfo() { MEnclosingFunctionForBlock = node.MFunctionName };
+            base.VisitContextChildren(node, CDeclarationFunction.BODY, arg1);
             m_scopeSystem.ExitScope();
             return default(InitializationsInfo);
         }

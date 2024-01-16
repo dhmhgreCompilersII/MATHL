@@ -35,7 +35,7 @@ INTEGER : '0'|NATURAL;
 FLOATING :  (NATURAL?'.'NATURAL EXPONENT?)|(NATURAL'.'NATURAL? EXPONENT?);
 
 
-NEWLINE :'\r'?'\n' ; 
-LINECOMMENTS :'//'.*'\n' ->skip;
+LINECOMMENTS :'//'.*?'\r'?'\n' ->skip;
 BLOCKCOMMENTS:'/*' .*? '*/' ->skip;
+NEWLINE :'\r'?'\n' ; 
 SPACE :[ \t] ->skip;

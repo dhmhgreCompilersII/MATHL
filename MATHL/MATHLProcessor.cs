@@ -102,11 +102,7 @@ namespace MATHL
             InitializationsProcessor initializationsProcessor =
                 new InitializationsProcessor(m_environment.M_ScopeSystem);
             initializationsProcessor.Visit(asttree);
-
-            EvaluationProcessor evaluator = new EvaluationProcessor(m_environment.M_ScopeSystem,m_environment.M_Logger);
-            evaluator.Visit(asttree);
-
-
+            
             // Reports
             m_environment.M_ScopeSystem.Report("SymbolTable.txt");
 

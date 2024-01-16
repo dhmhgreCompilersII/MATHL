@@ -205,7 +205,7 @@ namespace MATHL.Composite {
         
         public Expression M_ExpressionTree {
             get => m_expressionTree;
-            protected set => m_expressionTree = value ?? throw new ArgumentNullException(nameof(value));
+            set => m_expressionTree = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         // Access node information by key
