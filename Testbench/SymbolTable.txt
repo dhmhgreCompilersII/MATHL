@@ -12,17 +12,9 @@ NAMESPACE :ST_VARIABLE
 	a:IntegerType= 0
 	b:IntegerType= 0
 	c:IntegerType= 0
-	d:IntegerType= 0
+	d:= 0
 NAMESPACE :ST_FUNCTION
-	foo:IntegerType <f>(IntegerType)
+		---- EMPTY ----
 
-
-------------------------------------
----- SCOPE foo ------
-NAME:foo
-PARENT SCOPE:  global
-
-NAMESPACE :ST_VARIABLE
-	a:IntegerType= 0
 
 

@@ -184,7 +184,6 @@ namespace MATHL.Visitors {
             };
             return declaredtype;
         }
-
         public override LType VisitExpression_equationassignment(MATHLParser.Expression_equationassignmentContext context) {
             LType declaredtype = null;
 
@@ -216,7 +215,6 @@ namespace MATHL.Visitors {
             }
             return null;
         }
-
         public override LType VisitExpression_IDENTIFIER(MATHLParser.Expression_IDENTIFIERContext context) {
 
             IToken identifierToken = context.IDENTIFIER().Symbol;
@@ -230,7 +228,6 @@ namespace MATHL.Visitors {
             }
             return idSymbol.MType;
         }
-
         public override LType VisitExpression_FunctionCall(MATHLParser.Expression_FunctionCallContext context) {
             IToken identifierToken = context.IDENTIFIER().Symbol;
             string identifier = identifierToken.Text;
@@ -243,15 +240,9 @@ namespace MATHL.Visitors {
             }
             return idSymbol.MType;
         }
-
-        public override LType VisitExpression_NUMBER(MATHLParser.Expression_NUMBERContext context) {
-            return base.VisitExpression_NUMBER(context);
-        }
-
         public override LType VisitNumberINTEGER(MATHLParser.NumberINTEGERContext context) {
             return IntegerType.Instance;
         }
-
         public override LType VisitNumberFLOAT(MATHLParser.NumberFLOATContext context) {
             return FloatingType.Instance;
         }

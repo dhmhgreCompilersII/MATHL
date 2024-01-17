@@ -64,8 +64,8 @@ expression
 							    <assoc=left>IDIV |
 							    <assoc=left>'%') b=expression				  #expression_multiplicationdivision
 			| a=expression op=('+'|'-') b=expression						  #expression_additionsubtraction
-			| a=expression '=' b=expression									  #expression_equationassignment
 			| a=expression  b=expression									  #expression_context 
+			| a=expression '=' b=expression									  #expression_equationassignment
 			;
 
 

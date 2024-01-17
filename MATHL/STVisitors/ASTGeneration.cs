@@ -218,7 +218,6 @@ namespace MATHL.STVisitors {
                 CExpression_FunctionCall.PARAMS, m_contextsStack, newNode, m_parentsStack, info, m_infoStack);
             return newNode;
         }
-
         public override ASTElement VisitExpression_equationassignment(MATHLParser.Expression_equationassignmentContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
@@ -235,7 +234,6 @@ namespace MATHL.STVisitors {
 
             return newNode;
         }
-
         public override ASTElement VisitRange(MATHLParser.RangeContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
@@ -254,7 +252,6 @@ namespace MATHL.STVisitors {
 
             return newNode;
         }
-
         public override ASTElement VisitExpression_unaryprefixexpression(MATHLParser.Expression_unaryprefixexpressionContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
@@ -277,7 +274,6 @@ namespace MATHL.STVisitors {
 
             return newNode;
         }
-
         public override ASTElement VisitExpression_additionsubtraction(MATHLParser.Expression_additionsubtractionContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
@@ -305,7 +301,6 @@ namespace MATHL.STVisitors {
                 m_contextsStack, newNode, m_parentsStack, info, m_infoStack);
             return newNode;
         }
-
         public override ASTElement VisitExpression_multiplicationdivision(MATHLParser.Expression_multiplicationdivisionContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
@@ -338,7 +333,6 @@ namespace MATHL.STVisitors {
 
             return newNode;
         }
-
         public override ASTElement VisitExpression_context(MATHLParser.Expression_contextContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
@@ -357,7 +351,6 @@ namespace MATHL.STVisitors {
 
             return newNode;
         }
-
         public override ASTElement VisitNumberINTEGER(MATHLParser.NumberINTEGERContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
@@ -372,7 +365,6 @@ namespace MATHL.STVisitors {
 
             return newNode;
         }
-
         public override ASTElement VisitNumberFLOAT(MATHLParser.NumberFLOATContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
@@ -386,7 +378,6 @@ namespace MATHL.STVisitors {
             }
             return newNode;
         }
-
         public override ASTElement VisitExpression_NUMBER(MATHLParser.Expression_NUMBERContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
@@ -401,7 +392,6 @@ namespace MATHL.STVisitors {
 
             return newNode;
         }
-
         public override ASTElement VisitTerminal(ITerminalNode node) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
