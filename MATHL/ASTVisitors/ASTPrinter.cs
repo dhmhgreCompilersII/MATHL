@@ -195,6 +195,15 @@ namespace MATHL.ASTVisitors {
             return base.VisitExpression_UnaryMinus(node, node);
         }
 
+        public override int VisitExpression_ParenthesizedExpression(CExpression_ParenthesizedExpression node, params ASTElement[] args) {
+            m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
+
+            CreateContextSubgraph(node, CExpression_ParenthesizedExpression.EXPR,
+                node.mc_contextNames[CExpression_ParenthesizedExpression.EXPR]);
+
+            return base.VisitExpression_ParenthesizedExpression(node, node);
+        }
+
         public override int VisitExpression_Addition(CExpression_Addition node, params ASTElement[] args) {
             m_writer.WriteLine($"\"{args[0].MNodeName}\"->\"{node.MNodeName}\";");
 

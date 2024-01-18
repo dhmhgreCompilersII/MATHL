@@ -16,6 +16,7 @@ namespace MATHL.Composite {
         NT_EXPRESSION_EQUATION, NT_EXPRESSION_ADDITION, NT_EXPRESSION_SUBTRACTION, NT_EXPRESSION_MULTIPLICATION,
         NT_EXPRESSION_FDIVISION, NT_EXPRESSION_IDIVISION, NT_EXPRESSION_MODULO,NT_EXPRESSION_UNARYPLUS,
         NT_EXPRESSION_UNARYMINUS, NT_EXPRESSION_RANGE,NT_EXPRESSION_FUNCTIONCALL, NT_EXPRESSION_NUMBER,
+        NT_EXPRESSION_PARENTHESIS,
 
         T_INTTYPE, T_FLOATTYPE, T_RANGETYPE,T_IDENTIFIER, T_FLOATNUMBER, T_INTEGERNUMBER
     }
@@ -39,6 +40,7 @@ namespace MATHL.Composite {
         public const int COMMAND = 0;
         public readonly string[] mc_contextNames = { "Command_Expression" };
 
+        public ASTElement M_Expression => GetChild(COMMAND, 0);
         public CCommand_Expression() :
             base(1, (int)NodeType.NT_COMMAND_EXPRESSION) {
         }
@@ -71,6 +73,9 @@ namespace MATHL.Composite {
         public const int NAME = 0, PARAMS= 1;
         public readonly string[] mc_contextNames = { "FUNCTIONNAME", "ARGUMENTS" };
 
+        public ASTElement M_FunctionName => GetChild(NAME, 0);
+        public IEnumerable<ASTElement> M_Params => GetContextChildren(PARAMS);
+
         public CExpression_FunctionCall() :
             base(2, (int)NodeType.NT_EXPRESSION_FUNCTIONCALL) {
         }
@@ -84,6 +89,9 @@ namespace MATHL.Composite {
     public class CExpression_Equation : CExpression {
         public const int LHS = 0, RHS=1;
         public readonly string[] mc_contextNames = { "LHS", "RHS" };
+
+        public ASTElement M_LHSExpression => GetChild(LHS, 0);
+        public ASTElement M_RHSExpression => GetChild(RHS, 0);
 
         public CExpression_Equation() :
             base(2, (int)NodeType.NT_EXPRESSION_EQUATION) {
@@ -99,6 +107,8 @@ namespace MATHL.Composite {
         public const int EXPR = 0;
         public readonly string[] mc_contextNames = { "Expression" };
 
+        public ASTElement M_Expression => GetChild(EXPR, 0);
+
         public CExpression_UnaryPlus() :
             base(1, (int)NodeType.NT_EXPRESSION_UNARYPLUS) {
         }
@@ -112,6 +122,8 @@ namespace MATHL.Composite {
     public class CExpression_UnaryMinus : CExpression {
         public const int EXPR = 0;
         public readonly string[] mc_contextNames = { "Expression" };
+
+        public ASTElement M_Expression => GetChild(EXPR, 0);
 
         public CExpression_UnaryMinus() :
             base(1, (int)NodeType.NT_EXPRESSION_UNARYMINUS) {
@@ -127,6 +139,9 @@ namespace MATHL.Composite {
         public const int LHS = 0, RHS = 1;
         public readonly string[] mc_contextNames = { "LHS", "RHS" };
 
+        public ASTElement M_LHSExpression => GetChild(LHS, 0);
+        public ASTElement M_RHSExpression => GetChild(RHS, 0);
+
         public CExpression_Addition() :
             base(2, (int)NodeType.NT_EXPRESSION_ADDITION) {
         }
@@ -140,6 +155,9 @@ namespace MATHL.Composite {
     public class CExpression_Subtraction : CExpression {
         public const int LHS = 0, RHS = 1;
         public readonly string[] mc_contextNames = { "LHS", "RHS" };
+
+        public ASTElement M_LHSExpression => GetChild(LHS, 0);
+        public ASTElement M_RHSExpression => GetChild(RHS, 0);
 
         public CExpression_Subtraction() :
             base(2, (int)NodeType.NT_EXPRESSION_SUBTRACTION) {
@@ -155,6 +173,8 @@ namespace MATHL.Composite {
         public const int LHS = 0, RHS = 1;
         public readonly string[] mc_contextNames = { "LHS", "RHS" };
 
+        public ASTElement M_LHSExpression => GetChild(LHS, 0);
+        public ASTElement M_RHSExpression => GetChild(RHS, 0);
         public CExpression_Multiplication() :
             base(2, (int)NodeType.NT_EXPRESSION_MULTIPLICATION) {
         }
@@ -167,8 +187,10 @@ namespace MATHL.Composite {
     }
     public class CExpression_FDivision : CExpression {
         public const int LHS = 0, RHS = 1;
-        public readonly string[] mc_contextNames = { "LHS", "RHS" };
+        public readonly string[] mc_contextNames = { "NUMERATOR", "DENOMINATOR" };
 
+        public ASTElement M_LHSExpression => GetChild(LHS, 0);
+        public ASTElement M_RHSExpression => GetChild(RHS, 0);
         public CExpression_FDivision() :
             base(2, (int)NodeType.NT_EXPRESSION_FDIVISION) {
         }
@@ -181,8 +203,10 @@ namespace MATHL.Composite {
     }
     public class CExpression_IDivision : CExpression {
         public const int LHS = 0, RHS = 1;
-        public readonly string[] mc_contextNames = { "LHS", "RHS" };
+        public readonly string[] mc_contextNames = { "NUMERATOR", "DENOMINATOR" };
 
+        public ASTElement M_LHSExpression => GetChild(LHS, 0);
+        public ASTElement M_RHSExpression => GetChild(RHS, 0);
         public CExpression_IDivision() :
             base(2, (int)NodeType.NT_EXPRESSION_IDIVISION) {
         }
@@ -195,19 +219,32 @@ namespace MATHL.Composite {
     }
     public class CExpression_Modulo : CExpression {
         public const int LHS = 0, RHS = 1;
-        public readonly string[] mc_contextNames = { "LHS", "RHS" };
+        public readonly string[] mc_contextNames = { "NUMERATOR", "DENOMINATOR" };
 
+        public ASTElement M_LHSExpression => GetChild(LHS, 0);
+        public ASTElement M_RHSExpression => GetChild(RHS, 0);
         public CExpression_Modulo() :
             base(2, (int)NodeType.NT_EXPRESSION_MODULO) {
         }
-
         public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v,
             params Params[] info) {
             MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
             return visitor.VisitExpression_Modulo(this, info);
         }
     }
+    public class CExpression_ParenthesizedExpression : CExpression {
+        public const int EXPR = 0;
+        public readonly string[] mc_contextNames = { "Expression" };
 
+        public ASTElement M_Expression => GetChild(EXPR, 0);
+        public CExpression_ParenthesizedExpression() : 
+            base(1, (int)NodeType.NT_EXPRESSION_PARENTHESIS) { }
+
+        public override Return Accept<Return, Params>(IASTBaseVisitor<Return, Params> v, params Params[] info) {
+            MATHLBaseVisitor<Return, Params> visitor = v as MATHLBaseVisitor<Return, Params>;
+            return visitor.VisitExpression_ParenthesizedExpression(this, info);
+        }
+    }
     public class CExpression_Number : CExpression {
         public const int NUMBER = 0;
         public readonly string[] mc_contextNames = { "NUMBER" };
@@ -222,11 +259,14 @@ namespace MATHL.Composite {
             return visitor.VisitExpression_Number(this, info);
         }
     }
-
     public class CExpression_Range : CExpression {
         public const int START = 0, END = 1 , STEP=2;
         public readonly string[] mc_contextNames = { "Start", "End", "Step" };
 
+        public ASTElement M_StartExpression => GetChild(START, 0);
+        public ASTElement M_EndExpression => GetChild(END, 0);
+        public ASTElement M_StepExpression => GetChild(STEP, 0);
+        
         public CExpression_Range() :
             base(3, (int)NodeType.NT_EXPRESSION_RANGE) {
         }

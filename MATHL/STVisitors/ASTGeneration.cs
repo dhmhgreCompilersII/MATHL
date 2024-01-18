@@ -252,6 +252,23 @@ namespace MATHL.STVisitors {
 
             return newNode;
         }
+
+        public override ASTElement VisitExpression_parenthesizedexpression(MATHLParser.Expression_parenthesizedexpressionContext context) {
+            ASTComposite parent = m_parentsStack.Peek();
+            int parentContext = m_contextsStack.Peek();
+
+            ASTComposite newNode = new CExpression_ParenthesizedExpression();
+            parent.AddChild(parentContext, newNode);
+            newNode[typeof(Scope)] = m_currentScope;
+
+            ASTGenerationInfo info = new ASTGenerationInfo() { MContextParent = newNode };
+            var res = this.VisitElementInContext(context.expression(), 
+                CExpression_ParenthesizedExpression.EXPR,
+                m_contextsStack, newNode, m_parentsStack, info, m_infoStack);
+
+            return newNode;
+        }
+
         public override ASTElement VisitExpression_unaryprefixexpression(MATHLParser.Expression_unaryprefixexpressionContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();

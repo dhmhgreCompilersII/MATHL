@@ -9,10 +9,7 @@ NAMESPACE :ST_TYPENAME
 	int:IntegerType
 	float:FloatingType
 NAMESPACE :ST_VARIABLE
-	a:IntegerType= 0
-	b:IntegerType= 0
-	c:IntegerType= 0
-	d:= 0
+	x:IntegerType= 0
 NAMESPACE :ST_FUNCTION
 		---- EMPTY ----
 
