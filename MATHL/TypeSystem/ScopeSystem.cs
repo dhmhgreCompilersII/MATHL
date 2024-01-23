@@ -156,7 +156,7 @@ namespace MATHL.TypeSystem {
             int exitCode;
 
             // Run the external process & wait for it to finish
-            using (Process proc = Process.Start(start)) {
+            using (Process? proc = Process.Start(start)) {
                 proc.WaitForExit();
 
                 // Retrieve the app's exit code

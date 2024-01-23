@@ -10,6 +10,7 @@ NAMESPACE :ST_TYPENAME
 	float:FloatingType
 NAMESPACE :ST_VARIABLE
 	x:IntegerType= 0
+	y:IntegerType= 0
 NAMESPACE :ST_FUNCTION
 		---- EMPTY ----
 

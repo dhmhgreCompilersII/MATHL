@@ -106,6 +106,9 @@ namespace MATHL
             Expression2TextEmmiter e2t = new Expression2TextEmmiter();
             e2t.Visit(asttree);
 
+            AlgebraIRGeneration air = new AlgebraIRGeneration();
+            air.Visit(asttree);
+
             // Reports
             m_environment.M_ScopeSystem.Report("SymbolTable.txt");
 

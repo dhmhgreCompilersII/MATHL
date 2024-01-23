@@ -69,15 +69,12 @@ namespace MATHL.TypeSystem {
         public SymbolCategory MSymbolCategory => m_symbolCategory;
 
         public override string ToString() {
-            string symbol;
             if (MSymbolCategory == SymbolCategory.ST_VARIABLE) {
                 switch (m_value.MType) {
                     case TypeID.TID_INTEGER:
-                        return MName + ":" + m_type +$"= {m_value.Ivalue}";
-                        break;
+                        return MName + ":" + m_type + $"= {m_value.Ivalue}";
                     case TypeID.TID_FLOAT:
                         return MName + ":" + m_type + $"= {m_value.Fvalue}";
-                        break;
                     default:
                         return MName + ":" + m_type;
                 }

@@ -70,79 +70,79 @@ namespace MATHL.Composite {
             return result;
         }
 
-        public virtual Result VisitCompileUnit(CCompileUnit node, params Params[] args) {
+        public virtual Result? VisitCompileUnit(CCompileUnit node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitDeclaration_Function(CDeclarationFunction node, params Params[] args) {
+        public virtual Result? VisitDeclaration_Function(CDeclarationFunction node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitCommand_Expression(CCommand_Expression node, params Params[] args) {
+        public virtual Result? VisitCommand_Expression(CCommand_Expression node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitExpression_FunctionCall(CExpression_FunctionCall node, params Params[] args) {
+        public virtual Result? VisitExpression_FunctionCall(CExpression_FunctionCall node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitExpression_Equation(CExpression_Equation node, params Params[] args) {
+        public virtual Result? VisitExpression_Equation(CExpression_Equation node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitExpression_UnaryPlus(CExpression_UnaryPlus node, params Params[] args) {
+        public virtual Result? VisitExpression_UnaryPlus(CExpression_UnaryPlus node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitExpression_UnaryMinus(CExpression_UnaryMinus node, params Params[] args) {
+        public virtual Result? VisitExpression_UnaryMinus(CExpression_UnaryMinus node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitExpression_Addition(CExpression_Addition node, params Params[] args) {
+        public virtual Result? VisitExpression_Addition(CExpression_Addition node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitExpression_Subtraction(CExpression_Subtraction node, params Params[] args) {
+        public virtual Result? VisitExpression_Subtraction(CExpression_Subtraction node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitExpression_Multiplication(CExpression_Multiplication node, params Params[] args) {
+        public virtual Result? VisitExpression_Multiplication(CExpression_Multiplication node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitExpression_FDivision(CExpression_FDivision node, params Params[] args) {
+        public virtual Result? VisitExpression_FDivision(CExpression_FDivision node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitExpression_IDivision(CExpression_IDivision node, params Params[] args) {
+        public virtual Result? VisitExpression_IDivision(CExpression_IDivision node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitExpression_Modulo(CExpression_Modulo node, params Params[] args) {
+        public virtual Result? VisitExpression_Modulo(CExpression_Modulo node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitExpression_ParenthesizedExpression(CExpression_ParenthesizedExpression node, params Params[] args) {
+        public virtual Result? VisitExpression_ParenthesizedExpression(CExpression_ParenthesizedExpression node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitExpression_Range(CExpression_Range node, params Params[] args) {
+        public virtual Result? VisitExpression_Range(CExpression_Range node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitExpression_Number(CExpression_Number node, params Params[] args) {
+        public virtual Result? VisitExpression_Number(CExpression_Number node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitCommand_CommandBlock(CCommand_CommandBlock node, params Params[] args) {
+        public virtual Result? VisitCommand_CommandBlock(CCommand_CommandBlock node, params Params[] args) {
+            return VisitChildren(node, args);
+        } 
+        public virtual Result? VisitCommand_Return(CCommand_Return node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitCommand_Return(CCommand_Return node, params Params[] args) {
+        public virtual Result? VisitDeclaration_Variable(CDeclarationVariable node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitDeclaration_Variable(CDeclarationVariable node, params Params[] args) {
+        public virtual Result? VisitDeclarator_Variable(CDeclaratorVariable node, params Params[] args) {
             return VisitChildren(node, args);
         }
-        public virtual Result VisitDeclarator_Variable(CDeclaratorVariable node, params Params[] args) {
-            return VisitChildren(node, args);
-        }
-        public virtual Result VisitT_IntegerDataType(CIntType node, params Params[] args) {
+        public virtual Result? VisitT_IntegerDataType(CIntType node, params Params[] args) {
             return default(Result);
         }
-        public virtual Result VisitT_FloatDataType(CFloatType node, params Params[] args) {
+        public virtual Result? VisitT_FloatDataType(CFloatType node, params Params[] args) {
             return default(Result);
         }
-        public virtual Result VisitT_RangeDataType(CRangeType node, params Params[] args) {
+        public virtual Result? VisitT_RangeDataType(CRangeType node, params Params[] args) {
             return default(Result);
         }
-        public virtual Result VisitT_INTEGERNUMBER(CINTEGERNUMBER node, params Params[] args) {
+        public virtual Result? VisitT_INTEGERNUMBER(CINTEGERNUMBER node, params Params[] args) {
             return default(Result);
         }
-        public virtual Result VisitT_FLOATNUMBER(CFLOATNUMBER node, params Params[] args) {
+        public virtual Result? VisitT_FLOATNUMBER(CFLOATNUMBER node, params Params[] args) {
             return default(Result);
         }
         public virtual Result VisitT_IDENTIFIER(CIDENTIFIER node, params Params[] args) {

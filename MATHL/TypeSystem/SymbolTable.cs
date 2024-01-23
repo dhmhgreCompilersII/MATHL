@@ -22,7 +22,7 @@ namespace MATHL.TypeSystem {
         private int m_scopelevel;
         public int M_Scopelevel => m_scopelevel;
 
-        public Scope(Scope parentScope,Action<Scope> init, string scopeName=null) {
+        public Scope(Scope parentScope,Action<Scope> init, string? scopeName=null) {
             // 1. Set parent scope
             m_parentScope = parentScope;
 

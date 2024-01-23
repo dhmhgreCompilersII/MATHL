@@ -11,7 +11,7 @@ namespace MATHL.ASTVisitors {
     }
 
     public class Expression2TextEmmiter : MATHLBaseVisitor<string,Expression2TextParams> {
-        public override string VisitExpression_Number(CExpression_Number node, params Expression2TextParams[] args) {
+        public override string? VisitExpression_Number(CExpression_Number node, params Expression2TextParams[] args) {
             return base.VisitExpression_Number(node, args);
         }
 
@@ -124,7 +124,7 @@ namespace MATHL.ASTVisitors {
         }
 
         public override string VisitT_FLOATNUMBER(CFLOATNUMBER node, params Expression2TextParams[] args) {
-            return node.MValue.Fvalue.ToString();
+            return node.M_Value.Fvalue.ToString();
         }
 
         public override string VisitT_IDENTIFIER(CIDENTIFIER node, params Expression2TextParams[] args) {

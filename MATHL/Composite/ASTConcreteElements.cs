@@ -55,7 +55,14 @@ namespace MATHL.Composite {
     public abstract class CExpression : ASTComposite {
         private LType m_type=null;
         private bool m_isConstantExpression=false;
-        
+
+        private AlgebraElement m_algebraElement;
+
+        public AlgebraElement M_AlgebraElement {
+            get => m_algebraElement;
+            set => m_algebraElement = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
         public bool M_IsConstantExpression {
             get => m_isConstantExpression;
             set => m_isConstantExpression = value;
@@ -385,7 +392,7 @@ namespace MATHL.Composite {
 
         public LType M_Type => m_type;
 
-        public LValue MValue  => m_value;
+        public LValue M_Value  => m_value;
         
 
         public CFLOATNUMBER(string leafLiteral) :
@@ -458,7 +465,7 @@ namespace MATHL.Composite {
 
         public override string MNodeName => m_nodeName + "_" + M_StringLiteral;
 
-        public LType MType => m_type;
+        public LType M_Type => m_type;
 
         public CRangeType(string leafLiteral) :
             base(leafLiteral, (int)NodeType.T_RANGETYPE) {

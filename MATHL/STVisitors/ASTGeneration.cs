@@ -237,7 +237,7 @@ namespace MATHL.STVisitors {
         public override ASTElement VisitRange(MATHLParser.RangeContext context) {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
-            ASTComposite newNode = null;
+            ASTComposite newNode = null!;
             newNode = new CExpression_Range();
             parent.AddChild(parentContext, newNode);
             newNode[typeof(Scope)] = m_currentScope;
@@ -273,7 +273,7 @@ namespace MATHL.STVisitors {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
             int context_ = 0;
-            ASTComposite newNode = null;
+            ASTComposite newNode = null!;
             switch (context.op.Type) {
                 case MATHLLexer.PLUS:
                     newNode = new CExpression_UnaryPlus();
@@ -297,7 +297,7 @@ namespace MATHL.STVisitors {
             int context_L = 0, context_R = 1;
 
             // Preorder Actions
-            ASTComposite newNode = null;
+            ASTComposite newNode = null!;
             switch (context.op.Type) {
                 case MATHLLexer.PLUS:
                     newNode = new CExpression_Addition();
@@ -323,7 +323,7 @@ namespace MATHL.STVisitors {
             int parentContext = m_contextsStack.Peek();
             int context_L = 0, context_R = 1;
 
-            ASTComposite newNode = null;
+            ASTComposite newNode = null!;
             switch (context.op.Type) {
                 case MATHLLexer.MULT:
                     newNode = new CExpression_Multiplication();
@@ -413,7 +413,7 @@ namespace MATHL.STVisitors {
             ASTComposite parent = m_parentsStack.Peek();
             int parentContext = m_contextsStack.Peek();
             ASTGenerationInfo info = m_infoStack.Peek();
-            ASTElement newNode = null;
+            ASTElement? newNode = null;
 
             switch (node.Symbol.Type) {
                 case MATHLLexer.INT:
@@ -431,7 +431,7 @@ namespace MATHL.STVisitors {
                 case MATHLLexer.IDENTIFIER:
                     switch (info.MContextParent.MType) {
                         case (int)NodeType.NT_EXPRESSION_FUNCTIONCALL:
-                            FunctionSymbol functionSymbol;
+                            FunctionSymbol? functionSymbol;
                             // FunctionDefinition has already being declared and the
                             // corresponding FunctionSymbol is stored into the symboltable
                             LSymbol symbol = m_scopesystem.SearchSymbol(

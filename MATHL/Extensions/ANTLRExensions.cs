@@ -53,8 +53,8 @@ public static class ANTLRExtensions {
     public static Result VisitElementInContext<Result,Param>(this AbstractParseTreeVisitor<Result> t,
         ParserRuleContext node, int context, Stack<int> contextsStack,
         ASTComposite parent, Stack<ASTComposite> parentStack,
-        Param param = default(Param),Stack<Param> infoStack=null) {
-        Result res = default(Result);
+        Param? param = default(Param),Stack<Param>? infoStack=null) {
+        Result? res = default(Result);
 
         parentStack.Push(parent);
         contextsStack.Push(context);
@@ -74,7 +74,7 @@ public static class ANTLRExtensions {
 
     public static Result VisitElementInContext<Result, Param>(this AbstractParseTreeVisitor<Result> t,
         ParserRuleContext node, Stack<Param> infoStack, Param param) {
-        Result res = default(Result);
+        Result res;
         
         infoStack.Push(param);
         res = t.Visit(node);     // Visits a particular element
@@ -98,7 +98,7 @@ public static class ANTLRExtensions {
     public static Result VisitElementsInContext<Result>(this AbstractParseTreeVisitor<Result> t,
         IEnumerable<IParseTree> nodeset, int context, Stack<int> contextsStack,
         ASTComposite parent, Stack<ASTComposite> parentsStack) {
-        Result res = default(Result);
+        Result? res = default(Result);
 
         parentsStack.Push(parent);
         contextsStack.Push(context);
@@ -114,8 +114,8 @@ public static class ANTLRExtensions {
     public static Result VisitElementsInContext<Result,Param>(this AbstractParseTreeVisitor<Result> t,
         IEnumerable<IParseTree> nodeset, int context, Stack<int> contextsStack,
         ASTComposite parent, Stack<ASTComposite> parentsStack,
-        Param param = default(Param), Stack<Param> infoStack = null) {
-        Result res = default(Result);
+        Param? param = default(Param), Stack<Param>? infoStack = null) {
+        Result? res = default(Result);
 
         parentsStack.Push(parent);
         contextsStack.Push(context);
@@ -135,9 +135,9 @@ public static class ANTLRExtensions {
         return res;
     }
 
-    public static Result VisitElementsInContext<Result, Param>(this AbstractParseTreeVisitor<Result> t,
-        IEnumerable<IParseTree> nodeset, Stack<Param> infoStack = null, Param param = default(Param)) {
-        Result res = default(Result);
+    public static Result? VisitElementsInContext<Result, Param>(this AbstractParseTreeVisitor<Result> t,
+        IEnumerable<IParseTree> nodeset, Stack<Param>? infoStack = null, Param? param = default(Param)) {
+        Result? res = default(Result);
         
         infoStack.Push(param);
         foreach (IParseTree node in nodeset) {
@@ -174,7 +174,7 @@ public static class ANTLRExtensions {
     public static Result VisitTerminalInContext<Result,Param>(this AbstractParseTreeVisitor<Result> t,
         ParserRuleContext tokenParent, IToken node, int context, Stack<int> s,
         ASTComposite parent, Stack<ASTComposite> parentStack,
-        Param param = default(Param),Stack<Param> infoStack = null) {
+        Param? param = default(Param),Stack<Param>? infoStack = null) {
 
         parentStack.Push(parent);
         s.Push(context);
